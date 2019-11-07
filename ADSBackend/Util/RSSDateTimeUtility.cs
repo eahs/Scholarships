@@ -10,7 +10,7 @@ Date		Author		Description
 using System;
 using System.Globalization;
 
-namespace ADSBackend.Util
+namespace Scholarships.Util
 {
     /// <summary>
     /// Provides methods for generating and parsing date-time information exposed by syndicated content. This class cannot be inherited.

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ADSBackend.Controllers;
+using Scholarships.Controllers;
 
 namespace Microsoft.AspNetCore.Mvc
 {

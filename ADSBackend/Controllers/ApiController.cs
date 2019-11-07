@@ -1,11 +1,11 @@
-﻿using ADSBackend.Models.ApiModels;
+﻿using Scholarships.Models.ApiModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Produces("application/json")]
     [Route("api")]

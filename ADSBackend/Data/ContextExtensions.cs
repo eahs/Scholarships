@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ADSBackend.Data
+namespace Scholarships.Data
 {
     public static class ContextExtensions
     {

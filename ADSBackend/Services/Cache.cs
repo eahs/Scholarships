@@ -1,9 +1,9 @@
-﻿using ADSBackend.Models.CacheViewModels;
+﻿using Scholarships.Models.CacheViewModels;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Services
+namespace Scholarships.Services
 {
     public class Cache
     {

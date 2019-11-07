@@ -1,9 +1,9 @@
-﻿using ADSBackend.Models.Identity;
+﻿using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
 
-namespace ADSBackend.Configuration
+namespace Scholarships.Configuration
 {
     public class ApplicationUserSeed
     {

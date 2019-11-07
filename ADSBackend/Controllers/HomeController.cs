@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ADSBackend.Models.CacheViewModels
+namespace Scholarships.Models.CacheViewModels
 {
     public class CacheItem<T>
     {

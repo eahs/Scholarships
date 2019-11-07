@@ -1,12 +1,16 @@
-﻿using System;
+﻿using Scholarships.Models.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ADSBackend.Models
+namespace Scholarships.Models
 {
     public class Profile
     {
         [Key]
         public int ProfileId { get; set; }
+
+        public int UserId { get; set; }
+        public ApplicationUser User { get; set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }

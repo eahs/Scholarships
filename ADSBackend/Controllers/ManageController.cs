@@ -1,6 +1,6 @@
-﻿using ADSBackend.Models.Identity;
-using ADSBackend.Models.ManageViewModels;
-using ADSBackend.Services;
+﻿using Scholarships.Models.Identity;
+using Scholarships.Models.ManageViewModels;
+using Scholarships.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Authorize]
     [Route("[controller]/[action]")]
@@ -518,7 +518,7 @@ namespace ADSBackend.Controllers
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("ADSBackend"),
+                _urlEncoder.Encode("Scholarships"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

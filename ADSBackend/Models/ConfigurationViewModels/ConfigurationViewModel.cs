@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ADSBackend.Models.ConfigurationViewModels
+namespace Scholarships.Models.ConfigurationViewModels
 {
     public class ConfigurationViewModel
     {

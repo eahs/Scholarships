@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ADSBackend.Models.AccountViewModels
+namespace Scholarships.Models.AccountViewModels
 {
     public class LoginViewModel
     {

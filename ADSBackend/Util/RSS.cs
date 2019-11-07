@@ -1,11 +1,11 @@
-﻿using ADSBackend.Models.ApiModels;
+﻿using Scholarships.Models.ApiModels;
 using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace ADSBackend.Util
+namespace Scholarships.Util
 {
     public class RSS
     {

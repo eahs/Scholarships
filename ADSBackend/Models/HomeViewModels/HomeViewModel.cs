@@ -1,6 +1,6 @@
-﻿using ADSBackend.Models.Identity;
+﻿using Scholarships.Models.Identity;
 
-namespace ADSBackend.Models.HomeViewModels
+namespace Scholarships.Models.HomeViewModels
 {
     public class HomeViewModel
     {

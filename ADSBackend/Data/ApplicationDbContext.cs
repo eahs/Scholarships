@@ -1,9 +1,9 @@
-﻿using ADSBackend.Models;
-using ADSBackend.Models.Identity;
+﻿using Scholarships.Models;
+using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace ADSBackend.Data
+namespace Scholarships.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace ADSBackend.Models
+namespace Scholarships.Models
 {
     public class ScholarshipCategory
     {

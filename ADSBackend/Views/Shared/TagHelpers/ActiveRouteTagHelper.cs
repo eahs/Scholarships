@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ADSBackend.Views.Shared.TagHelpers
+namespace Scholarships.Views.Shared.TagHelpers
 {
     [HtmlTargetElement(Attributes = "is-active-route")]
     public class ActiveRouteTagHelper : TagHelper

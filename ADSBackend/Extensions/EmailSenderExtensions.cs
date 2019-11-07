@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Services
+namespace Scholarships.Services
 {
     public static class EmailSenderExtensions
     {

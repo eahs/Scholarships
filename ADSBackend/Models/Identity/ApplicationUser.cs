@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ADSBackend.Models.Identity
+namespace Scholarships.Models.Identity
 {
     // Add profile data for application users by adding properties to the ApplicationUser class
     public class ApplicationUser : IdentityUser<int>

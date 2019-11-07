@@ -1,6 +1,6 @@
-﻿using ADSBackend.Models.AccountViewModels;
-using ADSBackend.Models.Identity;
-using ADSBackend.Services;
+﻿using Scholarships.Models.AccountViewModels;
+using Scholarships.Models.Identity;
+using Scholarships.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Authorize]
     [Route("[controller]/[action]")]

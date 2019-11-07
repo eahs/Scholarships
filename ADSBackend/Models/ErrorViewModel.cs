@@ -1,6 +1,6 @@
 using System;
 
-namespace ADSBackend.Models
+namespace Scholarships.Models
 {
     public class ErrorViewModel
     {

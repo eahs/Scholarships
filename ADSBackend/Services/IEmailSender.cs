@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace ADSBackend.Services
+namespace Scholarships.Services
 {
     public interface IEmailSender
     {

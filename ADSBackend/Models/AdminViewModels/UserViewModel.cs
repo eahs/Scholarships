@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ADSBackend.Models.AdminViewModels
+namespace Scholarships.Models.AdminViewModels
 {
     public class UserViewModel
     {

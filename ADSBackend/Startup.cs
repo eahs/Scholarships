@@ -1,6 +1,6 @@
-using ADSBackend.Configuration;
-using ADSBackend.Data;
-using ADSBackend.Models.Identity;
+using Scholarships.Configuration;
+using Scholarships.Data;
+using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ADSBackend
+namespace Scholarships
 {
     public class Startup
     {
@@ -25,7 +25,7 @@ namespace ADSBackend
         {
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("ADSBackendContext"));
+                options.UseSqlServer(Configuration.GetConnectionString("ScholarshipsContext"));
             });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()

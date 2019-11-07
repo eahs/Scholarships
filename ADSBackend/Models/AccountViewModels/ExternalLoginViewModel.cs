@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Models.AccountViewModels
+namespace Scholarships.Models.AccountViewModels
 {
     public class ExternalLoginViewModel
     {

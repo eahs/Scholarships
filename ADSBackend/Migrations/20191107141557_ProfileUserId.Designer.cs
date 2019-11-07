@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20190904182201_Initial")]
-    partial class Initial
+    [Migration("20191107141557_ProfileUserId")]
+    partial class ProfileUserId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,19 @@ namespace Scholarships.Migrations
                 .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Scholarships.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Category");
+                });
 
             modelBuilder.Entity("Scholarships.Models.ConfigurationItem", b =>
                 {
@@ -116,6 +129,163 @@ namespace Scholarships.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Scholarships.Models.Profile", b =>
+                {
+                    b.Property<int>("ProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ACTScore");
+
+                    b.Property<string>("ActivitiesCommunity");
+
+                    b.Property<string>("ActivitiesSchool");
+
+                    b.Property<string>("Address1");
+
+                    b.Property<string>("Address2");
+
+                    b.Property<DateTime>("BirthDate");
+
+                    b.Property<string>("City");
+
+                    b.Property<int>("ClassRank");
+
+                    b.Property<bool>("CollegeAccepted");
+
+                    b.Property<string>("CollegeAttending");
+
+                    b.Property<string>("CollegeIntendedMajor");
+
+                    b.Property<string>("EarningsFather");
+
+                    b.Property<double>("EarningsMother");
+
+                    b.Property<double>("EarningsTotal");
+
+                    b.Property<string>("Email");
+
+                    b.Property<double>("FamilyAssets");
+
+                    b.Property<string>("FatherEmployer");
+
+                    b.Property<string>("FatherName");
+
+                    b.Property<string>("FatherOccupation");
+
+                    b.Property<string>("FirstName");
+
+                    b.Property<int>("Gender");
+
+                    b.Property<string>("LastName");
+
+                    b.Property<string>("LivingSituation");
+
+                    b.Property<string>("MotherEmployer");
+
+                    b.Property<string>("MotherName");
+
+                    b.Property<string>("MotherOccupation");
+
+                    b.Property<string>("OtherAid");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<double>("RoomBoard");
+
+                    b.Property<int>("SATScoreMath");
+
+                    b.Property<int>("SATScoreReading");
+
+                    b.Property<string>("SchoolOffices");
+
+                    b.Property<string>("Siblings");
+
+                    b.Property<string>("SpecialCircumstances");
+
+                    b.Property<double>("StudentAssets");
+
+                    b.Property<string>("StudentEmployer");
+
+                    b.Property<string>("StudentId");
+
+                    b.Property<double>("StudentIncome");
+
+                    b.Property<double>("TuitionTotal");
+
+                    b.Property<double>("TuitionYearly");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("ZipCode");
+
+                    b.HasKey("ProfileId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Profile");
+                });
+
+            modelBuilder.Entity("Scholarships.Models.Scholarship", b =>
+                {
+                    b.Property<int>("ScholarshipId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Amount");
+
+                    b.Property<string>("ApplicationInstructions");
+
+                    b.Property<bool>("ApplyOnline");
+
+                    b.Property<string>("Description");
+
+                    b.Property<DateTime>("DueDate");
+
+                    b.Property<string>("Eligibility");
+
+                    b.Property<string>("Name");
+
+                    b.Property<DateTime>("ReleaseDate");
+
+                    b.Property<string>("SponsorAddress1");
+
+                    b.Property<string>("SponsorAddress2");
+
+                    b.Property<string>("SponsorCompany");
+
+                    b.Property<string>("SponsorEmail");
+
+                    b.Property<string>("SponsorName");
+
+                    b.Property<string>("SponsorPhone");
+
+                    b.Property<string>("Standards");
+
+                    b.Property<bool>("TranscriptsRequired");
+
+                    b.HasKey("ScholarshipId");
+
+                    b.ToTable("Scholarship");
+                });
+
+            modelBuilder.Entity("Scholarships.Models.ScholarshipCategory", b =>
+                {
+                    b.Property<int>("CategoryId");
+
+                    b.Property<int>("ScholarshipId");
+
+                    b.Property<int>("ScholarshipCategoryId");
+
+                    b.HasKey("CategoryId", "ScholarshipId");
+
+                    b.HasAlternateKey("ScholarshipCategoryId");
+
+                    b.HasIndex("ScholarshipId");
+
+                    b.ToTable("ScholarshipCategory");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
@@ -197,6 +367,27 @@ namespace Scholarships.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Scholarships.Models.Profile", b =>
+                {
+                    b.HasOne("Scholarships.Models.Identity.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Scholarships.Models.ScholarshipCategory", b =>
+                {
+                    b.HasOne("Scholarships.Models.Category", "Category")
+                        .WithMany("Scholarships")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Scholarships.Models.Scholarship", "Scholarship")
+                        .WithMany("Categories")
+                        .HasForeignKey("ScholarshipId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

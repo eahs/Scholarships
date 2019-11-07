@@ -1,4 +1,4 @@
-﻿namespace ADSBackend.Models.ApiModels
+﻿namespace Scholarships.Models.ApiModels
 {
     public class ConfigResponse
     {

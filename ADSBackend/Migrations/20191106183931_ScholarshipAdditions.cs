@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ADSBackend.Migrations
+namespace Scholarships.Migrations
 {
     public partial class ScholarshipAdditions : Migration
     {

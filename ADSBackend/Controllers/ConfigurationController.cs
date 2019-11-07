@@ -1,11 +1,11 @@
-﻿using ADSBackend.Data;
-using ADSBackend.Models.ConfigurationViewModels;
+﻿using Scholarships.Data;
+using Scholarships.Models.ConfigurationViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ConfigurationController : Controller

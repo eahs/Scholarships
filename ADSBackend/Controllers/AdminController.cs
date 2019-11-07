@@ -1,11 +1,11 @@
-﻿using ADSBackend.Models.HomeViewModels;
-using ADSBackend.Models.Identity;
+﻿using Scholarships.Models.HomeViewModels;
+using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Authorize]
     public class AdminController : Controller

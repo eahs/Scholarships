@@ -1,11 +1,11 @@
-﻿using ADSBackend.Data;
-using ADSBackend.Models;
+﻿using Scholarships.Data;
+using Scholarships.Models;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Services
+namespace Scholarships.Services
 {
     public class Configuration
     {

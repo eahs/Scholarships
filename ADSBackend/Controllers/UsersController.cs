@@ -1,7 +1,7 @@
-﻿using ADSBackend.Data;
-using ADSBackend.Models.Identity;
-using ADSBackend.Models.AdminViewModels;
-using ADSBackend.Services;
+﻿using Scholarships.Data;
+using Scholarships.Models.Identity;
+using Scholarships.Models.AdminViewModels;
+using Scholarships.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ADSBackend.Controllers
+namespace Scholarships.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller

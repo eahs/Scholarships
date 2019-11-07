@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ADSBackend.Models.ApiModels
+namespace Scholarships.Models.ApiModels
 {
     public class NewsFeedItem
     {

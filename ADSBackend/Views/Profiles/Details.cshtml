@@ -1,0 +1,264 @@
+﻿@model Scholarships.Models.Profile
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Profile</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentId)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StudentId)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BirthDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Gender)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Gender)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address1)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address1)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Address2)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Address2)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.City)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ZipCode)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ZipCode)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ClassRank)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClassRank)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SATScoreMath)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SATScoreMath)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SATScoreReading)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SATScoreReading)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ACTScore)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ACTScore)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CollegeAttending)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CollegeAttending)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TuitionYearly)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TuitionYearly)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomBoard)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RoomBoard)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TuitionTotal)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.TuitionTotal)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CollegeAccepted)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CollegeAccepted)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CollegeIntendedMajor)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CollegeIntendedMajor)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.LivingSituation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LivingSituation)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.OtherAid)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.OtherAid)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ActivitiesSchool)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ActivitiesSchool)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ActivitiesCommunity)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ActivitiesCommunity)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SchoolOffices)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SchoolOffices)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.SpecialCircumstances)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.SpecialCircumstances)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FatherName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FatherName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FatherOccupation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FatherOccupation)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FatherEmployer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FatherEmployer)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MotherName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MotherName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MotherOccupation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MotherOccupation)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.MotherEmployer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MotherEmployer)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EarningsFather)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EarningsFather)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EarningsMother)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EarningsMother)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EarningsTotal)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EarningsTotal)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FamilyAssets)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FamilyAssets)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentEmployer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StudentEmployer)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentIncome)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StudentIncome)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentAssets)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StudentAssets)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Siblings)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Siblings)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ProfileId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
