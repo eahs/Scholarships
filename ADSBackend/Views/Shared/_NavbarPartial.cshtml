@@ -4,6 +4,27 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
+@{ 
+    var handlingController = this.ViewContext.RouteData.Values["controller"].ToString();
+
+    var setupClass = "";
+    var adminClass = "";
+
+
+    switch (handlingController)
+    {
+
+        // Scholarship Setup
+        case "Scholarships": setupClass = "active"; break;
+
+        // Admininstration
+        case "Users": adminClass = "active"; break;
+        case "Configuration": adminClass = "active"; break;
+
+    }
+}
+
+
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
         <ul class="nav metismenu" id="side-menu">
@@ -42,11 +63,16 @@
                 </li>
                 @if (User.IsInRole("Admin"))
                 {
-                    <li is-active-route asp-controller="Users">
-                        <a asp-controller="Users" asp-action="Index"><i class="fa fa-users"></i><span class="nav-label">Manage Users</span></a>
-                    </li>
-                    <li is-active-route asp-controller="Configuration">
-                        <a asp-controller="Configuration" asp-action="Index"><i class="fa fa-cog"></i><span class="nav-label">Configuration</span></a>
+                    <li id="nav_admin" class="@adminClass">
+                        <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Administration </span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li is-active-route asp-controller="Users">
+                                <a asp-controller="Users" asp-action="Index">Manage Users</a>
+                            </li>
+                            <li is-active-route asp-controller="Configuration">
+                                <a asp-controller="Configuration" asp-action="Index">Configuration</a>
+                            </li>
+                        </ul>
                     </li>
                 }
             }

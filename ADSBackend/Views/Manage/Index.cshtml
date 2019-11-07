@@ -1,6 +1,6 @@
 ﻿@model IndexViewModel
 @{
-    ViewData["Title"] = "Profile";
+    ViewData["Title"] = "Password";
     ViewData.AddActivePage(ManageNavPages.Index);
 }
 
@@ -19,15 +19,15 @@
                 @if (Model.IsEmailConfirmed)
                 {
                     <div class="input-group">
-                        <input asp-for="Email" class="form-control" />
+                        <input asp-for="Email" disabled class="form-control" />
                         <span class="input-group-addon" aria-hidden="true"><span class="glyphicon glyphicon-ok text-success"></span></span>
                     </div>
                 }
                 else
                 {
-                    <input asp-for="Email" class="form-control" />
+                    <input asp-for="Email" disabled class="form-control" />
                     <br />
-                    <button asp-action="SendVerificationEmail" class="btn btn-default">Send verification email</button>
+                    <!--<button asp-action="SendVerificationEmail" class="btn btn-default">Send verification email</button>-->
                 }
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>

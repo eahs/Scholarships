@@ -42,6 +42,8 @@ namespace ADSBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            return RedirectToAction("ChangePassword", "Manage");
+            /*
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
@@ -58,6 +60,7 @@ namespace ADSBackend.Controllers
             };
 
             return View(model);
+            */
         }
 
         [HttpPost]

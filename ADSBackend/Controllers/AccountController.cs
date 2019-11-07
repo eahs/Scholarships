@@ -198,6 +198,13 @@ namespace ADSBackend.Controllers
 
         [HttpGet]
         [AllowAnonymous]
+        public IActionResult DomainNotAuthorized()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -253,6 +260,105 @@ namespace ADSBackend.Controllers
             return Challenge(properties, provider);
         }
 
+
+        public string ConvertToProperNameCase(string s)
+        {
+            string ReturnValue = string.Empty;
+
+            if (s.Trim().Length > 0)
+            {
+                try
+                {
+                    s = s.ToLower();
+
+                    bool[] Name = new bool[s.Length];
+                    for (int i = Name.Length; i < Name.Length; i++)
+                    {
+                        Name[i] = false;
+                    }
+
+                    for (int i = 0; i < s.Length; i++)
+                    {
+                        if (i == 0)
+                        {
+                            Name[i] = true;
+                        }
+
+                        if (s[i].Equals('\'') || s[i].Equals('-') || s[i].Equals(' '))
+                        {
+                            Name[i + 1] = true;
+                        }
+                    }
+
+                    string[] Prefixes = new string[] { "MAC", "MC" };
+                    bool[] b = new bool[1] { true };
+
+                    foreach (string p in Prefixes)
+                    {
+                        if (s.ToUpper().Trim().StartsWith(p))
+                        {
+                            switch (p.Length)
+                            {
+                                case 2:
+                                    b = new bool[] { true, false, true };
+                                    break;
+                                case 3:
+                                    b = new bool[] { true, false, false, true };
+                                    break;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < b.Length; i++)
+                    {
+                        Name[i] = b[i];
+                    }
+
+                    string[] Suffixes = new string[] { "XXIIII", "IIIII", "VIIII", "XVIII", "XXIII", "IIII", "VIII", "XIII", "XVII", "XXII",
+                                                       "XXIV", "III", "VII", "IIX", "XII", "XIV", "XVI", "XIX", "XXV", "XXI", "II", "IV", "VI",
+                                                       "IX", "XI", "XV", "XX", "I", "V", "X" };
+
+                    foreach (string suf in Suffixes)
+                    {
+                        if (s.ToUpper().Trim().EndsWith(suf) && (s.Length > (suf.Length + 1)))
+                        {
+                            for (int i = s.Length - 1; i > (s.Length - (suf.Length + 1)); i--)
+                            {
+                                Name[i] = true;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < s.Length; i++)
+                    {
+                        if (Name[i] == true)
+                        {
+                            ReturnValue += s.Substring(i, 1).ToUpper();
+                        }
+                        else
+                        {
+                            ReturnValue += s.Substring(i, 1);
+                        }
+
+                    }
+
+                    return ReturnValue;
+                }
+                catch (Exception ex)
+                {
+                    return ReturnValue = "";
+                }
+            }
+            else
+            {
+                return ReturnValue = "";
+            }
+        }
+
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -285,10 +391,42 @@ namespace ADSBackend.Controllers
                 ViewData["ReturnUrl"] = returnUrl;
                 ViewData["LoginProvider"] = info.LoginProvider;
                 var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                var firstname = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                var lastname = info.Principal.FindFirstValue(ClaimTypes.Surname);
+
+                firstname = ConvertToProperNameCase(firstname);
+                lastname = ConvertToProperNameCase(lastname);
+
+                if (!email.Contains("@eastonsd.org") && !email.Contains("@roverkids.org"))
+                {
+                    return RedirectToAction(nameof(DomainNotAuthorized));
+                }
+
+                var user = new ApplicationUser { UserName = email, Email = email, FirstName = firstname, LastName = lastname};
+                var result2 = await _userManager.CreateAsync(user);
+                if (result2.Succeeded)
+                {
+                    result2 = await _userManager.AddLoginAsync(user, info);
+                    if (result2.Succeeded)
+                    {
+                        // reset user roles
+                        var roles = await _userManager.GetRolesAsync(user);
+                        await _userManager.RemoveFromRolesAsync(user, roles);
+
+                        // assign new role
+                        await _userManager.AddToRoleAsync(user, "Student" );
+
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
+                        return RedirectToLocal(returnUrl);
+                    }
+                }
+
                 return View("ExternalLogin", new ExternalLoginViewModel { Email = email });
             }
         }
 
+        /*
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -320,7 +458,7 @@ namespace ADSBackend.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             return View(nameof(ExternalLogin), model);
         }
-
+        */
         [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
@@ -337,6 +475,7 @@ namespace ADSBackend.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
+        
 
         [HttpGet]
         [AllowAnonymous]
