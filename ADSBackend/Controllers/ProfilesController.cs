@@ -2,21 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
+using Scholarships.Models.Identity;
 
 namespace Scholarships.Controllers
 {
     public class ProfilesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfilesController(ApplicationDbContext context)
+        public ProfilesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Profiles
@@ -25,79 +29,56 @@ namespace Scholarships.Controllers
             return View(await _context.Profile.ToListAsync());
         }
 
-        // GET: Profiles/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<Profile> GetProfileAsync ()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var user = await _userManager.GetUserAsync(User);
 
-            var profile = await _context.Profile
-                .FirstOrDefaultAsync(m => m.ProfileId == id);
+            if (user == null)
+                return null;
+
+            var profile = await _context.Profile.FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (profile == null)
             {
-                return NotFound();
-            }
-
-            return View(profile);
-        }
-
-        // GET: Profiles/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Profiles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone,ClassRank,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(profile);
+                profile = new Profile
+                {
+                    UserId = user.Id
+                };
+                _context.Profile.Add(profile);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            return View(profile);
+
+            return profile;
         }
 
-        // GET: Profiles/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Profiles/Edit
+        public async Task<IActionResult> Edit()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var profile = await GetProfileAsync();
 
-            var profile = await _context.Profile.FindAsync(id);
-            if (profile == null)
-            {
-                return NotFound();
-            }
             return View(profile);
         }
 
-        // POST: Profiles/Edit/5
+        // POST: Profiles/Edit
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone,ClassRank,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
         {
-            if (id != profile.ProfileId)
+            var _profile = await GetProfileAsync();
+
+            if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
                 return NotFound();
             }
+
+            // Copy values from profile into _profile
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(profile);
+                    _context.Update(_profile);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -114,35 +95,6 @@ namespace Scholarships.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(profile);
-        }
-
-        // GET: Profiles/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var profile = await _context.Profile
-                .FirstOrDefaultAsync(m => m.ProfileId == id);
-            if (profile == null)
-            {
-                return NotFound();
-            }
-
-            return View(profile);
-        }
-
-        // POST: Profiles/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var profile = await _context.Profile.FindAsync(id);
-            _context.Profile.Remove(profile);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool ProfileExists(int id)
