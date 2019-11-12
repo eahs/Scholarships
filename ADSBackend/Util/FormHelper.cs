@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,11 @@ namespace Scholarships.Util
 {
     public class FormHelper
     {
+        public static string JsonStatus(string message)
+        {
+            return JsonConvert.SerializeObject(new { Status = message });
+        }
+
         public static SelectList States = new SelectList(
             new[]
             {

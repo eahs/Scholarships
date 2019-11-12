@@ -9,7 +9,7 @@
 <div class="row">
     <div class="tabs-container">
         <ul class="nav nav-tabs" role="tablist">
-            <li><a class="nav-link active" data-toggle="tab" href="#tab-1">Basic Profile</a></li>
+            <li class="active"><a class="nav-link active" data-toggle="tab" href="#tab-1">Basic Profile</a></li>
             <li><a class="nav-link" data-toggle="tab" href="#tab-2">Academic Performance</a></li>
             <li><a class="nav-link" data-toggle="tab" href="#tab-3">College Plans</a></li>
             <li><a class="nav-link" data-toggle="tab" href="#tab-4">Extracurricular Activities</a></li>
@@ -18,7 +18,7 @@
         <div class="tab-content">
             <div role="tabpanel" id="tab-1" class="tab-pane active">
                 <div class="panel-body">
-                    <form asp-action="EditProfile">
+                    <form asp-action="EditProfile" id="EditProfile">
                         <h3>Basic Profile</h3>
                         <fieldset>
                             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -41,12 +41,15 @@
                             <div class="form-group" id="dob">
                                 <label asp-for="BirthDate" class="control-label"></label>
                                 <div class="input-group date">
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="BirthDate" class="form-control" />
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="BirthDate" value="@Model.BirthDate.ToString("MM/dd/yyyy")" class="form-control" />
                                 </div>
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                             <div class="form-group">
+                                <label asp-for="Gender" class="control-label"></label>
                                 <select asp-for="Gender" asp-items="ViewBag.Genders" class="form-control"></select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+
                             </div>
                             <div class="form-group">
                                 <label asp-for="Email" class="control-label"></label>
@@ -83,6 +86,8 @@
                             </div>
                         </fieldset>
                     </form>
+                    <button type="button" onclick="saveProfile()" class="btn btn-primary btn-lg">Save Basic Profile</button>
+
                 </div>
             </div>
             <div role="tabpanel" id="tab-2" class="tab-pane">
@@ -93,6 +98,11 @@
                                 <label asp-for="ClassRank" class="control-label"></label>
                                 <input asp-for="ClassRank" class="form-control" />
                                 <span asp-validation-for="ClassRank" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="GPA" class="control-label"></label>
+                                <input asp-for="GPA" class="form-control" />
+                                <span asp-validation-for="GPA" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="SATScoreMath" class="control-label"></label>
@@ -237,7 +247,7 @@
 
 @section Styles  {
 
-    <link href="~/lib/inspinia/plugins/datepicker/datepicker3.css" rel="stylesheet" /> 
+    <link href="~/lib/inspinia/plugins/datepicker/datepicker3.css" rel="stylesheet" />
 
     <style type="text/css">
     </style>
@@ -245,23 +255,45 @@
 
 @section Scripts {
 
-<script src="~/lib/inspinia/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/lib/inspinia/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $(document).ready(function () {
+        function saveProfile() {
+            var post_url = $("#EditProfile").attr("action"); //get form action url
+            var form_data = $("#EditProfile").serialize(); //Encode form elements for submission
 
-        var mem = $('#dob .input-group.date').datepicker({
-            todayBtn: "linked",
-            keyboardNavigation: false,
-            forceParse: true,
-            calendarWeeks: true,
-            autoclose: true,
-            format: "mm/dd/yyyy"
+            $.ajax({
+                type: "POST",
+                url: post_url,
+                data: form_data,
+                success: function (response) {
+                    
+                    if (response.Status === "Success") {
+                        swal("Good job!", "Your basic scholarship profile has been saved.  Keep going!", "success")
+                            .then((value) => {
+                                $('.nav-tabs a[href="#tab-2"]').tab('show')
+                            });
+                    }
+                },
+                dataType: "json"
+            });
+        }
+
+        $(document).ready(function () {
+
+            var mem = $('#dob .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "mm/dd/yyyy"
+            });
+
         });
-
-    });
-</script>
+    </script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

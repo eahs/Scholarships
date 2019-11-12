@@ -13,12 +13,12 @@ using Scholarships.Util;
 
 namespace Scholarships.Controllers
 {
-    public class ProfilesController : Controller
+    public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfilesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ProfileController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -27,7 +27,9 @@ namespace Scholarships.Controllers
         // GET: Profiles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Profile.ToListAsync());
+            var profile = await GetProfileAsync();
+
+            return View(profile);
         }
 
         public async Task<Profile> GetProfileAsync ()
@@ -42,7 +44,8 @@ namespace Scholarships.Controllers
             {
                 profile = new Profile
                 {
-                    UserId = user.Id
+                    UserId = user.Id,
+                    Email = user.Email
                 };
                 _context.Profile.Add(profile);
                 await _context.SaveChangesAsync();
@@ -74,12 +77,59 @@ namespace Scholarships.Controllers
             return View(profile);
         }
 
-        // POST: Profiles/Edit
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Profiles/EditProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone,ClassRank,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
+        public async Task<string> EditProfile([Bind("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone")] Profile profile)
+        {
+            var _profile = await GetProfileAsync();
+
+            if (_profile == null || _profile.ProfileId != profile.ProfileId)
+            {
+                return FormHelper.JsonStatus("NotFound");
+            }
+
+            // Copy values from profile into _profile
+            _profile.FirstName = profile.FirstName;
+            _profile.LastName = profile.LastName;
+            _profile.StudentId = profile.StudentId;
+            _profile.BirthDate = profile.BirthDate;
+            _profile.Gender = profile.Gender;
+            _profile.Email = profile.Email;
+            _profile.Address1 = profile.Address1;
+            _profile.Address2 = profile.Address2;
+            _profile.City = profile.City;
+            _profile.ZipCode = profile.ZipCode;
+            _profile.Phone = profile.Phone;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(_profile);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProfileExists(profile.ProfileId))
+                    {
+                        return FormHelper.JsonStatus("NotFound"); ;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return FormHelper.JsonStatus("Success");
+            }
+
+            return FormHelper.JsonStatus("InvalidRequest"); ;
+        }
+
+        // POST: Profiles/EditProfile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore")] Profile profile)
         {
             var _profile = await GetProfileAsync();
 
@@ -88,7 +138,6 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            // Copy values from profile into _profile
 
             if (ModelState.IsValid)
             {
@@ -112,6 +161,9 @@ namespace Scholarships.Controllers
             }
             return View(profile);
         }
+
+        //         public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
+
 
         private bool ProfileExists(int id)
         {
