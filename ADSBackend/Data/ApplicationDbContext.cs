@@ -15,6 +15,7 @@ namespace Scholarships.Data
         public DbSet<Profile> Profile { get; set; }
         public DbSet<Scholarship> Scholarship { get; set; }
         public DbSet<ScholarshipCategory> ScholarshipCategory { get; set; }
+        public DbSet<Guardian> Guardian { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

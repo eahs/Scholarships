@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Identity;
+using Scholarships.Util;
 
 namespace Scholarships.Controllers
 {
@@ -54,6 +55,21 @@ namespace Scholarships.Controllers
         public async Task<IActionResult> Edit()
         {
             var profile = await GetProfileAsync();
+            var genders = new[]
+            {
+                new { Name = "Male", GenderId = 0},
+                new { Name = "Female", GenderId = 1},
+                new { Name = "Other", GenderId = 2}
+            }.ToList();
+            var livingSituations = new[]
+            {
+                new { Name = "Live On Campus", Key = "oncampus"},
+                new { Name = "Commute", Key = "commute"}
+            }.ToList();
+
+            ViewBag.Genders = new SelectList(genders, "GenderId", "Name");
+            ViewBag.LivingSituations = new SelectList(livingSituations, "Key", "Name");
+            ViewBag.States = FormHelper.States;
 
             return View(profile);
         }

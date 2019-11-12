@@ -38,15 +38,15 @@
                                 <input asp-for="StudentId" class="form-control" />
                                 <span asp-validation-for="StudentId" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="dob">
                                 <label asp-for="BirthDate" class="control-label"></label>
-                                <input asp-for="BirthDate" class="form-control" />
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="BirthDate" class="form-control" />
+                                </div>
                                 <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Gender" class="control-label"></label>
-                                <input asp-for="Gender" class="form-control" />
-                                <span asp-validation-for="Gender" class="text-danger"></span>
+                                <select asp-for="Gender" asp-items="ViewBag.Genders" class="form-control"></select>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Email" class="control-label"></label>
@@ -67,6 +67,9 @@
                                 <label asp-for="City" class="control-label"></label>
                                 <input asp-for="City" class="form-control" />
                                 <span asp-validation-for="City" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <select asp-for="State" asp-items="ViewBag.States" class="form-control"></select>
                             </div>
                             <div class="form-group">
                                 <label asp-for="ZipCode" class="control-label"></label>
@@ -179,6 +182,11 @@
                                 <input asp-for="SchoolOffices" class="form-control" />
                                 <span asp-validation-for="SchoolOffices" class="text-danger"></span>
                             </div>
+                            <div class="form-group">
+                                <label asp-for="SpecialCircumstances" class="control-label"></label>
+                                <input asp-for="SpecialCircumstances" class="form-control" />
+                                <span asp-validation-for="SpecialCircumstances" class="text-danger"></span>
+                            </div>
                         </fieldset>
                     </form>
                 </div>
@@ -187,56 +195,6 @@
                 <div class="panel-body">
                     <form asp-action="EditFamilyIncome">
                         <fieldset>
-                            <div class="form-group">
-                                <label asp-for="SpecialCircumstances" class="control-label"></label>
-                                <input asp-for="SpecialCircumstances" class="form-control" />
-                                <span asp-validation-for="SpecialCircumstances" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="FatherName" class="control-label"></label>
-                                <input asp-for="FatherName" class="form-control" />
-                                <span asp-validation-for="FatherName" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="FatherOccupation" class="control-label"></label>
-                                <input asp-for="FatherOccupation" class="form-control" />
-                                <span asp-validation-for="FatherOccupation" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="FatherEmployer" class="control-label"></label>
-                                <input asp-for="FatherEmployer" class="form-control" />
-                                <span asp-validation-for="FatherEmployer" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="MotherName" class="control-label"></label>
-                                <input asp-for="MotherName" class="form-control" />
-                                <span asp-validation-for="MotherName" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="MotherOccupation" class="control-label"></label>
-                                <input asp-for="MotherOccupation" class="form-control" />
-                                <span asp-validation-for="MotherOccupation" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="MotherEmployer" class="control-label"></label>
-                                <input asp-for="MotherEmployer" class="form-control" />
-                                <span asp-validation-for="MotherEmployer" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="EarningsFather" class="control-label"></label>
-                                <input asp-for="EarningsFather" class="form-control" />
-                                <span asp-validation-for="EarningsFather" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="EarningsMother" class="control-label"></label>
-                                <input asp-for="EarningsMother" class="form-control" />
-                                <span asp-validation-for="EarningsMother" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="EarningsTotal" class="control-label"></label>
-                                <input asp-for="EarningsTotal" class="form-control" />
-                                <span asp-validation-for="EarningsTotal" class="text-danger"></span>
-                            </div>
                             <div class="form-group">
                                 <label asp-for="FamilyAssets" class="control-label"></label>
                                 <input asp-for="FamilyAssets" class="form-control" />
@@ -279,11 +237,31 @@
 
 @section Styles  {
 
+    <link href="~/lib/inspinia/plugins/datepicker/datepicker3.css" rel="stylesheet" /> 
+
     <style type="text/css">
     </style>
 }
 
 @section Scripts {
+
+<script src="~/lib/inspinia/plugins/datepicker/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var mem = $('#dob .input-group.date').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: true,
+            calendarWeeks: true,
+            autoclose: true,
+            format: "mm/dd/yyyy"
+        });
+
+    });
+</script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
