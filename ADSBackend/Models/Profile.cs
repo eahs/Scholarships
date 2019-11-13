@@ -69,11 +69,14 @@ namespace Scholarships.Models
         [DisplayName("College You Are Attending")]
         public string CollegeAttending { get; set; } = "";
         [DisplayName("Yearly Tuition Cost")]
-        public string TuitionYearly { get; set; } = "";
+        [DataType(DataType.Currency, ErrorMessage="You must enter the yearly tuition cost in dollars. Example: 35,000")]
+        public double TuitionYearly { get; set; }
         [DisplayName("Yearly Room and Board Cost")]
-        public string RoomBoard { get; set; } = "";
-        [DisplayName("Total Yearly Tuition")]
-        public string TuitionTotal { get; set; } = "";
+        [DataType(DataType.Currency)]
+        public double RoomBoard { get; set; }
+        [DisplayName("Total Yearly Cost")]
+        [DataType(DataType.Currency)]
+        public double TuitionTotal { get; set; }
 
         [DisplayName("Have you already been accepted?")]
         public bool CollegeAccepted { get; set; } = false;
@@ -101,6 +104,7 @@ namespace Scholarships.Models
 
         public List<Guardian> Guardians { get; set; }
 
+        [DataType(DataType.Currency)]
         public double EarningsTotal { get; set; }
 
         public double FamilyAssets { get; set; }

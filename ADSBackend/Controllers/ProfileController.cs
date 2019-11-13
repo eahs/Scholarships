@@ -180,6 +180,57 @@ namespace Scholarships.Controllers
             return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
 
+
+        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid";
+
+        // POST: Profiles/EditProfile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<string> EditCollegePlans(int id, [Bind(CollegePlansBindingFields)] Profile profile)
+        {
+            var _profile = await GetProfileAsync();
+
+            if (_profile == null || _profile.ProfileId != profile.ProfileId)
+            {
+                return FormHelper.JsonStatus("NotFound");
+            }
+
+            // Copy values from profile into _profile
+            _profile.CollegeAttending = profile.CollegeAttending;
+            _profile.TuitionYearly = profile.TuitionYearly;
+            _profile.RoomBoard = profile.RoomBoard;
+            _profile.TuitionTotal = profile.TuitionTotal;
+            _profile.CollegeAccepted = profile.CollegeAccepted;
+            _profile.CollegeIntendedMajor = profile.CollegeIntendedMajor;
+            _profile.LivingSituation = profile.LivingSituation;
+            _profile.OtherAid = profile.OtherAid;
+
+            ScrubModelState(CollegePlansBindingFields);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(_profile);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProfileExists(profile.ProfileId))
+                    {
+                        return FormHelper.JsonStatus("NotFound"); ;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return FormHelper.JsonStatus("Success");
+            }
+
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
+        }
+
         public async Task<IActionResult> EditGuardiansAjax ()
         {
             var _profile = await GetProfileAsync();
@@ -202,16 +253,18 @@ namespace Scholarships.Controllers
 
             var relations = new[]
             {
-                new { Name = "Self", Id = 0},
-                new { Name = "Father", Id = 1},
-                new { Name = "Mother", Id = 2},
-                new { Name = "Guardian", Id = 2}
+                new { Name = "", Id = 0},
+                new { Name = "Self", Id = 1},
+                new { Name = "Father", Id = 2},
+                new { Name = "Mother", Id = 3},
+                new { Name = "Guardian", Id = 4}
             }.ToList();
             var employmentStatus = new[]
             {
-                new { Name = "Full-time", Id = 0},
-                new { Name = "Part-time", Id = 1},
-                new { Name = "Unemployed", Id = 2}
+                new { Name = "", Id = 0},
+                new { Name = "Full-time", Id = 1},
+                new { Name = "Part-time", Id = 2},
+                new { Name = "Unemployed", Id = 3}
             }.ToList();
 
             ViewBag.Relationships = new SelectList(relations, "Id", "Name");

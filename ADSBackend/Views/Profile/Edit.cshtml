@@ -6,261 +6,295 @@
 
 <h2>Scholarship Profile</h2>
 
-<div class="row">
-<div class="progress">
+<div class="alert alert-info">
+    Each scholarship you will apply for requires common pieces of information.  Please provide the information requested below.
+</div>
+
+<div class="progress" style="margin-bottom: 10px">
     <div class="progress-bar progress-bar-success" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 </div>
 
 <div class="tabs-container">
-<ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a class="nav-link active" data-toggle="tab" href="#tab-1">Basic Profile</a></li>
-    <li><a class="nav-link" data-toggle="tab" href="#tab-2">Academic Performance</a></li>
-    <li><a class="nav-link" data-toggle="tab" href="#tab-3">College Plans</a></li>
-    <li><a class="nav-link" data-toggle="tab" href="#tab-4">Extracurricular Activities</a></li>
-    <li><a class="nav-link" data-toggle="tab" href="#tab-5">Family Income</a></li>
-</ul>
-<div class="tab-content">
-<div role="tabpanel" id="tab-1" class="tab-pane active">
-    <div class="panel-body">
-        <form asp-action="EditProfile" id="EditProfile">
-            <h3>Basic Profile</h3>
-            <fieldset>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="ProfileId"/>
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label asp-for="FirstName" class="control-label"></label>
-                            <input asp-for="FirstName" class="form-control" />
-                            <span asp-validation-for="FirstName" class="text-danger"></span>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-1">Basic Profile</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-2">Academic Performance</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-3">College Plans</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-4">Extracurricular Activities</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-5">Family Income</a></li>
+    </ul>
+    <div class="tab-content" style="width: 98%">
+        <div role="tabpanel" id="tab-1" class="tab-pane active">
+            <div class="panel-body">
+                <form asp-action="EditProfile" id="EditProfile">
+                    <h3>Basic Profile</h3>
+                    <fieldset>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="ProfileId" />
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="FirstName" class="control-label"></label>
+                                    <input asp-for="FirstName" class="form-control" />
+                                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label asp-for="LastName" class="control-label"></label>
+                                    <input asp-for="LastName" class="form-control" />
+                                    <span asp-validation-for="LastName" class="text-danger"></span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col">
                         <div class="form-group">
-                            <label asp-for="LastName" class="control-label"></label>
-                            <input asp-for="LastName" class="form-control" />
-                            <span asp-validation-for="LastName" class="text-danger"></span>
+                            <label asp-for="StudentId" class="control-label"></label>
+                            <input asp-for="StudentId" class="form-control" data-mask="99999" />
+                            <span asp-validation-for="StudentId" class="text-danger"></span>
                         </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StudentId" class="control-label"></label>
-                    <input asp-for="StudentId" class="form-control"/>
-                    <span asp-validation-for="StudentId" class="text-danger"></span>
-                </div>
-                <div class="form-group" id="dob">
-                    <label asp-for="BirthDate" class="control-label"></label>
-                    <div class="input-group date">
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="BirthDate" value="@Model.BirthDate.ToString("MM/dd/yyyy")" class="form-control"/>
-                    </div>
-                    <span asp-validation-for="BirthDate" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Gender" class="control-label"></label>
-                    <select asp-for="Gender" asp-items="ViewBag.Genders" class="form-control"></select>
-                    <span asp-validation-for="Gender" class="text-danger"></span>
+                        <div class="form-group" id="dob">
+                            <label asp-for="BirthDate" class="control-label"></label>
+                            <div class="input-group date">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="BirthDate" data-mask="99/99/9999" value="@Model.BirthDate.ToString("MM/dd/yyyy")" class="form-control" />
+                            </div>
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Gender" class="control-label"></label>
+                            <select asp-for="Gender" asp-items="ViewBag.Genders" class="form-control"></select>
+                            <span asp-validation-for="Gender" class="text-danger"></span>
 
-                </div>
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control"/>
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Address1" class="control-label"></label>
-                    <input asp-for="Address1" class="form-control"/>
-                    <span asp-validation-for="Address1" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Address2" class="control-label"></label>
-                    <input asp-for="Address2" class="form-control"/>
-                    <span asp-validation-for="Address2" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="City" class="control-label"></label>
-                    <input asp-for="City" class="form-control"/>
-                    <span asp-validation-for="City" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="State" class="control-label"></label>
-                    <select asp-for="State" asp-items="ViewBag.States" class="form-control"></select>
-                    <span asp-validation-for="State" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ZipCode" class="control-label"></label>
-                    <input asp-for="ZipCode" class="form-control"/>
-                    <span asp-validation-for="ZipCode" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Phone" class="control-label"></label>
-                    <input asp-for="Phone" class="form-control"/>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-            </fieldset>
-        </form>
-        <button type="button" onclick="saveProfile()" class="btn btn-primary btn-lg">Save Basic Profile</button>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Email" class="control-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address1" class="control-label"></label>
+                            <input asp-for="Address1" class="form-control" />
+                            <span asp-validation-for="Address1" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Address2" class="control-label"></label>
+                            <input asp-for="Address2" class="form-control" />
+                            <span asp-validation-for="Address2" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="City" class="control-label"></label>
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="State" class="control-label"></label>
+                            <select asp-for="State" asp-items="ViewBag.States" class="form-control"></select>
+                            <span asp-validation-for="State" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ZipCode" class="control-label"></label>
+                            <input asp-for="ZipCode" class="form-control" />
+                            <span asp-validation-for="ZipCode" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Phone" class="control-label"></label>
+                            <input asp-for="Phone" data-mask="(999) 999-9999" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+                </form>
+                <button type="button" onclick="saveProfile()" class="btn btn-primary btn-lg">Save Basic Profile</button>
 
-    </div>
-</div>
-<div role="tabpanel" id="tab-2" class="tab-pane">
-    <div class="panel-body">
-        <form asp-action="EditAcademic" id="EditAcademic">
-            <input type="hidden" asp-for="ProfileId"/>
-            <fieldset>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="ClassRank" class="control-label"></label>
-                    <input asp-for="ClassRank" class="form-control"/>
-                    <span asp-validation-for="ClassRank" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="GPA" class="control-label"></label>
-                    <input asp-for="GPA" class="form-control"/>
-                    <span asp-validation-for="GPA" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SATScoreMath" class="control-label"></label>
-                    <input asp-for="SATScoreMath" class="form-control"/>
-                    <span asp-validation-for="SATScoreMath" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SATScoreReading" class="control-label"></label>
-                    <input asp-for="SATScoreReading" class="form-control"/>
-                    <span asp-validation-for="SATScoreReading" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ACTScore" class="control-label"></label>
-                    <input asp-for="ACTScore" class="form-control"/>
-                    <span asp-validation-for="ACTScore" class="text-danger"></span>
-                </div>
-            </fieldset>
-        </form>
-        <button type="button" onclick="saveAcademic()" class="btn btn-primary btn-lg">Save Academic Performance</button>
+            </div>
+        </div>
+        <div role="tabpanel" id="tab-2" class="tab-pane">
+            <div class="panel-body">
+                <form asp-action="EditAcademic" id="EditAcademic">
+                    <input type="hidden" asp-for="ProfileId" />
+                    <fieldset>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="ClassRank" class="control-label"></label>
+                            <input asp-for="ClassRank" class="form-control" />
+                            <span asp-validation-for="ClassRank" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="GPA" class="control-label"></label>
+                            <input asp-for="GPA" class="form-control" />
+                            <span asp-validation-for="GPA" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SATScoreMath" class="control-label"></label>
+                            <input asp-for="SATScoreMath" class="form-control" />
+                            <span asp-validation-for="SATScoreMath" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SATScoreReading" class="control-label"></label>
+                            <input asp-for="SATScoreReading" class="form-control" />
+                            <span asp-validation-for="SATScoreReading" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ACTScore" class="control-label"></label>
+                            <input asp-for="ACTScore" class="form-control" />
+                            <span asp-validation-for="ACTScore" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+                </form>
+                <button type="button" onclick="saveAcademic()" class="btn btn-primary btn-lg">Save Academic Performance</button>
 
+            </div>
+        </div>
+        <div role="tabpanel" id="tab-3" class="tab-pane">
+            <div class="panel-body">
+                <form asp-action="EditCollegePlans" id="EditCollege">
+                    <input type="hidden" asp-for="ProfileId" />
+                    <fieldset>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="CollegeAttending" class="control-label"></label>
+                            <input asp-for="CollegeAttending" class="form-control" />
+                            <span asp-validation-for="CollegeAttending" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TuitionYearly" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">Enter estimated yearly tuition cost.  Enter 0 if you do not know.</small>
+                            <div class="input-group m-b">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-addon">$</span>
+                                </div>
+                                <input asp-for="TuitionYearly" class="form-control" />
+                            </div>
+                            <span asp-validation-for="TuitionYearly" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RoomBoard" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">Enter estimated room and board cost.  Enter 0 if you do not know.</small>
+                            <div class="input-group m-b">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-addon">$</span>
+                                </div>
+                                <input asp-for="RoomBoard" class="form-control" />
+                            </div>
+                            <span asp-validation-for="RoomBoard" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="TuitionTotal" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">Enter estimated total yearly cost.  Enter 0 if you do not know.</small>
+                            <div class="input-group m-b">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-addon">$</span>
+                                </div>
+                                <input asp-for="TuitionTotal" class="form-control" />
+                            </div>
+                            <span asp-validation-for="TuitionTotal" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.DisplayNameFor(model => model.CollegeAccepted)
+                                </label><br />
+                                <input type="radio" asp-for="CollegeAccepted" value="true" /> Yes</br>
+                                <input type="radio" asp-for="CollegeAccepted" value="false" /> No</br>
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="CollegeIntendedMajor" class="control-label"></label>
+                            <input asp-for="CollegeIntendedMajor" class="form-control" />
+                            <span asp-validation-for="CollegeIntendedMajor" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="LivingSituation" class="control-label"></label>
+                            <select asp-for="LivingSituation" asp-items="ViewBag.LivingSituations" class="form-control"></select>
+                            <span asp-validation-for="LivingSituation" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="OtherAid" class="control-label"></label>
+                            <textarea asp-for="OtherAid" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="OtherAid" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+                </form>
+                <button type="button" onclick="saveCollegePlans()" class="btn btn-primary btn-lg">Save College Plans</button>
+
+            </div>
+        </div>
+        <div role="tabpanel" id="tab-4" class="tab-pane">
+            <div class="panel-body">
+                <form asp-action="EditExtra" id="EditExtra">
+                    <input type="hidden" asp-for="ProfileId" />
+                    <fieldset>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="ActivitiesSchool" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">
+                                Please Indicate the grades in which participated.  Enter one activity per line.<br/>
+                            </small>
+                            <textarea asp-for="ActivitiesSchool" class="form-control" rows="4" placeholder="Marching Band 9-12 (this is an example)&#10;Yearbook 12 (another example)"></textarea>
+                            <span asp-validation-for="ActivitiesSchool" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ActivitiesCommunity" class="control-label"></label>
+                            <textarea asp-for="ActivitiesCommunity" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="ActivitiesCommunity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SchoolOffices" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">
+                                List any school offices you were a worker for along with any other school awards you have received.
+                            </small>
+                            <textarea asp-for="SchoolOffices" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="SchoolOffices" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="SpecialCircumstances" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">
+                                List any other circumstances you would like the scholarship provider to consider in your application.
+                            </small>
+                            <textarea asp-for="SpecialCircumstances" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="SpecialCircumstances" class="text-danger"></span>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <div role="tabpanel" id="tab-5" class="tab-pane">
+            <div class="panel-body">
+                <form asp-action="EditFamilyIncome" id="EditFamilyIncome">
+                    <input type="hidden" asp-for="ProfileId" />
+                    <fieldset>
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="FamilyAssets" class="control-label"></label>
+                            <input asp-for="FamilyAssets" class="form-control" />
+                            <span asp-validation-for="FamilyAssets" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StudentEmployer" class="control-label"></label>
+                            <input asp-for="StudentEmployer" class="form-control" />
+                            <span asp-validation-for="StudentEmployer" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StudentIncome" class="control-label"></label>
+                            <input asp-for="StudentIncome" class="form-control" />
+                            <span asp-validation-for="StudentIncome" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="StudentAssets" class="control-label"></label>
+                            <input asp-for="StudentAssets" class="form-control" />
+                            <span asp-validation-for="StudentAssets" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Siblings" class="control-label"></label>
+                            <input asp-for="Siblings" class="form-control" />
+                            <span asp-validation-for="Siblings" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Save" class="btn btn-default" />
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-<div role="tabpanel" id="tab-3" class="tab-pane">
-    <div class="panel-body">
-        <form asp-action="EditCollege" id="EditCollege">
-            <input type="hidden" asp-for="ProfileId"/>
-            <fieldset>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="CollegeAttending" class="control-label"></label>
-                    <input asp-for="CollegeAttending" class="form-control"/>
-                    <span asp-validation-for="CollegeAttending" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="TuitionYearly" class="control-label"></label>
-                    <input asp-for="TuitionYearly" class="form-control"/>
-                    <span asp-validation-for="TuitionYearly" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="RoomBoard" class="control-label"></label>
-                    <input asp-for="RoomBoard" class="form-control"/>
-                    <span asp-validation-for="RoomBoard" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="TuitionTotal" class="control-label"></label>
-                    <input asp-for="TuitionTotal" class="form-control"/>
-                    <span asp-validation-for="TuitionTotal" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <div class="checkbox">
-                        <label>
-                            <input asp-for="CollegeAccepted"/> @Html.DisplayNameFor(model => model.CollegeAccepted)
-                        </label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label asp-for="CollegeIntendedMajor" class="control-label"></label>
-                    <input asp-for="CollegeIntendedMajor" class="form-control"/>
-                    <span asp-validation-for="CollegeIntendedMajor" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="LivingSituation" class="control-label"></label>
-                    <select asp-for="LivingSituation" asp-items="ViewBag.LivingSituations" class="form-control"></select>
-                    <span asp-validation-for="LivingSituation" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="OtherAid" class="control-label"></label>
-                    <input asp-for="OtherAid" class="form-control"/>
-                    <span asp-validation-for="OtherAid" class="text-danger"></span>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div>
-<div role="tabpanel" id="tab-4" class="tab-pane">
-    <div class="panel-body">
-        <form asp-action="EditExtra" id="EditExtra">
-            <input type="hidden" asp-for="ProfileId"/>
-            <fieldset>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="ActivitiesSchool" class="control-label"></label>
-                    <input asp-for="ActivitiesSchool" class="form-control"/>
-                    <span asp-validation-for="ActivitiesSchool" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="ActivitiesCommunity" class="control-label"></label>
-                    <input asp-for="ActivitiesCommunity" class="form-control"/>
-                    <span asp-validation-for="ActivitiesCommunity" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SchoolOffices" class="control-label"></label>
-                    <input asp-for="SchoolOffices" class="form-control"/>
-                    <span asp-validation-for="SchoolOffices" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="SpecialCircumstances" class="control-label"></label>
-                    <input asp-for="SpecialCircumstances" class="form-control"/>
-                    <span asp-validation-for="SpecialCircumstances" class="text-danger"></span>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div>
-<div role="tabpanel" id="tab-5" class="tab-pane">
-    <div class="panel-body">
-        <form asp-action="EditFamilyIncome" id="EditFamilyIncome">
-            <input type="hidden" asp-for="ProfileId"/>
-            <fieldset>
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="FamilyAssets" class="control-label"></label>
-                    <input asp-for="FamilyAssets" class="form-control"/>
-                    <span asp-validation-for="FamilyAssets" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StudentEmployer" class="control-label"></label>
-                    <input asp-for="StudentEmployer" class="form-control"/>
-                    <span asp-validation-for="StudentEmployer" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StudentIncome" class="control-label"></label>
-                    <input asp-for="StudentIncome" class="form-control"/>
-                    <span asp-validation-for="StudentIncome" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="StudentAssets" class="control-label"></label>
-                    <input asp-for="StudentAssets" class="form-control"/>
-                    <span asp-validation-for="StudentAssets" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Siblings" class="control-label"></label>
-                    <input asp-for="Siblings" class="form-control"/>
-                    <span asp-validation-for="Siblings" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-default"/>
-                </div>
-            </fieldset>
-        </form>
-    </div>
-</div>
-</div>
-</div>
 </div>
 
 <div>
@@ -269,7 +303,8 @@
 
 @section Styles  {
 
-    <link href="~/lib/inspinia/plugins/datepicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
+    <link href="~/lib/jasny-bootstrap/dist/css/jasny-bootstrap.css" rel="stylesheet" />
 
     <style type="text/css">
     </style>
@@ -277,7 +312,8 @@
 
 @section Scripts {
 
-    <script src="~/lib/inspinia/plugins/datepicker/bootstrap-datepicker.js"></script>
+    <script src="~/lib/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script type="text/javascript">
@@ -288,11 +324,11 @@
             var filled = 0;
 
             var fields = $("#EditProfile").serializeArray();
-            $.each(fields, function(_, field) {
+            $.each(fields, function (_, field) {
 
                 if (field.value.length > 0)
                     filled++;
-                
+
             });
             filled -= 2; // hidden fields
 
@@ -304,23 +340,23 @@
 
             filled = 0;
             fields = $("#EditAcademic").serializeArray();
-            $.each(fields, function(_, field) {
+            $.each(fields, function (_, field) {
 
                 if (field.value.length > 0)
                     filled++;
-                
+
             });
             filled -= 2;
 
             if (filled > 4)
                 filled = 4;
 
-            total += 4*2;
-            completed += filled*2;
+            total += 4 * 2;
+            completed += filled * 2;
 
             var progress = Math.floor(completed / total * 100.0);
 
-            $('.progress-bar').css('width', progress+'%').attr('aria-valuenow', progress); 
+            $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
         }
 
         function displayValidationErrors(errors) {
@@ -374,6 +410,33 @@
                             swal("Good job!", "Your academic performance has been saved.  Now we need to know your college plans.", "success")
                                 .then((value) => {
                                     $('.nav-tabs a[href="#tab-3"]').tab('show')
+                                });
+                        }
+                        else if (response.Status === "InvalidRequest") {
+                            displayValidationErrors(response.Errors);
+                        }
+                    },
+                    dataType: "json"
+                });
+            }
+        }
+
+        function saveCollegePlans() {
+            var post_url = $("#EditCollege").attr("action");
+            var form_data = $("#EditCollege").serialize();
+
+            if ($("#EditCollege").valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    success: function (response) {
+
+                        if (response.Status === "Success") {
+                            updateProgressBar();
+                            swal("Good job!", "Your college plans have been saved.  Now we need to know about your extracurricular activities.", "success")
+                                .then((value) => {
+                                    $('.nav-tabs a[href="#tab-4"]').tab('show')
                                 });
                         }
                         else if (response.Status === "InvalidRequest") {

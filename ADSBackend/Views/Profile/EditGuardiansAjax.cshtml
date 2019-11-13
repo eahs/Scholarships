@@ -18,38 +18,45 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         @for (int i = 0; i < Model.Count; i++)
         {
-            <fieldset>
-                <div class="form-group">
-                    <label asp-for="@Model[i].FullName" class="control-label"></label>
-                    <input asp-for="@Model[i].FullName" class="form-control form-control-sm" />
-                    <span asp-validation-for="@Model[i].FullName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="@Model[i].Relationship" class="control-label"></label>
-                    <select asp-for="@Model[i].Relationship" asp-items="ViewBag.Relationships" class="form-control form-control-sm"></select>
-                    <span asp-validation-for="@Model[i].Relationship" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="@Model[i].EmploymentStatus" class="control-label"></label>
-                    <select asp-for="@Model[i].EmploymentStatus" asp-items="ViewBag.EmploymentStatus" class="form-control form-control-sm"></select>
-                    <span asp-validation-for="@Model[i].EmploymentStatus" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="@Model[i].Occupation" class="control-label"></label>
-                    <input asp-for="@Model[i].Occupation" class="form-control form-control-sm" />
-                    <span asp-validation-for="@Model[i].Occupation" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="@Model[i].Employer" class="control-label"></label>
-                    <input asp-for="@Model[i].Employer" class="form-control form-control-sm" />
-                    <span asp-validation-for="@Model[i].Employer" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="@Model[i].AnnualIncome" class="control-label"></label>
-                    <input asp-for="@Model[i].AnnualIncome" class="form-control form-control-sm" />
-                    <span asp-validation-for="@Model[i].AnnualIncome" class="text-danger"></span>
-                </div>
+    <fieldset class="alert alert-secondary">
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="@Model[i].FullName" class="control-label"></label>
+                <input asp-for="@Model[i].FullName" class="form-control form-control-sm" />
+                <span asp-validation-for="@Model[i].FullName" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-3">
+                <label asp-for="@Model[i].Relationship" class="control-label"></label>
+                <select asp-for="@Model[i].Relationship" asp-items="ViewBag.Relationships" class="form-control form-control-sm"></select>
+                <span asp-validation-for="@Model[i].Relationship" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="@Model[i].Occupation" class="control-label"></label>
+                <input asp-for="@Model[i].Occupation" class="form-control form-control-sm" />
+                <span asp-validation-for="@Model[i].Occupation" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-3">
+                <label asp-for="@Model[i].EmploymentStatus" class="control-label"></label>
+                <select asp-for="@Model[i].EmploymentStatus" asp-items="ViewBag.EmploymentStatus" class="form-control form-control-sm"></select>
+                <span asp-validation-for="@Model[i].EmploymentStatus" class="text-danger"></span>
+            </div>
 
-            </fieldset>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label asp-for="@Model[i].Employer" class="control-label"></label>
+                <input asp-for="@Model[i].Employer" class="form-control form-control-sm" />
+                <span asp-validation-for="@Model[i].Employer" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-3">
+                <label asp-for="@Model[i].AnnualIncome" class="control-label"></label>
+                <input asp-for="@Model[i].AnnualIncome" class="form-control form-control-sm" />
+                <span asp-validation-for="@Model[i].AnnualIncome" class="text-danger"></span>
+            </div>
+        </div>
+    </fieldset>
         }
     </form>

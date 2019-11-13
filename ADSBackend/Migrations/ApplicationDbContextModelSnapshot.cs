@@ -143,7 +143,8 @@ namespace Scholarships.Migrations
 
                     b.Property<int>("EmploymentStatus");
 
-                    b.Property<string>("FullName");
+                    b.Property<string>("FullName")
+                        .IsRequired();
 
                     b.Property<string>("Occupation");
 
@@ -302,7 +303,7 @@ namespace Scholarships.Migrations
 
                     b.Property<string>("Phone");
 
-                    b.Property<string>("RoomBoard");
+                    b.Property<double>("RoomBoard");
 
                     b.Property<int?>("SATScoreMath");
 
@@ -326,9 +327,9 @@ namespace Scholarships.Migrations
 
                     b.Property<double>("StudentIncome");
 
-                    b.Property<string>("TuitionTotal");
+                    b.Property<double>("TuitionTotal");
 
-                    b.Property<string>("TuitionYearly");
+                    b.Property<double>("TuitionYearly");
 
                     b.Property<int>("UserId");
 
