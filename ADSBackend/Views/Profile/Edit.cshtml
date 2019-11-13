@@ -27,15 +27,21 @@
             <fieldset>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="ProfileId"/>
-                <div class="form-group">
-                    <label asp-for="FirstName" class="control-label"></label>
-                    <input asp-for="FirstName" class="form-control"/>
-                    <span asp-validation-for="FirstName" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="LastName" class="control-label"></label>
-                    <input asp-for="LastName" class="form-control"/>
-                    <span asp-validation-for="LastName" class="text-danger"></span>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label asp-for="FirstName" class="control-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label asp-for="LastName" class="control-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label asp-for="StudentId" class="control-label"></label>
@@ -173,7 +179,7 @@
                 </div>
                 <div class="form-group">
                     <label asp-for="LivingSituation" class="control-label"></label>
-                    <input asp-for="LivingSituation" class="form-control"/>
+                    <select asp-for="LivingSituation" asp-items="ViewBag.LivingSituations" class="form-control"></select>
                     <span asp-validation-for="LivingSituation" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -329,50 +335,54 @@
             var post_url = $("#EditProfile").attr("action"); //get form action url
             var form_data = $("#EditProfile").serialize(); //Encode form elements for submission
 
-            $.ajax({
-                type: "POST",
-                url: post_url,
-                data: form_data,
-                success: function (response) {
-                    
-                    if (response.Status === "Success") {
-                        updateProgressBar();
-                        swal("Good job!", "Your basic scholarship profile has been saved.  Keep going!", "success")
-                            .then((value) => {
-                                $('.nav-tabs a[href="#tab-2"]').tab('show')
-                            });
-                    }
-                    else if (response.Status === "InvalidRequest") {
-                        displayValidationErrors(response.Errors);
-                    }
-                },
-                dataType: "json"
-            });
+            if ($("#EditProfile").valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    success: function (response) {
+
+                        if (response.Status === "Success") {
+                            updateProgressBar();
+                            swal("Good job!", "Your basic scholarship profile has been saved.  Keep going!", "success")
+                                .then((value) => {
+                                    $('.nav-tabs a[href="#tab-2"]').tab('show')
+                                });
+                        }
+                        else if (response.Status === "InvalidRequest") {
+                            displayValidationErrors(response.Errors);
+                        }
+                    },
+                    dataType: "json"
+                });
+            }
         }
 
         function saveAcademic() {
-            var post_url = $("#EditAcademic").attr("action"); 
-            var form_data = $("#EditAcademic").serialize(); 
+            var post_url = $("#EditAcademic").attr("action");
+            var form_data = $("#EditAcademic").serialize();
 
-            $.ajax({
-                type: "POST",
-                url: post_url,
-                data: form_data,
-                success: function (response) {
-                    
-                    if (response.Status === "Success") {
-                        updateProgressBar();
-                        swal("Good job!", "Your academic performance has been saved.  Now we need to know your college plans.", "success")
-                            .then((value) => {
-                                $('.nav-tabs a[href="#tab-3"]').tab('show')
-                            });
-                    }
-                    else if (response.Status === "InvalidRequest") {
-                        displayValidationErrors(response.Errors);
-                    }
-                },
-                dataType: "json"
-            });
+            if ($("#EditAcademic").valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    success: function (response) {
+
+                        if (response.Status === "Success") {
+                            updateProgressBar();
+                            swal("Good job!", "Your academic performance has been saved.  Now we need to know your college plans.", "success")
+                                .then((value) => {
+                                    $('.nav-tabs a[href="#tab-3"]').tab('show')
+                                });
+                        }
+                        else if (response.Status === "InvalidRequest") {
+                            displayValidationErrors(response.Errors);
+                        }
+                    },
+                    dataType: "json"
+                });
+            }
         }
 
 

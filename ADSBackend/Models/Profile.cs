@@ -81,7 +81,8 @@ namespace Scholarships.Models
         [DisplayName("Intended Major")]
         public string CollegeIntendedMajor { get; set; } = "";
 
-        [RegularExpression(@"oncampus|commute", ErrorMessage = "You must declare your intended living situation")]
+        [DisplayName("College Housing Plans")]
+        [RegularExpression(@"oncampus|commute", ErrorMessage = "You must declare your intended plans for college housing.")]
         public string LivingSituation { get; set; } = "oncampus"; // "oncampus", "commute"
 
         [DisplayName("Other Financial Aid")]

@@ -80,10 +80,12 @@ namespace Scholarships.Controllers
             return View(profile);
         }
 
+        private const string ProfileBindingFields = "ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone";
+
         // POST: Profiles/EditProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<string> EditProfile([Bind("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone")] Profile profile)
+        public async Task<string> EditProfile([Bind(ProfileBindingFields)] Profile profile)
         {
             var _profile = await GetProfileAsync();
 
@@ -105,7 +107,7 @@ namespace Scholarships.Controllers
             _profile.ZipCode = profile.ZipCode;
             _profile.Phone = profile.Phone;
 
-            ScrubModelState("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone");
+            ScrubModelState(ProfileBindingFields);
 
             if (ModelState.IsValid)
             {
@@ -131,11 +133,12 @@ namespace Scholarships.Controllers
             return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
 
+        private const string AcademicBindingFields = "ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore";
 
         // POST: Profiles/EditProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<string> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore")] Profile profile)
+        public async Task<string> EditAcademic(int id, [Bind(AcademicBindingFields)] Profile profile)
         {
             var _profile = await GetProfileAsync();
 
@@ -151,7 +154,7 @@ namespace Scholarships.Controllers
             _profile.SATScoreReading = profile.SATScoreReading;
             _profile.ACTScore = profile.ACTScore;
 
-            ScrubModelState("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore");
+            ScrubModelState(AcademicBindingFields);
 
             if (ModelState.IsValid)
             {
@@ -175,6 +178,55 @@ namespace Scholarships.Controllers
             }
 
             return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
+        }
+
+        public async Task<IActionResult> EditGuardiansAjax ()
+        {
+            var _profile = await GetProfileAsync();
+
+            var guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+
+            if (guardians == null || guardians.Count == 0)
+            {
+                var self = new Guardian
+                {
+                    ProfileId = _profile.ProfileId,
+                    FullName = _profile.FirstName + " " + _profile.LastName,
+                    Relationship = 0 // self
+                };
+                _context.Guardian.Add(self);
+                await _context.SaveChangesAsync();
+
+                guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+            }
+
+            var relations = new[]
+            {
+                new { Name = "Self", Id = 0},
+                new { Name = "Father", Id = 1},
+                new { Name = "Mother", Id = 2},
+                new { Name = "Guardian", Id = 2}
+            }.ToList();
+            var employmentStatus = new[]
+            {
+                new { Name = "Full-time", Id = 0},
+                new { Name = "Part-time", Id = 1},
+                new { Name = "Unemployed", Id = 2}
+            }.ToList();
+
+            ViewBag.Relationships = new SelectList(relations, "Id", "Name");
+            ViewBag.EmploymentStatus = new SelectList(employmentStatus, "Id", "Name");
+
+            return View(guardians);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditGuardiansAjax (ICollection<Guardian> guardians)
+        {
+            await Task.Delay(0);
+
+            return View(guardians);
         }
 
         //         public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
