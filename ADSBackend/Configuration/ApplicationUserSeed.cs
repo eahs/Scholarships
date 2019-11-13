@@ -2,29 +2,51 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
+using Scholarships.Data;
 
 namespace Scholarships.Configuration
 {
     public class ApplicationUserSeed
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public ApplicationUserSeed(UserManager<ApplicationUser> userManager)
+        public ApplicationUserSeed(UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
         public void CreateAdminUser()
         {
-            if (_userManager.FindByNameAsync("admin").Result != null)
+            ApplicationUser user = _userManager.FindByNameAsync("admin").Result;
+            if (user != null)
             {
+                /*
+                if (user.Email == null || user.Email == "")
+                    user.Email = "tanczosm@eastonsd.org";
+
+                _userManager.UpdateAsync(user);
+
+                var applicationUser = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+
+                if (applicationUser != null)
+                {
+                    if (applicationUser.Email == null || applicationUser.Email == "")
+                        applicationUser.Email = "tanczosm@eastonsd.org";
+
+                    _context.Users.Update(applicationUser);
+                }
+                */
+
                 return;
             }
 
             var adminUser = new ApplicationUser
             {
                 UserName = "admin",
-                FirstName = "Admin"
+                FirstName = "Admin",
+                Email = "tanczosm@eastonsd.org"
             };
 
             IdentityResult result;

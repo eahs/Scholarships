@@ -9,9 +9,14 @@ namespace Scholarships.Util
 {
     public class FormHelper
     {
-        public static string JsonStatus(string message)
+        public static string JsonStatus(string statusMessage)
         {
-            return JsonConvert.SerializeObject(new { Status = message });
+            return JsonConvert.SerializeObject(new { Status = statusMessage });
+        }
+
+        public static string JsonStatus(object result)
+        {
+            return JsonConvert.SerializeObject(result);
         }
 
         public static SelectList States = new SelectList(

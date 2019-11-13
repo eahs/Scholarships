@@ -25,7 +25,7 @@ namespace Scholarships.Models
         [Required]
         [DisplayName("EAHS Student Id")]
         [StringLength(5, ErrorMessage = "Student ID numbers are five digits long")]
-        [RegularExpression(@"[0-9]{5}", ErrorMessage = "Only digits may be used")]
+        [RegularExpression(@"[0-9]{5}", ErrorMessage = "Student ID's are five digits long. Example: 12345")]
         public string StudentId { get; set; } = "";
 
         [DataType(DataType.Date)]

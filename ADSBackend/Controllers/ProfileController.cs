@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
@@ -13,6 +15,7 @@ using Scholarships.Util;
 
 namespace Scholarships.Controllers
 {
+    [Authorize]
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -102,6 +105,8 @@ namespace Scholarships.Controllers
             _profile.ZipCode = profile.ZipCode;
             _profile.Phone = profile.Phone;
 
+            ScrubModelState("ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone");
+
             if (ModelState.IsValid)
             {
                 try
@@ -123,21 +128,30 @@ namespace Scholarships.Controllers
                 return FormHelper.JsonStatus("Success");
             }
 
-            return FormHelper.JsonStatus("InvalidRequest"); ;
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
+
 
         // POST: Profiles/EditProfile
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore")] Profile profile)
+        public async Task<string> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore")] Profile profile)
         {
             var _profile = await GetProfileAsync();
 
             if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
-                return NotFound();
+                return FormHelper.JsonStatus("NotFound");
             }
 
+            // Copy values from profile into _profile
+            _profile.ClassRank = profile.ClassRank;
+            _profile.GPA = profile.GPA;
+            _profile.SATScoreMath = profile.SATScoreMath;
+            _profile.SATScoreReading = profile.SATScoreReading;
+            _profile.ACTScore = profile.ACTScore;
+
+            ScrubModelState("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore");
 
             if (ModelState.IsValid)
             {
@@ -150,20 +164,31 @@ namespace Scholarships.Controllers
                 {
                     if (!ProfileExists(profile.ProfileId))
                     {
-                        return NotFound();
+                        return FormHelper.JsonStatus("NotFound"); ;
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return FormHelper.JsonStatus("Success");
             }
-            return View(profile);
+
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
 
         //         public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)
 
+        // Remove any modelstate errors that don't pertain to the actual fields we are binding to
+        private void ScrubModelState(string bindingFields)
+        {
+            string[] bindingKeys = bindingFields.Split(",");
+            foreach (string key in ModelState.Keys)
+            {
+                if (!bindingKeys.Contains(key))
+                    ModelState.Remove(key);
+            }
+        }
 
         private bool ProfileExists(int id)
         {
