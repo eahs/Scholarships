@@ -92,6 +92,9 @@ namespace Scholarships
                 // seed the AspNetUsers table
                 var userSeed = new ApplicationUserSeed(userManager, dbContext);
                 userSeed.CreateAdminUser();
+
+                var dbSeed = new ApplicationDbSeed(dbContext);
+                dbSeed.SeedDatabase();
             }
         }
     }

@@ -48,7 +48,7 @@ namespace Scholarships.Controllers
                 profile = new Profile
                 {
                     UserId = user.Id,
-                    Email = user.Email
+                    Email = user.Email                    
                 };
                 _context.Profile.Add(profile);
                 await _context.SaveChangesAsync();
@@ -73,11 +73,44 @@ namespace Scholarships.Controllers
                 new { Name = "Commute", Key = "commute"}
             }.ToList();
 
+            var fields = await _context.FieldOfStudy.OrderBy(f => f.Name).ToListAsync();
+            fields.Insert(0, fields.FirstOrDefault(f => f.FieldOfStudyId == 1));
+
             ViewBag.Genders = new SelectList(genders, "GenderId", "Name");
             ViewBag.LivingSituations = new SelectList(livingSituations, "Key", "Name");
             ViewBag.States = FormHelper.States;
+            ViewBag.FieldsOfStudy = new SelectList(fields, "FieldOfStudyId", "Name");
 
             return View(profile);
+        }
+
+        private async Task<string> UpdateProfile (string bindingfields, Profile profile)
+        {
+            ScrubModelState(bindingfields);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(profile);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ProfileExists(profile.ProfileId))
+                    {
+                        return FormHelper.JsonStatus("NotFound"); ;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return FormHelper.JsonStatus("Success");
+            }
+
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
+
         }
 
         private const string ProfileBindingFields = "ProfileId,FirstName,LastName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone";
@@ -107,30 +140,7 @@ namespace Scholarships.Controllers
             _profile.ZipCode = profile.ZipCode;
             _profile.Phone = profile.Phone;
 
-            ScrubModelState(ProfileBindingFields);
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(_profile);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProfileExists(profile.ProfileId))
-                    {
-                        return FormHelper.JsonStatus("NotFound"); ;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return FormHelper.JsonStatus("Success");
-            }
-
-            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
+            return await UpdateProfile(ProfileBindingFields, _profile);
         }
 
         private const string AcademicBindingFields = "ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore";
@@ -154,34 +164,12 @@ namespace Scholarships.Controllers
             _profile.SATScoreReading = profile.SATScoreReading;
             _profile.ACTScore = profile.ACTScore;
 
-            ScrubModelState(AcademicBindingFields);
+            return await UpdateProfile(AcademicBindingFields, _profile);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(_profile);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProfileExists(profile.ProfileId))
-                    {
-                        return FormHelper.JsonStatus("NotFound"); ;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return FormHelper.JsonStatus("Success");
-            }
-
-            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
 
 
-        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid";
+        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,FieldOfStudy,CollegeIntendedMajor,LivingSituation,OtherAid";
 
         // POST: Profiles/EditProfile
         [HttpPost]
@@ -201,56 +189,42 @@ namespace Scholarships.Controllers
             _profile.RoomBoard = profile.RoomBoard;
             _profile.TuitionTotal = profile.TuitionTotal;
             _profile.CollegeAccepted = profile.CollegeAccepted;
+            _profile.FieldOfStudy = profile.FieldOfStudy;
             _profile.CollegeIntendedMajor = profile.CollegeIntendedMajor;
             _profile.LivingSituation = profile.LivingSituation;
             _profile.OtherAid = profile.OtherAid;
 
-            ScrubModelState(CollegePlansBindingFields);
+            return await UpdateProfile(CollegePlansBindingFields, _profile);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(_profile);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProfileExists(profile.ProfileId))
-                    {
-                        return FormHelper.JsonStatus("NotFound"); ;
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return FormHelper.JsonStatus("Success");
-            }
-
-            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
         }
 
-        public async Task<IActionResult> EditGuardiansAjax ()
+        private const string ExtraCurricularBindingFields = "ProfileId,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances";
+
+        // POST: Profiles/EditExtraCurricular
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<string> EditExtraCurricular([Bind(ExtraCurricularBindingFields)] Profile profile)
         {
             var _profile = await GetProfileAsync();
 
-            var guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
-
-            if (guardians == null || guardians.Count == 0)
+            if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
-                var self = new Guardian
-                {
-                    ProfileId = _profile.ProfileId,
-                    FullName = _profile.FirstName + " " + _profile.LastName,
-                    Relationship = 0 // self
-                };
-                _context.Guardian.Add(self);
-                await _context.SaveChangesAsync();
-
-                guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+                return FormHelper.JsonStatus("NotFound");
             }
 
+            // Copy values from profile into _profile
+            _profile.ActivitiesSchool = profile.ActivitiesSchool;
+            _profile.ActivitiesCommunity = profile.ActivitiesCommunity;
+            _profile.SchoolOffices = profile.SchoolOffices;
+            _profile.SpecialCircumstances = profile.SpecialCircumstances;
+
+            return await UpdateProfile(ExtraCurricularBindingFields, _profile);
+
+        }
+
+
+        private void SetupGuardiansAjaxForm ()
+        {
             var relations = new[]
             {
                 new { Name = "", Id = 0},
@@ -262,23 +236,91 @@ namespace Scholarships.Controllers
             var employmentStatus = new[]
             {
                 new { Name = "", Id = 0},
-                new { Name = "Full-time", Id = 1},
-                new { Name = "Part-time", Id = 2},
+                new { Name = "Full Time", Id = 1},
+                new { Name = "Part Time", Id = 2},
                 new { Name = "Unemployed", Id = 3}
             }.ToList();
 
             ViewBag.Relationships = new SelectList(relations, "Id", "Name");
             ViewBag.EmploymentStatus = new SelectList(employmentStatus, "Id", "Name");
+        }
+
+        public async Task<IActionResult> EditGuardiansAjax ()
+        {
+            var _profile = await GetProfileAsync();
+            var guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+
+            if (guardians == null || guardians.Count == 0)
+            {
+                var self = new Guardian
+                {
+                    ProfileId = _profile.ProfileId,
+                    FullName = _profile.FirstName + " " + _profile.LastName,
+                    Relationship = 1 // self
+                };
+                _context.Guardian.Add(self);
+                await _context.SaveChangesAsync();
+
+                guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+            }
+
+            SetupGuardiansAjaxForm();
 
             return View(guardians);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditGuardiansAjax (ICollection<Guardian> guardians)
+        public async Task<IActionResult> EditGuardiansAjax ([Bind("ProfileId,GuardianId,FullName,Relationship,EmploymentStatus,Occupation,Employer,AnnualIncome")] ICollection<Guardian> guardians, bool addGuardian = false, int removeGuardianId = -1)
         {
-            await Task.Delay(0);
+            var _profile = await GetProfileAsync();
 
+            if (removeGuardianId != -1)
+            {
+                var guardianToRemove = await _context.Guardian.FirstOrDefaultAsync(g => g.ProfileId == _profile.ProfileId && g.GuardianId == removeGuardianId);
+
+                if (guardianToRemove != null)
+                {
+                    _context.Remove(guardianToRemove);
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            var _guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
+
+            if (ModelState.IsValid)
+            {
+                foreach (var guardian in _guardians)
+                {
+                    var fg = guardians.FirstOrDefault(g => g.GuardianId == guardian.GuardianId);
+
+                    if (fg != null && fg.ProfileId == _profile.ProfileId)
+                    {
+                        guardian.FullName = fg.FullName;
+                        guardian.Relationship = fg.Relationship;
+                        guardian.EmploymentStatus = fg.EmploymentStatus;
+                        guardian.Occupation = fg.Occupation;
+                        guardian.Employer = fg.Employer;
+                        guardian.AnnualIncome = fg.AnnualIncome;
+
+                        _context.Guardian.Update(guardian);
+                    }
+                }
+
+                if (addGuardian)
+                {
+                    _context.Guardian.Add(new Guardian
+                    {
+                        ProfileId = _profile.ProfileId,
+                        FullName = "",
+                        Relationship = 0
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            SetupGuardiansAjaxForm();
             return View(guardians);
         }
 

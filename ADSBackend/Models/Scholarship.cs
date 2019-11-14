@@ -29,6 +29,5 @@ namespace Scholarships.Models
         public DateTime DueDate { get; set; } // Date when scholarship is due
 
         public List<ScholarshipCategory> Categories { get; set; }
-        
     }
 }

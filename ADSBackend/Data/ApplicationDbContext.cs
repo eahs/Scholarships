@@ -14,6 +14,7 @@ namespace Scholarships.Data
         public DbSet<ConfigurationItem> ConfigurationItem { get; set; }
         public DbSet<Profile> Profile { get; set; }
         public DbSet<Scholarship> Scholarship { get; set; }
+        public DbSet<FieldOfStudy> FieldOfStudy { get; set; }
         public DbSet<ScholarshipCategory> ScholarshipCategory { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
 

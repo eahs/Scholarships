@@ -39,6 +39,8 @@ namespace Scholarships.Models
 
 
         [Required, DataType(DataType.EmailAddress, ErrorMessage="Enter a valid contact email address")]
+        [RegularExpression("^(.+)@(?!roverkids.org).+$", ErrorMessage = "Please enter a personal email address you will have access to after graduation - roverkids.org accounts are not allowed")]
+        [DisplayName("Personal Email")]
         public string Email { get; set; }
 
         [DisplayName("Address (Line 1)")]
@@ -83,6 +85,10 @@ namespace Scholarships.Models
 
         [DisplayName("Intended Major")]
         public string CollegeIntendedMajor { get; set; } = "";
+
+        [DisplayName("General Field of Study")]
+        public int? FieldOfStudyId { get; set; } = 1;
+        public FieldOfStudy FieldOfStudy { get; set; }
 
         [DisplayName("College Housing Plans")]
         [RegularExpression(@"oncampus|commute", ErrorMessage = "You must declare your intended plans for college housing.")]
