@@ -469,10 +469,40 @@
             })
         }
 
-        function RemoveGuardian(guardianId) {
+        function SaveGuardians(options, successcallback) {
 
-            var post_url = $("#EditGuardiansAjax").attr("action"); //get form action url
+            var post_url = $("#EditGuardiansAjax").attr("action");
             var form_data = $("#EditGuardiansAjax").serialize(); //Encode form elements for submission
+
+            if (typeof (options) != "undefined") {
+                post_url += "?" + options;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: post_url,
+                data: form_data,
+                error: function(jqXHR, textStatus, errorThrown) {
+                    alert(textStatus + ": Couldn't delete family member. " + errorThrown);
+                },
+                success: function (newFormHTML) {
+
+                    var container = document.getElementById("EditGuardiansAjaxContainer");
+                    container.innerHTML = newFormHTML;
+                    var forms = container.getElementsByTagName("form");
+                    var newForm = forms[forms.length - 1];
+                    $.validator.unobtrusive.parse(newForm);
+
+                    if (typeof successcallback === "function") {
+                        successcallback();
+                    }
+                },
+                dataType: "html"
+            });
+
+        }
+
+        function RemoveGuardian(guardianId) {
 
             swal({
               title: "Are you sure you want to remove this person?",
@@ -483,24 +513,7 @@
             })
             .then((willDelete) => {
                 if (willDelete) {
-                        $.ajax({
-                            type: "POST",
-                            url: post_url + "?RemoveGuardianId=" + guardianId,
-                            data: form_data,
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                alert(textStatus + ": Couldn't delete family member. " + errorThrown);
-                            },
-                            success: function (newFormHTML) {
-
-                                var container = document.getElementById("EditGuardiansAjaxContainer");
-                                container.innerHTML = newFormHTML; //.insertAdjacentHTML("beforeend", newFormHTML);
-                                var forms = container.getElementsByTagName("form");
-                                var newForm = forms[forms.length - 1];
-                                $.validator.unobtrusive.parse(newForm);
-                                
-                            },
-                            dataType: "html"
-                        });
+                    SaveGuardians("RemoveGuardianId=" + guardianId);
               } 
             });
         }
