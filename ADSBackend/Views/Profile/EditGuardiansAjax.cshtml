@@ -11,10 +11,11 @@
         {
             <input type="hidden" asp-for="@Model[i].ProfileId" />
             <input type="hidden" asp-for="@Model[i].GuardianId" />
-            <fieldset class="alert alert-secondary">
+            <fieldset class="alert alert-secondary" id="__Guardian_@Model[i].GuardianId">
                 @if (i != 0)
                 {
-                <a class="btn btn-danger" style="position: absolute; right: 5px; top: 5px; color: white" onclick="RemoveGuardian(@Model[i].GuardianId)">
+                <a class="btn btn-danger removeGuardian" data-guardian="@Model[i].GuardianId" style="position: absolute; right: 5px; top: 5px; color: white">
+                    <!--onclick="RemoveGuardian(@Model[i].GuardianId)"-->
                     <i class="fa fa-times" style="color: white"></i> Remove
                 </a>
                 }
@@ -64,6 +65,6 @@
             </fieldset>
         }
         <div class="form-group">
-            <button class="btn btn-default" onclick="SaveGuardians()">Save All</button> <button class="btn btn-default" onclick="SaveGuardians('addGuardian=true')">Add Family Member</button>
+            <button class="btn btn-default saveGuardians">Save All</button> <button class="btn btn-default addGuardian">Add Family Member</button>
         </div>
     </form>

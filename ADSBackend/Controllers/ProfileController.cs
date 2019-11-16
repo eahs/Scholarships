@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -281,9 +282,27 @@ namespace Scholarships.Controllers
 
                 if (guardianToRemove != null)
                 {
+                    var gr = guardians.FirstOrDefault(g => g.GuardianId == guardianToRemove.GuardianId);
+                    if (gr != null)
+                        guardians.Remove(gr);
+
+                    TryValidateModel(guardians);
+
                     _context.Remove(guardianToRemove);
                     await _context.SaveChangesAsync();
                 }
+            }
+
+            if (addGuardian)
+            {
+                _context.Guardian.Add(new Guardian
+                {
+                    ProfileId = _profile.ProfileId,
+                    FullName = "",
+                    Relationship = 0
+                });
+
+                await _context.SaveChangesAsync();
             }
 
             var _guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
@@ -307,21 +326,11 @@ namespace Scholarships.Controllers
                     }
                 }
 
-                if (addGuardian)
-                {
-                    _context.Guardian.Add(new Guardian
-                    {
-                        ProfileId = _profile.ProfileId,
-                        FullName = "",
-                        Relationship = 0
-                    });
-                }
-
                 await _context.SaveChangesAsync();
             }
 
             SetupGuardiansAjaxForm();
-            return View(guardians);
+            return View(_guardians);
         }
 
         //         public async Task<IActionResult> EditAcademic(int id, [Bind("ProfileId,ClassRank,GPA,SATScoreMath,SATScoreReading,ACTScore,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,CollegeIntendedMajor,LivingSituation,OtherAid,ActivitiesSchool,ActivitiesCommunity,SchoolOffices,SpecialCircumstances,FatherName,FatherOccupation,FatherEmployer,MotherName,MotherOccupation,MotherEmployer,EarningsFather,EarningsMother,EarningsTotal,FamilyAssets,StudentEmployer,StudentIncome,StudentAssets,Siblings")] Profile profile)

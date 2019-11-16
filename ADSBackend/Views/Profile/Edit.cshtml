@@ -300,12 +300,13 @@
             var filled = 0;
 
             var fields = $("#EditProfile").serializeArray();
-            $.each(fields, function (_, field) {
+            $.each(fields,
+                function(_, field) {
 
-                if (field.value.length > 0)
-                    filled++;
+                    if (field.value.length > 0)
+                        filled++;
 
-            });
+                });
             filled -= 2; // hidden fields
 
             if (filled > 10)
@@ -316,12 +317,13 @@
 
             filled = 0;
             fields = $("#EditAcademic").serializeArray();
-            $.each(fields, function (_, field) {
+            $.each(fields,
+                function(_, field) {
 
-                if (field.value.length > 0)
-                    filled++;
+                    if (field.value.length > 0)
+                        filled++;
 
-            });
+                });
             filled -= 2;
 
             if (filled > 4)
@@ -336,11 +338,13 @@
         }
 
         function displayValidationErrors(errors) {
-            $.each(errors, function (idx, validationError) {
+            $.each(errors,
+                function(idx, validationError) {
 
-                $("span[data-valmsg-for='" + validationError.Key + "']").text(validationError.Errors[0].ErrorMessage);
+                    $("span[data-valmsg-for='" + validationError.Key + "']")
+                        .text(validationError.Errors[0].ErrorMessage);
 
-            });
+                });
         }
 
         function saveProfile() {
@@ -352,7 +356,7 @@
                     type: "POST",
                     url: post_url,
                     data: form_data,
-                    success: function (response) {
+                    success: function(response) {
 
                         if (response.Status === "Success") {
                             updateProgressBar();
@@ -360,8 +364,7 @@
                                 .then((value) => {
                                     $('.nav-tabs a[href="#tab-2"]').tab('show')
                                 });
-                        }
-                        else if (response.Status === "InvalidRequest") {
+                        } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
                         }
                     },
@@ -379,16 +382,17 @@
                     type: "POST",
                     url: post_url,
                     data: form_data,
-                    success: function (response) {
+                    success: function(response) {
 
                         if (response.Status === "Success") {
                             updateProgressBar();
-                            swal("Good job!", "Your academic performance has been saved.  Now we need to know your college plans.", "success")
+                            swal("Good job!",
+                                    "Your academic performance has been saved.  Now we need to know your college plans.",
+                                    "success")
                                 .then((value) => {
                                     $('.nav-tabs a[href="#tab-3"]').tab('show')
                                 });
-                        }
-                        else if (response.Status === "InvalidRequest") {
+                        } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
                         }
                     },
@@ -406,16 +410,17 @@
                     type: "POST",
                     url: post_url,
                     data: form_data,
-                    success: function (response) {
+                    success: function(response) {
 
                         if (response.Status === "Success") {
                             updateProgressBar();
-                            swal("Good job!", "Your college plans have been saved.  Now we need to know about your extracurricular activities.", "success")
+                            swal("Good job!",
+                                    "Your college plans have been saved.  Now we need to know about your extracurricular activities.",
+                                    "success")
                                 .then((value) => {
                                     $('.nav-tabs a[href="#tab-4"]').tab('show')
                                 });
-                        }
-                        else if (response.Status === "InvalidRequest") {
+                        } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
                         }
                     },
@@ -434,16 +439,17 @@
                     type: "POST",
                     url: post_url,
                     data: form_data,
-                    success: function (response) {
+                    success: function(response) {
 
                         if (response.Status === "Success") {
                             updateProgressBar();
-                            swal("Good job!", "Your extra curricular activities have been saved.  You are almost there!  We just need to know about your family income.", "success")
+                            swal("Good job!",
+                                    "Your extra curricular activities have been saved.  You are almost there!  We just need to know about your family income.",
+                                    "success")
                                 .then((value) => {
                                     $('.nav-tabs a[href="#tab-5"]').tab('show')
                                 });
-                        }
-                        else if (response.Status === "InvalidRequest") {
+                        } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
                         }
                     },
@@ -478,17 +484,21 @@
                 post_url += "?" + options;
             }
 
-            $.ajax({
-                type: "POST",
+
+            var jqxhr = $.ajax({
+                method: "POST",
                 url: post_url,
                 data: form_data,
+                cache: false,
+                global: false,
                 error: function(jqXHR, textStatus, errorThrown) {
                     alert(textStatus + ": Couldn't delete family member. " + errorThrown);
                 },
-                success: function (newFormHTML) {
-
+                dataType: "html"
+            }).done(function(newFormHTML) {
                     var container = document.getElementById("EditGuardiansAjaxContainer");
-                    container.innerHTML = newFormHTML;
+                    $("#EditGuardiansAjaxContainer").html(newFormHTML);
+
                     var forms = container.getElementsByTagName("form");
                     var newForm = forms[forms.length - 1];
                     $.validator.unobtrusive.parse(newForm);
@@ -496,30 +506,35 @@
                     if (typeof successcallback === "function") {
                         successcallback();
                     }
-                },
-                dataType: "html"
-            });
+                })
+                .fail(function() {
+                    alert( "error" );
+                })
+                .always(function() {
+                    alert( "complete" );
+                });
 
         }
 
         function RemoveGuardian(guardianId) {
 
             swal({
-              title: "Are you sure you want to remove this person?",
-              text: "Once deleted, this person will no longer show up on your list of family income providers.",
-              icon: "warning",
-              buttons: true,
-              dangerMode: true,
-            })
-            .then((willDelete) => {
-                if (willDelete) {
-                    SaveGuardians("RemoveGuardianId=" + guardianId);
-              } 
-            });
+                    title: "Are you sure you want to remove this person?",
+                    text: "Once deleted, this person will no longer show up on your list of family income providers.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $("#__Guardian_" + guardianId).fadeOut('fast');
+                        SaveGuardians("RemoveGuardianId=" + guardianId);
+                    }
+                });
         }
 
 
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             var mem = $('#dob .input-group.date').datepicker({
                 todayBtn: "linked",
@@ -532,12 +547,33 @@
 
             updateProgressBar();
 
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                var target = $(e.target).attr("href") // activated tab
-                if (target === "#tab-5") {
-                    LoadFamilyIncomeForm();
-                }
-            });
+            $('a[data-toggle="tab"]').on('shown.bs.tab',
+                function(e) {
+                    var target = $(e.target).attr("href") // activated tab
+                    if (target === "#tab-5") {
+                        LoadFamilyIncomeForm();
+                    }
+                });
+
+            $(document).on("click",
+                '.removeGuardian',
+                function(event) {
+                    var guardianId = $(this).attr("data-guardian");
+                    RemoveGuardian(guardianId);
+                });
+
+            $(document).on("click",
+                '.saveGuardians',
+                function(event) {
+                    SaveGuardians();
+                });
+
+            $(document).on("click",
+                '.addGuardian',
+                function(event) {
+                    SaveGuardians("addGuardian=true");
+                });
+
         });
     </script>
 
