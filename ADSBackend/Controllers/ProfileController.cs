@@ -43,7 +43,7 @@ namespace Scholarships.Controllers
             if (user == null)
                 return null;
 
-            var profile = await _context.Profile.FirstOrDefaultAsync(p => p.UserId == user.Id);
+            var profile = await _context.Profile.Include(p => p.Guardians).FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (profile == null)
             {
                 profile = new Profile
@@ -140,6 +140,7 @@ namespace Scholarships.Controllers
             _profile.City = profile.City;
             _profile.ZipCode = profile.ZipCode;
             _profile.Phone = profile.Phone;
+            _profile.FormCompletedBasic = true;
 
             return await UpdateProfile(ProfileBindingFields, _profile);
         }
@@ -164,6 +165,7 @@ namespace Scholarships.Controllers
             _profile.SATScoreMath = profile.SATScoreMath;
             _profile.SATScoreReading = profile.SATScoreReading;
             _profile.ACTScore = profile.ACTScore;
+            _profile.FormCompletedAcademicPerformance = true;
 
             return await UpdateProfile(AcademicBindingFields, _profile);
 
@@ -194,6 +196,7 @@ namespace Scholarships.Controllers
             _profile.CollegeIntendedMajor = profile.CollegeIntendedMajor;
             _profile.LivingSituation = profile.LivingSituation;
             _profile.OtherAid = profile.OtherAid;
+            _profile.FormCompletedCollegePlans = true;
 
             return await UpdateProfile(CollegePlansBindingFields, _profile);
 
@@ -218,6 +221,7 @@ namespace Scholarships.Controllers
             _profile.ActivitiesCommunity = profile.ActivitiesCommunity;
             _profile.SchoolOffices = profile.SchoolOffices;
             _profile.SpecialCircumstances = profile.SpecialCircumstances;
+            _profile.FormCompletedExtraCurriculur = true;
 
             return await UpdateProfile(ExtraCurricularBindingFields, _profile);
 
