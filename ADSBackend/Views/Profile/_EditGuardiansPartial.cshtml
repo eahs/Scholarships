@@ -3,7 +3,7 @@
 
 <form asp-action="EditGuardiansAjax" id="EditGuardiansAjax">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    @for (int i = 0; i < Model.Count; i++)
+    @for (int i = 0; i < Model?.Count; i++)
     {
         <input type="hidden" asp-for="@Model[i].ProfileId" />
         <input type="hidden" asp-for="@Model[i].GuardianId" />

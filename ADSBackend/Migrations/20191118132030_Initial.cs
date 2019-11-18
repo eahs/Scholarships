@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Scholarships.Migrations
@@ -13,7 +12,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true)
@@ -28,7 +27,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -56,7 +55,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     CategoryId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     Enabled = table.Column<bool>(nullable: false)
@@ -79,11 +78,24 @@ namespace Scholarships.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FieldOfStudy",
+                columns: table => new
+                {
+                    FieldOfStudyId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FieldOfStudy", x => x.FieldOfStudyId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Scholarship",
                 columns: table => new
                 {
                     ScholarshipId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SponsorCompany = table.Column<string>(nullable: true),
                     SponsorName = table.Column<string>(nullable: true),
                     SponsorAddress1 = table.Column<string>(nullable: true),
@@ -111,7 +123,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -132,7 +144,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -217,7 +229,7 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     ProfileId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(nullable: false),
                     LastName = table.Column<string>(nullable: false),
@@ -237,11 +249,12 @@ namespace Scholarships.Migrations
                     SATScoreReading = table.Column<int>(nullable: true),
                     ACTScore = table.Column<int>(nullable: true),
                     CollegeAttending = table.Column<string>(nullable: true),
-                    TuitionYearly = table.Column<string>(nullable: true),
-                    RoomBoard = table.Column<string>(nullable: true),
-                    TuitionTotal = table.Column<string>(nullable: true),
+                    TuitionYearly = table.Column<double>(nullable: false),
+                    RoomBoard = table.Column<double>(nullable: false),
+                    TuitionTotal = table.Column<double>(nullable: false),
                     CollegeAccepted = table.Column<bool>(nullable: false),
                     CollegeIntendedMajor = table.Column<string>(nullable: true),
+                    FieldOfStudyId = table.Column<int>(nullable: true),
                     LivingSituation = table.Column<string>(nullable: true),
                     OtherAid = table.Column<string>(nullable: true),
                     ActivitiesSchool = table.Column<string>(nullable: true),
@@ -263,6 +276,12 @@ namespace Scholarships.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Profile", x => x.ProfileId);
+                    table.ForeignKey(
+                        name: "FK_Profile_FieldOfStudy_FieldOfStudyId",
+                        column: x => x.FieldOfStudyId,
+                        principalTable: "FieldOfStudy",
+                        principalColumn: "FieldOfStudyId",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Profile_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -302,9 +321,9 @@ namespace Scholarships.Migrations
                 columns: table => new
                 {
                     GuardianId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ProfileId = table.Column<int>(nullable: false),
-                    FullName = table.Column<int>(nullable: false),
+                    FullName = table.Column<string>(nullable: false),
                     Relationship = table.Column<int>(nullable: false),
                     EmploymentStatus = table.Column<int>(nullable: false),
                     Occupation = table.Column<string>(nullable: true),
@@ -367,6 +386,11 @@ namespace Scholarships.Migrations
                 column: "ProfileId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Profile_FieldOfStudyId",
+                table: "Profile",
+                column: "FieldOfStudyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Profile_UserId",
                 table: "Profile",
                 column: "UserId");
@@ -414,6 +438,9 @@ namespace Scholarships.Migrations
 
             migrationBuilder.DropTable(
                 name: "Scholarship");
+
+            migrationBuilder.DropTable(
+                name: "FieldOfStudy");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
