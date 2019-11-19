@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scholarships.Data;
 
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191119131344_QuestionSet")]
+    partial class QuestionSet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,17 +184,12 @@ namespace Scholarships.Migrations
                     b.Property<string>("Config")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("QuestionId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Response")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AnswerId");
 
                     b.HasIndex("AnswerSetId");
-
-                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answer");
                 });
@@ -288,9 +285,6 @@ namespace Scholarships.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
 
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
@@ -752,12 +746,6 @@ namespace Scholarships.Migrations
                     b.HasOne("Scholarships.Models.Forms.AnswerSet", "AnswerSet")
                         .WithMany("Answers")
                         .HasForeignKey("AnswerSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Scholarships.Models.Forms.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

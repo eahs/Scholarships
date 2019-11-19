@@ -10,9 +10,12 @@ namespace Scholarships.Models.Forms
     {
         [Key]
         public int AnswerId { get; set; }
-        public int ProfileId { get; set; }
-        public Profile Profile { get; set; }
-        public string Response { get; set; }  
+        public int AnswerSetId { get; set; }
+        public AnswerSet AnswerSet { get; set; }
+        public int QuestionId { get; set; }
+        public Question Question { get; set; }
+        public string Response { get; set; }
+        public List<AnswerOption> Options { get; set; }
         public string Config { get; set; }  // Any extraneous JSON-encoded data for this answer
     }
 }

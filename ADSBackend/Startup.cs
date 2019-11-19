@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Scholarships.Services;
 
 namespace Scholarships
 {
@@ -44,6 +45,7 @@ namespace Scholarships
 
             // Add application services.
             services.AddTransient<Services.IEmailSender, Services.EmailSender>();
+            services.AddScoped<Services.IViewRenderService, Services.ViewRenderService>();
 
             // caching
             services.AddMemoryCache();

@@ -2,6 +2,7 @@
 using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Scholarships.Models.Forms;
 
 namespace Scholarships.Data
 {
@@ -17,6 +18,13 @@ namespace Scholarships.Data
         public DbSet<FieldOfStudy> FieldOfStudy { get; set; }
         public DbSet<ScholarshipCategory> ScholarshipCategory { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
+
+        public DbSet<Answer> Answer { get; set; }
+        public DbSet<AnswerOption> AnswerOption  { get; set; }
+        public DbSet<AnswerSet> AnswerSet  { get; set; }
+        public DbSet<Question> Question  { get; set; }
+        public DbSet<QuestionOption> QuestionOption  { get; set; }
+        public DbSet<QuestionSet> QuestionSet  { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
