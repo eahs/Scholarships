@@ -1,0 +1,14 @@
+﻿@model  Scholarships.Models.Forms.Question
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label asp-for="@Model.Name" class="control-label"></label>
+            <input asp-for="@Model.Name" class="form-control" />
+            <span asp-validation-for="@Model.Name" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-3">
+            <label asp-for="@Model.Type" class="control-label"></label>
+            <input asp-for="@Model.Type" class="form-control" />
+            <span asp-validation-for="@Model.Type" class="text-danger"></span>
+        </div>
+    </div>

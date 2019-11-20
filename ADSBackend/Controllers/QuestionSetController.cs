@@ -81,6 +81,37 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<QuestionSetViewModel> Edit(int id, [Bind("Name,Description,SingularName,PluralName,AllowMultiple")] QuestionSet questionSet)
+        {
+            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
+
+            if (qset == null)
+                return Error(QuestionSetError.NotFound);
+
+            if (!UserCanModifyQuestionSet(qset))
+                return Error(QuestionSetError.NotAuthorized);
+
+            if (ModelState.IsValid)
+            {
+                qset.Name = questionSet.Name;
+                qset.Description = questionSet.Description;
+                qset.SingularName = questionSet.SingularName;
+                qset.PluralName = questionSet.PluralName;
+                qset.AllowMultiple = questionSet.AllowMultiple;
+
+                _context.QuestionSet.Update(qset);
+                await _context.SaveChangesAsync();
+
+                return new QuestionSetViewModel { QuestionSet = qset };
+            }
+
+            return Error(QuestionSetError.InvalidForm);
+        }
+
+        /*
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,Description,SingularName,PluralName,AllowMultiple")] QuestionSet questionSet)
         {
             var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
@@ -105,6 +136,7 @@ namespace Scholarships.Controllers
 
             return View(qset);
         }
+        */
 
         /*
                 public async Task<QuestionSetViewModel> Edit(int id)

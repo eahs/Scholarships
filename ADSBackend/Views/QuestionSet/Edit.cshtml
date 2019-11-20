@@ -1,42 +1,130 @@
 ﻿@model Scholarships.Models.Forms.QuestionSetViewModel
 
 
-        <div class="ibox">
-            <div class="ibox-title"><h4>Question Set</h4></div>
-            <div class="ibox-content">
-                <form asp-controller="QuestionSet" asp-action="Edit" id="@Model.FormId">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <div class="form-group">
-                        <label asp-for="@Model.QuestionSet.Name" class="control-label"></label>
-                        <input asp-for="@Model.QuestionSet.Name" class="form-control" />
-                        <span asp-validation-for="@Model.QuestionSet.Name" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@Model.QuestionSet.Description" class="control-label"></label>
-                        <input asp-for="@Model.QuestionSet.Description" class="form-control" />
-                        <span asp-validation-for="@Model.QuestionSet.Description" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@Model.QuestionSet.SingularName" class="control-label"></label>
-                        <input asp-for="@Model.QuestionSet.SingularName" class="form-control" />
-                        <span asp-validation-for="@Model.QuestionSet.SingularName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@Model.QuestionSet.PluralName" class="control-label"></label>
-                        <input asp-for="@Model.QuestionSet.PluralName" class="form-control" />
-                        <span asp-validation-for="@Model.QuestionSet.PluralName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@Model.QuestionSet.AllowMultiple" class="control-label"></label>
-                        <input asp-for="@Model.QuestionSet.AllowMultiple" class="form-control" />
-                        <span asp-validation-for="@Model.QuestionSet.AllowMultiple" class="text-danger"></span>
-                    </div>
-                </form>
-                <div id="QuestionSet_Questions_@Model.FormId">
-
+<div class="ibox">
+    <div class="ibox-title">
+        <div style="float: right" id="saveMessage"></div>
+        <h4>Question Set</h4>
+    </div>
+    <div class="ibox-content">
+        <form asp-controller="QuestionSet" asp-action="Edit" id="QuestionSetForm_@Model.FormId">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="@Model.QuestionSet.Name" class="control-label"></label>
+                <input asp-for="@Model.QuestionSet.Name" class="form-control" />
+                <span asp-validation-for="@Model.QuestionSet.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.QuestionSet.Description" class="control-label"></label>
+                <input asp-for="@Model.QuestionSet.Description" class="form-control" />
+                <span asp-validation-for="@Model.QuestionSet.Description" class="text-danger"></span>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label asp-for="@Model.QuestionSet.SingularName" class="control-label"></label>
+                    <input asp-for="@Model.QuestionSet.SingularName" class="form-control" />
+                    <span asp-validation-for="@Model.QuestionSet.SingularName" class="text-danger"></span>
+                </div>
+                <div class="form-group col-md-3">
+                    <label asp-for="@Model.QuestionSet.PluralName" class="control-label"></label>
+                    <input asp-for="@Model.QuestionSet.PluralName" class="form-control" />
+                    <span asp-validation-for="@Model.QuestionSet.PluralName" class="text-danger"></span>
                 </div>
             </div>
+            <div class="form-group">
+                <label asp-for="@Model.QuestionSet.AllowMultiple" class="control-label"></label>
+                <div class="checkbox">
+
+                    <input type="radio" asp-for="@Model.QuestionSet.AllowMultiple" value="true" /> Yes</br>
+                    <input type="radio" asp-for="@Model.QuestionSet.AllowMultiple" value="false" /> No</br>
+                </div>
+
+                <span asp-validation-for="@Model.QuestionSet.AllowMultiple" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <select id="qtypepicker">
+                    <option data-icon="fa-heart">Mustard</option>
+                    <option>Ketchup</option>
+                    <option data-divider="true"></option>
+                    <option>Barbecue</option>
+                </select>
+
+            </div>
+            <input type="submit" value="Save" />
+        </form>
+        <div id="QuestionSet_Questions">
+            <form asp-controller="QuestionSet" asp-action="EditQuestion" id="QuestionSetForm_@Model.FormId">
+            </form>
         </div>
+        <button type="button" onclick="" class="btn btn-primary btn-lg">Save Question Set</button>
+
+    </div>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+}
 
 
+@section Scripts
+{
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 
+    <script type="text/javascript">
+
+
+        function saveForm(formid) {
+            var post_url = $(formid).attr("action"); //get form action url
+            var form_data = $(formid).serialize(); //Encode form elements for submission
+
+            $("#saveMessage").hide();
+
+            if ($(formid).valid()) {
+                $("#saveMessage").html("Saving...").fadeIn(200);
+
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    dataType: "json"
+                }).done(function (response, textStatus, jqXHR) {
+                    if (!response.isError) {
+                        $("#saveMessage").html("All changes saved");
+                    } else if (response.Status === "InvalidRequest") {
+                        $("#saveMessage").html("Unable to save - Please fix errors");
+                        displayValidationErrors(response.modelStateErrors);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    $("#saveMessage").html("Error saving form!");
+                })
+                .always(function () {
+
+                    $("#saveMessage").delay(4000).fadeOut();
+                })
+
+            }
+        }
+
+        function displayValidationErrors(errors) {
+            $.each(errors,
+                function(idx, validationError) {
+
+                    $("span[data-valmsg-for='" + validationError.Key + "']")
+                        .text(validationError.Errors[0].ErrorMessage);
+
+                });
+        }
+
+        $(document).ready(function () {
+
+            $('#QuestionSetForm_@Model.FormId').change(function () {
+                saveForm('#QuestionSetForm_@Model.FormId');
+            });
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}
