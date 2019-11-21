@@ -42,47 +42,55 @@
                 <span asp-validation-for="@Model.QuestionSet.AllowMultiple" class="text-danger"></span>
             </div>
 
-            <div class="form-row">
-                <div class="col-md-9">
-                    <input type="text" class="form-control" placeholder="Question" />
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <select class="qtypepicker" name="Type">
-                            <option data-icon="fa-minus" value="6">Short answer</option>
-                            <option data-icon="fa-navicon" value="7">Paragraph</option>
-                            <option data-divider="true"></option>
-                            <option data-icon="fa-dot-circle-o" value="3">Multiple choice</option>
-                            <option data-icon="fa-check-square" value="1">Checkboxes</option>
-                            <option data-icon="fa-toggle-down" value="2">Dropdown</option>
-                            <option data-divider="true" value=""></option>
-                            <option data-icon="fa-upload" value="8">File upload</option>
-                            <option data-divider="true"></option>
-                            <option data-icon="fa-calendar" value="4">Date</option>
-                            <option data-icon="fa-clock-o" value="5">Time</option>
-                        </select>
+            <ul class="qsortable">
+                <li>
+                    <div class="form-row">
+                        <div class="col-md-12 text-center">
+                            <span class="grippyhorizontal"></span>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6 questioneditor-options">
-                    <ul class="sortable" data-questionid="125">
-                        <li id="q_22">
-                            <span class="grippy"></span>
-                            <i class="fa fa-circle-o"></i> Option 1
-                        </li>
-                        <li id="q_33">
-                            <span class="grippy"></span>
-                            <i class="fa fa-square-o"></i> Option 2
-                        </li>
-                        <li id="q_44">
-                            <span class="grippy"></span>
-                            <i class="fa fa-minus"></i> Option 3
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
+                    <div class="form-row">
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" placeholder="Question" />
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <select class="qtypepicker" name="Type">
+                                    <option data-icon="fa-minus" value="6">Short answer</option>
+                                    <option data-icon="fa-navicon" value="7">Paragraph</option>
+                                    <option data-divider="true"></option>
+                                    <option data-icon="fa-dot-circle-o" value="3">Multiple choice</option>
+                                    <option data-icon="fa-check-square" value="1">Checkboxes</option>
+                                    <option data-icon="fa-toggle-down" value="2">Dropdown</option>
+                                    <option data-divider="true" value=""></option>
+                                    <option data-icon="fa-upload" value="8">File upload</option>
+                                    <option data-divider="true"></option>
+                                    <option data-icon="fa-calendar" value="4">Date</option>
+                                    <option data-icon="fa-clock-o" value="5">Time</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 questioneditor-options">
+                            <ul class="sortable" data-questionid="125">
+                                <li id="q_22">
+                                    <span class="grippy"></span>
+                                    <i class="fa fa-circle-o"></i> Option 1
+                                </li>
+                                <li id="q_33">
+                                    <span class="grippy"></span>
+                                    <i class="fa fa-square-o"></i> Option 2
+                                </li>
+                                <li id="q_44">
+                                    <span class="grippy"></span>
+                                    <i class="fa fa-minus"></i> Option 3
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </form>
         <div id="QuestionSet_Questions">
             <form asp-controller="QuestionSet" asp-action="EditQuestion" id="QuestionSetForm_@Model.FormId">
@@ -170,6 +178,13 @@
                     var ids = $(this).children().get().map(function(el) {
                         return el.id.replace("q_", "");
                     }).join(",");
+                }
+            });
+
+            $(".qsortable").sortable({
+                handle: '.grippyhorizontal',
+                update: function (event, ui) {
+
                 }
             });
         });
