@@ -135,15 +135,11 @@ span.grippyhorizontal {
     padding: 0;
 }
 
-.qsortable li {
-    margin: 0 3px 3px 3px;
-    padding: 0.4em;
-    padding-left: 1.5em;
-    height: 150px;
-}
-
-.qsortable li span {
-    position: absolute;
-    margin-left: -1.3em;
-}
+    .qsortableli {
+        margin: 0 3px 3px 3px;
+        padding: 0.4em;
+        padding-left: 1.5em;
+        border: solid 1px #eee;
+        background: #fcfcfc;
+    }
 

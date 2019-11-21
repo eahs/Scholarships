@@ -43,7 +43,7 @@
             </div>
 
             <ul class="qsortable">
-                <li>
+                <li class="qsortableli" data-questionid="125">
                     <div class="form-row">
                         <div class="col-md-12 text-center">
                             <span class="grippyhorizontal"></span>
@@ -74,15 +74,15 @@
                     <div class="form-row">
                         <div class="form-group col-md-6 questioneditor-options">
                             <ul class="sortable" data-questionid="125">
-                                <li id="q_22">
+                                <li id="answer_22">
                                     <span class="grippy"></span>
                                     <i class="fa fa-circle-o"></i> Option 1
                                 </li>
-                                <li id="q_33">
+                                <li id="answer_33">
                                     <span class="grippy"></span>
                                     <i class="fa fa-square-o"></i> Option 2
                                 </li>
-                                <li id="q_44">
+                                <li id="answer_44">
                                     <span class="grippy"></span>
                                     <i class="fa fa-minus"></i> Option 3
                                 </li>
@@ -176,15 +176,20 @@
                     var questionData = $(this).sortable('serialize');
 
                     var ids = $(this).children().get().map(function(el) {
-                        return el.id.replace("q_", "");
+                        return el.id.replace("answer_", "");
                     }).join(",");
                 }
             });
 
             $(".qsortable").sortable({
                 handle: '.grippyhorizontal',
+                start: function(e, ui){
+                    ui.placeholder.height(ui.item.height());
+                },
                 update: function (event, ui) {
-
+                    var parent = $(this);
+                    var questionId = parent.data("questionid");
+                    alert(questionId);
                 }
             });
         });
