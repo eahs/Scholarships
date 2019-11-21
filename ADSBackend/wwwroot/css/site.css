@@ -47,8 +47,8 @@ button.accept-policy {
 
 span.grippy {
     content: '....';
-    width: 10px;
-    height: 20px;
+    width: 20px;
+    height: 30px;
     display: inline-block;
     overflow: hidden;
     line-height: 5px;
@@ -90,3 +90,41 @@ span.grippyhorizontal {
     span.grippyhorizontal::after {
         content: '.... ....';
     }
+
+.bootstrap-select .dropdown-toggle .filter-option-inner-inner i
+{
+    margin-right: 8px;
+}
+
+.bootstrap-select .dropdown-menu li a span.text 
+{
+    padding-left: 8px;
+}
+
+.questioneditor-options {
+    margin: 5px 0px 5px 0px;
+}
+
+.questioneditor-options i {
+    margin-left: 10px;
+    margin-right: 8px;
+}
+
+.sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sortable li {
+    margin: 0 3px 3px 3px;
+    padding: 0.4em;
+    padding-left: 1.5em;
+    font-size: 1.4em;
+    height: 30px;
+}
+
+.sortable li span {
+    position: absolute;
+    margin-left: -1.3em;
+}

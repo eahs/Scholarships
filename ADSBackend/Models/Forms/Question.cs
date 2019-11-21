@@ -13,9 +13,10 @@ namespace Scholarships.Models.Forms
         Dropdown = 2,
         MultipleChoice = 3,
         Date = 4,
-        ShortAnswer = 5,
-        Paragraph = 6,
-        FileUpload = 7
+        Time = 5,
+        ShortAnswer = 6,
+        Paragraph = 7,
+        FileUpload = 8
     }
 
     public class Question

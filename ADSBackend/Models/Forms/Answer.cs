@@ -15,6 +15,7 @@ namespace Scholarships.Models.Forms
         public int QuestionId { get; set; }
         public Question Question { get; set; }
         public string Response { get; set; }
+        public DateTime DateTime { get; set; }
         public List<AnswerOption> Options { get; set; }
         public string Config { get; set; }  // Any extraneous JSON-encoded data for this answer
     }
