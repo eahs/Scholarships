@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scholarships.Data;
 
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191122011903_DescriptionTypo")]
+    partial class DescriptionTypo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -266,7 +268,7 @@ namespace Scholarships.Migrations
                     b.Property<int>("Order")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuestionSetId")
+                    b.Property<int?>("QuestionSetId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Required")
@@ -802,9 +804,7 @@ namespace Scholarships.Migrations
                 {
                     b.HasOne("Scholarships.Models.Forms.QuestionSet", null)
                         .WithMany("Questions")
-                        .HasForeignKey("QuestionSetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("QuestionSetId");
                 });
 
             modelBuilder.Entity("Scholarships.Models.Forms.QuestionOption", b =>

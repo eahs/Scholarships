@@ -1,14 +1,59 @@
-﻿@model  Scholarships.Models.Forms.Question
+﻿@using Scholarships.Models.Forms
+@model Scholarships.Models.Forms.QuestionViewModel
 
+@{
+
+}
+
+<li class="qsortableli" id="question_@Model.Question.QuestionId">
     <div class="form-row">
-        <div class="form-group col-md-4">
-            <label asp-for="@Model.Name" class="control-label"></label>
-            <input asp-for="@Model.Name" class="form-control" />
-            <span asp-validation-for="@Model.Name" class="text-danger"></span>
-        </div>
-        <div class="form-group col-md-3">
-            <label asp-for="@Model.Type" class="control-label"></label>
-            <input asp-for="@Model.Type" class="form-control" />
-            <span asp-validation-for="@Model.Type" class="text-danger"></span>
+        <div class="col-md-12 text-center">
+            <span class="grippyhorizontal"></span>
         </div>
     </div>
+    <div class="form-row">
+        <div class="col-md-9">
+            <input type="text" name="[@Model.Index].Name" value="@Model.Question.Name" class="form-control" placeholder="Question" />
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <select class="qtypepicker" name="[@Model.Index].Type">
+                    <option data-icon="fa-minus" value="@QuestionType.ShortAnswer" opt-selected-value="@Model.Question.Type">Short answer</option>
+                    <option data-icon="fa-navicon" value="@QuestionType.Paragraph" opt-selected-value="@Model.Question.Type">Paragraph</option>
+                    <option data-divider="true"></option>
+                    <option data-icon="fa-dot-circle-o" value="@QuestionType.MultipleChoice" opt-selected-value="@Model.Question.Type">Multiple choice</option>
+                    <option data-icon="fa-check-square" value="@QuestionType.Checkboxes" opt-selected-value="@Model.Question.Type">Checkboxes</option>
+                    <option data-icon="fa-toggle-down" value="@QuestionType.Dropdown" opt-selected-value="@Model.Question.Type">Dropdown</option>
+                    <option data-divider="true" value=""></option>
+                    <option data-icon="fa-upload" value="@QuestionType.FileUpload" opt-selected-value="@Model.Question.Type">File upload</option>
+                    <option data-divider="true"></option>
+                    <option data-icon="fa-calendar" value="@QuestionType.Date" opt-selected-value="@Model.Question.Type">Date</option>
+                    <option data-icon="fa-clock-o" value="@QuestionType.Time" opt-selected-value="@Model.Question.Type">Time</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-9">
+            <input type="text" name="[@Model.Index].Description" value="@Model.Question.Description" class="form-control" placeholder="Description" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6 questioneditor-options">
+            <ul class="sortable" data-questionid="@Model.Question.QuestionId">
+                <li id="answer_22">
+                    <span class="grippy"></span>
+                    <i class="fa fa-circle-o"></i> Option 1
+                </li>
+                <li id="answer_33">
+                    <span class="grippy"></span>
+                    <i class="fa fa-square-o"></i> Option 2
+                </li>
+                <li id="answer_44">
+                    <span class="grippy"></span>
+                    <i class="fa fa-minus"></i> Option 3
+                </li>
+            </ul>
+        </div>
+    </div>
+</li>

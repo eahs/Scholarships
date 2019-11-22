@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
+using Scholarships.Util;
 
 namespace Scholarships.Controllers
 {
@@ -107,6 +108,72 @@ namespace Scholarships.Controllers
             }
 
             return Error(QuestionSetError.InvalidForm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<QuestionViewModel> AddQuestion(int id)  // id is of question set
+        {
+            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
+
+            if (qset == null)
+                return new QuestionViewModel {ErrorCode = QuestionSetError.NotFound};
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            Question q = new Question
+            {
+                Name = "",
+                Description = "",
+                ErrorMessage = "",
+                Config = "{}",
+                Options = new List<QuestionOption>(),
+                Required = false,
+                Type = QuestionType.MultipleChoice
+            };
+
+            _context.Add(q);
+            await _context.SaveChangesAsync();
+
+
+            int index = await _context.Question.Where(q => q.QuestionSetId == id).CountAsync() - 1;
+
+            return new QuestionViewModel
+            {
+                Index = index,
+                ErrorCode = QuestionSetError.NoError,
+                QuestionForm = await _renderService.RenderToStringAsync("_QuestionPartial", q)
+            };
+
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<object> SaveQuestionOrder(int id, [Bind("order")] List<int> order)
+        {
+            QuestionSetError error = QuestionSetError.NoError;
+
+            return new FormsBaseViewModel
+            {
+                ErrorCode = error
+            };
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<FormsBaseViewModel> SaveQuestionOptionOrder(int id, [Bind("order")] List<int> order)
+        {
+            QuestionSetError error = QuestionSetError.NoError;
+
+            return new FormsBaseViewModel
+            {
+                ErrorCode = error
+            };
         }
 
         /*

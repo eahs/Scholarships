@@ -23,10 +23,11 @@ namespace Scholarships.Models.Forms
     {
         [Key]
         public int QuestionId { get; set; }
+        public int QuestionSetId { get; set; }
         public QuestionType Type { get; set; } = QuestionType.Checkboxes;
         public int Order { get; set; } = 0;
         public string Name { get; set; }
-        public string Decription { get; set; }
+        public string Description { get; set; }
         public string Config { get; set; }  // JSON configuration
         public bool Required { get; set; }
         public string ErrorMessage { get; set; }
