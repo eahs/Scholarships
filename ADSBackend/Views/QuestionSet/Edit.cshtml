@@ -14,6 +14,17 @@
         Index = 0,
         Question = question
     };
+
+    List<QuestionViewModel> questionvm = new List<QuestionViewModel>();
+
+    for (int i = 0; i < Model.QuestionSet.Questions.Count; i++)
+    {
+        questionvm.Add(new QuestionViewModel
+        {
+            Index = i,
+            Question = Model.QuestionSet.Questions[i]
+        });
+    }
 }
 
 <div class="ibox">
@@ -56,172 +67,19 @@
 
                 <span asp-validation-for="@Model.QuestionSet.AllowMultiple" class="text-danger"></span>
             </div>
-
-            <ul class="qsortable" data-questionsetid="125">
-                <li class="qsortableli" id="question_1000">
-                    <div class="form-row">
-                        <div class="col-md-12 text-center">
-                            <span class="grippyhorizontal"></span>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Question" />
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select class="qtypepicker" name="Type">
-                                    <option data-icon="fa-minus" value="6">Short answer</option>
-                                    <option data-icon="fa-navicon" value="7">Paragraph</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-dot-circle-o" value="3">Multiple choice</option>
-                                    <option data-icon="fa-check-square" value="1">Checkboxes</option>
-                                    <option data-icon="fa-toggle-down" value="2">Dropdown</option>
-                                    <option data-divider="true" value=""></option>
-                                    <option data-icon="fa-upload" value="8">File upload</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-calendar" value="4">Date</option>
-                                    <option data-icon="fa-clock-o" value="5">Time</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Description" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6 questioneditor-options">
-                            <ul class="sortable" data-questionid="125">
-                                <li id="answer_22">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-circle-o"></i> Option 1
-                                </li>
-                                <li id="answer_33">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-square-o"></i> Option 2
-                                </li>
-                                <li id="answer_44">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-minus"></i> Option 3
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="qsortableli" id="question_2000">
-                    <div class="form-row">
-                        <div class="col-md-12 text-center">
-                            <span class="grippyhorizontal"></span>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Question" />
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select class="qtypepicker" name="Type">
-                                    <option data-icon="fa-minus" value="6">Short answer</option>
-                                    <option data-icon="fa-navicon" value="7">Paragraph</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-dot-circle-o" value="3">Multiple choice</option>
-                                    <option data-icon="fa-check-square" value="1">Checkboxes</option>
-                                    <option data-icon="fa-toggle-down" value="2">Dropdown</option>
-                                    <option data-divider="true" value=""></option>
-                                    <option data-icon="fa-upload" value="8">File upload</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-calendar" value="4">Date</option>
-                                    <option data-icon="fa-clock-o" value="5">Time</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Description" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6 questioneditor-options">
-                            <ul class="sortable" data-questionid="125">
-                                <li id="answer_22">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-circle-o"></i> Option 1
-                                </li>
-                                <li id="answer_33">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-square-o"></i> Option 2
-                                </li>
-                                <li id="answer_44">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-minus"></i> Option 3
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                <li class="qsortableli" id="question_3000">
-                    <div class="form-row">
-                        <div class="col-md-12 text-center">
-                            <span class="grippyhorizontal"></span>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Question" />
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <select class="qtypepicker" name="Type">
-                                    <option data-icon="fa-minus" value="6">Short answer</option>
-                                    <option data-icon="fa-navicon" value="7">Paragraph</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-dot-circle-o" value="3">Multiple choice</option>
-                                    <option data-icon="fa-check-square" value="1">Checkboxes</option>
-                                    <option data-icon="fa-toggle-down" value="2">Dropdown</option>
-                                    <option data-divider="true" value=""></option>
-                                    <option data-icon="fa-upload" value="8">File upload</option>
-                                    <option data-divider="true"></option>
-                                    <option data-icon="fa-calendar" value="4">Date</option>
-                                    <option data-icon="fa-clock-o" value="5">Time</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-9">
-                            <input type="text" class="form-control" placeholder="Description" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-6 questioneditor-options">
-                            <ul class="sortable" data-questionid="125">
-                                <li id="answer_22">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-circle-o"></i> Option 1
-                                </li>
-                                <li id="answer_33">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-square-o"></i> Option 2
-                                </li>
-                                <li id="answer_44">
-                                    <span class="grippy"></span>
-                                    <i class="fa fa-minus"></i> Option 3
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </li>
-                @await Html.PartialAsync("_QuestionPartial", questionModel)
-            </ul>
         </form>
         <div id="QuestionSet_Questions">
-            <form asp-controller="QuestionSet" asp-action="EditQuestion" id="QuestionSetForm_@Model.FormId">
+            <form asp-controller="QuestionSet" asp-action="EditQuestion" id="QuestionSetForm">
+
+                <ul class="qsortable" id="QuestionList" data-questionsetid="125">
+                    @for (int i = 0; i < questionvm.Count; i++)
+                    {
+                        @await Html.PartialAsync("_QuestionEditPartial", @questionvm[i])
+                    }
+                </ul>
             </form>
         </div>
-        <button type="button" onclick="" class="btn btn-primary btn-lg">Save Question Set</button>
+        <button type="button" onclick="addQuestion()" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Add Question</button>
 
     </div>
 </div>
@@ -277,6 +135,36 @@
             }
         }
 
+        function addQuestion() {
+
+            var qsetId = @Model.QuestionSet.QuestionSetId;
+
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+            $.ajax({
+                    type: "POST",
+                    url: "/QuestionSet/AddQuestion/" + qsetId,
+                    data: {
+                        __RequestVerificationToken: token
+                    },
+                    dataType: "json"
+                }).done(function(response, textStatus, jqXHR) {
+
+                    if (!response.isError) {
+                        $("#QuestionList").append(response.questionForm);
+                    }
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+
+                })
+                .always(function() {
+                    setupEvents();
+                });
+
+        }
+
         function displayValidationErrors(errors) {
             $.each(errors,
                 function(idx, validationError) {
@@ -287,11 +175,29 @@
                 });
         }
 
-        $(document).ready(function () {
+        function setRadioStyle(questionid, questiontype) {
+            var qclass = "fa fa-circle-o";
+            if (questiontype == 2)
+                qclass = "fa fa-minus";
+            else if (questiontype == 1)
+                qclass = "fa fa-square-o";
 
-            $('#QuestionSetForm_@Model.FormId').change(function () {
-                saveForm('#QuestionSetForm_@Model.FormId');
+            // dropdown is fa fa-minus
+            // checkbox is fa fa-square-o
+
+            var items = $('#questionoptionslist_' + questionid + ' li');
+            items.push($('#questionoptions_add_' + questionid + ' div'));
+
+            items.each(function( index ) {
+                //console.log(index + ": " + $(this).text());
+                $(this).children('i').removeClass();
+
+                $(this).children('i').addClass(qclass);
             });
+
+        }
+
+        function setupEvents() {
 
             $('select.qtypepicker').selectpicker({
                 iconBase: 'fa',
@@ -300,10 +206,24 @@
 
             $('select.qtypepicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 var option = e.target[clickedIndex];
-                alert('Picker changed to ' + option.value);
+                var type = parseInt(option.value);
+                alert('Picker changed to ' + type);
+                var questionid = $(e.target).data("questionid");
+
+                if (type > 3) {
+                    $('#questionoptions_' + questionid).hide();
+                    $('#questionoptions_add_' + questionid).hide();
+                } else {
+                    setRadioStyle(questionid, type);
+                    $('#questionoptions_' + questionid).show();
+                    $('#questionoptions_add_' + questionid).show();
+                }
+
             });
 
-
+            $('.questioneditor-addbtn-add').on('click', function() {
+                var questionid = $(this).data("questionid");
+            });
 
             $(".sortable").sortable({
                 handle: '.grippy',
@@ -342,9 +262,20 @@
                         });
                 }
             });
+        }
+
+        $(document).ready(function () {
+
+            $('#QuestionSetForm_@Model.FormId').change(function () {
+                saveForm('#QuestionSetForm_@Model.FormId');
+            });
+
+            setupEvents();
+
 
             $(".qsortable").sortable({
                 handle: '.grippyhorizontal',
+                revert: false,
                 start: function(e, ui){
                     ui.placeholder.height(ui.item.height());
                 },

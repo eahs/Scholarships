@@ -92,8 +92,45 @@ span.grippyhorizontal {
         content: '.... ....';
     }
 
-.bootstrap-select .dropdown-toggle .filter-option-inner-inner i
-{
+.questioneditor-option {
+    border: solid 1px #f9f9f9;
+    background: #fcfcfc;
+}
+
+.questioneditor-option-editor {
+    display: inline-block;
+    width: 75%
+}
+
+
+.questioneditor-option-editor input {
+    border-top: 0px;
+    height: 20px;
+    line-height: 1.0;
+    border-right: 0px;
+    border-left: 0px;
+    border-bottom: solid 1px lightgray;
+    background: #fcfcfc;
+}
+
+.questioneditor-addbtn {
+    color: darkgray;
+    margin: 0 3px 3px 8px;
+    padding: 0.4em;
+    padding-left: 1.5em;
+    height: 30px;
+}
+
+.questioneditor-addbtn i {
+    margin-left: 10px;
+    margin-right: 8px;
+}
+
+.questioneditor-addbtn-add {
+    padding-left: 15px;
+}
+
+.bootstrap-select .dropdown-toggle .filter-option-inner-inner i {
     margin-right: 8px;
 }
 

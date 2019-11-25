@@ -125,6 +125,7 @@ namespace Scholarships.Controllers
 
             Question q = new Question
             {
+                QuestionSetId = qset.QuestionSetId,
                 Name = "",
                 Description = "",
                 ErrorMessage = "",
@@ -140,13 +141,16 @@ namespace Scholarships.Controllers
 
             int index = await _context.Question.Where(q => q.QuestionSetId == id).CountAsync() - 1;
 
-            return new QuestionViewModel
+            var qvm = new QuestionViewModel
             {
                 Index = index,
                 ErrorCode = QuestionSetError.NoError,
-                QuestionForm = await _renderService.RenderToStringAsync("_QuestionPartial", q)
+                Question =  q
             };
 
+            qvm.QuestionForm = await _renderService.RenderToStringAsync("_QuestionEditPartial", qvm);
+
+            return qvm;
         }
 
 
