@@ -13,7 +13,8 @@
         </div>
         <div class="form-row">
             <div class="col-md-9">
-                <input type="text" name="[@Model.Index].Name" value="@Model.Question.Name" class="form-control" placeholder="Question" />
+                <input type="hidden" name="[@Model.Index].QuestionId" value="@Model.Question.QuestionId"/>
+                <input type="text" name="[@Model.Index].Name" value="@Model.Question.Name" class="form-control" placeholder="Question"/>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
@@ -41,27 +42,20 @@
         <div class="form-row" id="questionoptions_@Model.Question.QuestionId">
             <div class="form-group col-md-9 questioneditor-options">
                 <ul class="sortable" id="questionoptionslist_@Model.Question.QuestionId" data-questionid="@Model.Question.QuestionId">
-                    <li id="answer_22" class="questioneditor-option">
-                        <span class="grippy"></span>
-                        <i class="fa fa-circle-o"></i>
-                        <div class="questioneditor-option-editor">
-                            <input type="text" class="form-control" placeholder="Option text"/>
-                        </div>
-                    </li>
-                    <li id="answer_33" class="questioneditor-option">
-                        <span class="grippy"></span>
-                        <i class="fa fa-circle-o"></i>
-                        <div class="questioneditor-option-editor">
-                            <input type="text" class="form-control" placeholder="Option text" />
-                        </div>
-                    </li>
-                    <li id="answer_44" class="questioneditor-option">
-                        <span class="grippy"></span>
-                        <i class="fa fa-circle-o"></i>
-                        <div class="questioneditor-option-editor">
-                            <input type="text" class="form-control" placeholder="Option text" />
-                        </div>
-                    </li>
+                    @for (int i = 0; i <  @Model.Question.Options.Count; i++)
+                    {
+                        QuestionOption option = @Model.Question.Options[i];
+
+                        <li id="answer_@option.QuestionOptionId" class="questioneditor-option">
+                            <span class="grippy"></span>
+                            <i class="fa fa-circle-o"></i>
+                            <div class="questioneditor-option-editor">
+                                <input type="hidden" name="[@Model.Index].Options[@i].QuestionOptionId" value="@option.QuestionOptionId" />
+                                <input type="hidden" name="[@Model.Index].Options[@i].Order" value="@option.Order" id="answer_order_@option.QuestionOptionId"/>
+                                <input type="text" class="form-control" name="[@Model.Index].Options[@i].Name" value="@option.Name" placeholder="Option text" />
+                            </div>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

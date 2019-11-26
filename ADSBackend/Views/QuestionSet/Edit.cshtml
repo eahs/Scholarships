@@ -69,9 +69,9 @@
             </div>
         </form>
         <div id="QuestionSet_Questions">
-            <form asp-controller="QuestionSet" asp-action="EditQuestion" id="QuestionSetForm">
+            <form asp-controller="QuestionSet" asp-action="EditQuestions" asp-route-id="@Model.QuestionSet.QuestionSetId" id="QuestionsForm">
 
-                <ul class="qsortable" id="QuestionList" data-questionsetid="125">
+                <ul class="qsortable" id="QuestionList" data-questionsetid="@Model.QuestionSet.QuestionSetId">
                     @for (int i = 0; i < questionvm.Count; i++)
                     {
                         @await Html.PartialAsync("_QuestionEditPartial", @questionvm[i])
@@ -133,6 +133,37 @@
                     });
 
             }
+        }
+
+        function saveQuestionsForm(formid) {
+            var post_url = $(formid).attr("action"); //get form action url
+            var form_data = $(formid).serialize(); //Encode form elements for submission
+
+            $("#saveMessage").hide();
+
+            $("#saveMessage").html("Saving...").fadeIn(200);
+
+            $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    dataType: "json"
+            }).done(function (response, textStatus, jqXHR) {
+
+                    if (!response.isError) {
+                        $("#saveMessage").html("All changes saved");
+                    } else if (response.Status === "InvalidRequest") {
+                        $("#saveMessage").html("Unable to save - Please fix errors");
+                        displayValidationErrors(response.modelStateErrors);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    $("#saveMessage").html("Error saving form!");
+                })
+                .always(function() {
+
+                    $("#saveMessage").delay(4000).fadeOut();
+                });
         }
 
         function addQuestion() {
@@ -197,7 +228,23 @@
 
         }
 
+        function setupStyles() {
+
+            var items = $('.qtypepicker');
+
+            items.each(function (index) {
+                //var questionid = parseInt($(this).attr('id').replace("question_", ""));
+                var questionid = $(this).data("questionid");
+                var questiontype = $(this).children("option:selected").val();
+
+                if (typeof(questionid) != "undefined" && typeof(questiontype) != "undefined")
+                    setRadioStyle(questionid, questiontype);
+            });
+        }
+
+
         function setupEvents() {
+
 
             $('select.qtypepicker').selectpicker({
                 iconBase: 'fa',
@@ -239,6 +286,10 @@
                         return el.id.replace("answer_", "");
                     });
 
+                    for (k = 0; k < ids.length; k++) {
+                        $('#answer_order_' + ids[k]).val(k);
+                    }
+
                     $("#saveMessage").html("Saving...").fadeIn(200);
 
                     $.ajax({
@@ -270,7 +321,12 @@
                 saveForm('#QuestionSetForm_@Model.FormId');
             });
 
+            $('#QuestionsForm').change(function () {
+                saveQuestionsForm('#QuestionsForm');
+            });
+
             setupEvents();
+            setupStyles();
 
 
             $(".qsortable").sortable({

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models.Forms;
@@ -108,6 +109,52 @@ namespace Scholarships.Controllers
             }
 
             return Error(QuestionSetError.InvalidForm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<QuestionViewModel> EditQuestions(int id, [Bind("Name,Description,Type,Options,Options.Name,Options.Order")] List<Question> questions)
+        {
+            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
+
+            if (qset == null)
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            var _questions = await _context.Question.Where(q => q.QuestionSetId == qset.QuestionSetId).ToListAsync();
+
+            int order = 0;
+            foreach (Question question in questions)
+            {
+                var _question = _questions.FirstOrDefault(q => q.QuestionId == question.QuestionId && q.QuestionSetId == qset.QuestionSetId);
+
+                if (_question != null)
+                {
+                    _question.Name = question.Name ?? "";
+                    _question.Description = question.Description ?? "";
+                    _question.Type = question.Type;
+
+                    _context.Question.Update(_question);
+
+                    if (question.Options != null)
+                    {
+                        for (int k = 0; k < question.Options.Count; k++)
+                        {
+                            question.Options[k].QuestionId = question.QuestionId;
+                        }
+
+                        _context.QuestionOption.UpdateRange(question.Options);
+                    }
+
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new QuestionViewModel { ErrorCode = QuestionSetError.NotFound };
         }
 
         [HttpPost]
