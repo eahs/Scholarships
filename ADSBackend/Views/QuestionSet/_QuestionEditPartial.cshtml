@@ -44,30 +44,29 @@
                 <ul class="sortable" id="questionoptionslist_@Model.Question.QuestionId" data-questionid="@Model.Question.QuestionId">
                     @for (int i = 0; i <  @Model.Question.Options.Count; i++)
                     {
-                        QuestionOption option = @Model.Question.Options[i];
+                        QuestionOptionViewModel option = new QuestionOptionViewModel
+                        {
+                            Index = @i,
+                            Question = @Model.Question,
+                            QuestionIndex = @Model.Index,
+                            QuestionOption = @Model.Question.Options[i]
+                        };
 
-                        <li id="answer_@option.QuestionOptionId" class="questioneditor-option">
-                            <span class="grippy"></span>
-                            <i class="fa fa-circle-o"></i>
-                            <div class="questioneditor-option-editor">
-                                <input type="hidden" name="[@Model.Index].Options[@i].QuestionOptionId" value="@option.QuestionOptionId" />
-                                <input type="hidden" name="[@Model.Index].Options[@i].Order" value="@option.Order" id="answer_order_@option.QuestionOptionId"/>
-                                <input type="text" class="form-control" name="[@Model.Index].Options[@i].Name" value="@option.Name" placeholder="Option text" />
-                            </div>
-                        </li>
+                        @await Html.PartialAsync("_QuestionOptionEditPartial", option)
+
                     }
                 </ul>
             </div>
         </div>
         <div class="form-row" id="questionoptions_add_@Model.Question.QuestionId">
             <div class="questioneditor-addbtn">
-                <i class="fa fa-square-o"></i> <span class="questioneditor-addbtn-add" data-questionid="@Model.Question.QuestionId">Add option</span>
+                <i class="fa fa-square-o"></i> <span class="questioneditor-addbtn-add" data-questionid="@Model.Question.QuestionId" data-questionindex="@Model.Index">Add option</span>
             </div>
         </div>
         <div class="form-row">
             <div class="col-md-8"></div>
             <div class="col-md-1" style="text-align: right">
-                <i class="fa fa-trash trashcan" style="font-size: 1.5em; padding-top: 10px" data-questionid="@Model.Question.QuestionId"></i>
+                <i class="fa fa-trash questioneditor-trash" style="font-size: 1.5em; padding-top: 10px" data-questionid="@Model.Question.QuestionId"></i>
             </div>
         </div>
     </li>

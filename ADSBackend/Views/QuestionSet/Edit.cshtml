@@ -1,31 +1,6 @@
 ﻿@using Scholarships.Models.Forms
 @model Scholarships.Models.Forms.QuestionSetViewModel
 
-@{
-    var question = new Question
-    {
-        QuestionId = 9999,
-        Type = QuestionType.FileUpload,
-        Name = "test"
-    };
-
-    var questionModel = new QuestionViewModel
-    {
-        Index = 0,
-        Question = question
-    };
-
-    List<QuestionViewModel> questionvm = new List<QuestionViewModel>();
-
-    for (int i = 0; i < Model.QuestionSet.Questions.Count; i++)
-    {
-        questionvm.Add(new QuestionViewModel
-        {
-            Index = i,
-            Question = Model.QuestionSet.Questions[i]
-        });
-    }
-}
 
 <div class="ibox">
     <div class="ibox-title">
@@ -69,15 +44,7 @@
             </div>
         </form>
         <div id="QuestionSet_Questions">
-            <form asp-controller="QuestionSet" asp-action="EditQuestions" asp-route-id="@Model.QuestionSet.QuestionSetId" id="QuestionsForm">
-
-                <ul class="qsortable" id="QuestionList" data-questionsetid="@Model.QuestionSet.QuestionSetId">
-                    @for (int i = 0; i < questionvm.Count; i++)
-                    {
-                        @await Html.PartialAsync("_QuestionEditPartial", @questionvm[i])
-                    }
-                </ul>
-            </form>
+            @await Html.PartialAsync("_QuestionFormPartial", @Model);
         </div>
         <button type="button" onclick="addQuestion()" class="btn btn-primary btn-lg"><i class="fa fa-plus"></i> Add Question</button>
 
@@ -97,7 +64,7 @@
 
 @section Scripts
 {
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
 
     <script type="text/javascript">
@@ -196,6 +163,81 @@
 
         }
 
+
+        function removeQuestion(questionId) {
+
+
+            swal({
+                    title: "Are you sure you want to remove this question?",
+                    text: "Once deleted, this question will no longer be available.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+
+                        var form = $('#__AjaxAntiForgeryForm');
+                        var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+                        $.ajax({
+                                type: "POST",
+                                url: "/QuestionSet/RemoveQuestion/@Model.QuestionSet.QuestionSetId",
+                                data: {
+                                    __RequestVerificationToken: token,
+                                    QuestionId: questionId
+                                },
+                                dataType: "json"
+                            }).done(function(response, textStatus, jqXHR) {
+
+                                if (!response.isError) {
+                                    $("#QuestionList").html(response.questionForm);
+                                }
+
+                            })
+                            .fail(function(jqXHR, textStatus, errorThrown) {
+
+                            })
+                            .always(function() {
+                                setupEvents();
+                            });
+
+                    }
+                });
+
+
+        }
+
+        function addQuestionOption(questionId, questionIndex) {
+
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+            $.ajax({
+                    type: "POST",
+                    url: "/QuestionSet/AddQuestionOption/" + questionId,
+                    data: {
+                        __RequestVerificationToken: token,
+                        QuestionIndex: questionIndex
+                    },
+                    dataType: "json"
+                }).done(function(response, textStatus, jqXHR) {
+
+                    if (!response.isError) {
+                        $("#questionoptionslist_" + questionId).append(response.questionOptionForm);
+                    }
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+
+                })
+                .always(function() {
+                    setupEvents();
+                });
+
+        }
+
+
         function displayValidationErrors(errors) {
             $.each(errors,
                 function(idx, validationError) {
@@ -245,6 +287,9 @@
 
         function setupEvents() {
 
+            $('.questioneditor-addbtn-add').off('click');
+            $('.questioneditor-trash').off('click');
+            $('select.qtypepicker').off('changed.bs.select');
 
             $('select.qtypepicker').selectpicker({
                 iconBase: 'fa',
@@ -254,7 +299,6 @@
             $('select.qtypepicker').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
                 var option = e.target[clickedIndex];
                 var type = parseInt(option.value);
-                alert('Picker changed to ' + type);
                 var questionid = $(e.target).data("questionid");
 
                 if (type > 3) {
@@ -269,7 +313,18 @@
             });
 
             $('.questioneditor-addbtn-add').on('click', function() {
-                var questionid = $(this).data("questionid");
+
+                var questionId = $(this).data("questionid");
+                var questionIndex = $(this).data("questionindex");
+
+                addQuestionOption(questionId, questionIndex);
+            });
+
+            $('.questioneditor-trash').on('click', function() {
+
+                var questionId = $(this).data("questionid");
+
+                removeQuestion(questionId);
             });
 
             $(".sortable").sortable({

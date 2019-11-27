@@ -1,0 +1,11 @@
+﻿@model Scholarships.Models.Forms.QuestionSetViewModel
+
+<form asp-controller="QuestionSet" asp-action="EditQuestions" asp-route-id="@Model.QuestionSet.QuestionSetId" id="QuestionsForm">
+
+    <ul class="qsortable" id="QuestionList" data-questionsetid="@Model.QuestionSet.QuestionSetId">
+        @for (int i = 0; i < Model.Questions.Count; i++)
+        {
+            @await Html.PartialAsync("_QuestionEditPartial", Model.Questions[i])
+        }
+    </ul>
+</form>

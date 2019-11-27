@@ -24,6 +24,7 @@ namespace Scholarships.Models.Forms
         [Key]
         public int QuestionId { get; set; }
         public int QuestionSetId { get; set; }
+        public QuestionSet QuestionSet { get; set; }
         public QuestionType Type { get; set; } = QuestionType.Checkboxes;
         public int Order { get; set; } = 0;
         public string Name { get; set; }

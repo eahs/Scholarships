@@ -1,0 +1,11 @@
+﻿@model Scholarships.Models.Forms.QuestionOptionViewModel
+
+<li id="answer_@Model.QuestionOption.QuestionOptionId" class="questioneditor-option">
+    <span class="grippy"></span>
+    <i class="fa fa-circle-o"></i>
+    <div class="questioneditor-option-editor">
+        <input type="hidden" name="[@Model.QuestionIndex].Options[@Model.Index].QuestionOptionId" value="@Model.QuestionOption.QuestionOptionId" />
+        <input type="hidden" name="[@Model.QuestionIndex].Options[@Model.Index].Order" value="@Model.QuestionOption.Order" id="answer_order_@Model.QuestionOption.QuestionOptionId"/>
+        <input type="text" class="form-control" name="[@Model.QuestionIndex].Options[@Model.Index].Name" value="@Model.QuestionOption.Name" placeholder="Option text" />
+    </div>
+</li>

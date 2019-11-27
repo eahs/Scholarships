@@ -18,6 +18,9 @@ namespace Scholarships.Models.Forms
         NotFound = 2,
 
         [Description("There are some errors with the submitted form that need fixing")]
-        InvalidForm = 3
+        InvalidForm = 3,
+
+        [Description("Form index required but not supplied in call")]
+        FormIndexNotProvided = 4
     }
 }

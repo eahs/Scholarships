@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -61,11 +62,22 @@ namespace Scholarships.Controllers
             }
         }
 
+        private async Task<QuestionSet> GetQuestionSet(int QuestionSetId)
+        {
+            var qset = await _context.QuestionSet.Include(qs => qs.Questions).ThenInclude(q => q.Options)
+                .FirstOrDefaultAsync(q => q.QuestionSetId == QuestionSetId);
+
+            // Fix sort orders
+            if (qset != null)
+                SortQuestionSet(qset);
+
+            return qset;
+        }
+
         // Admin level
         public async Task<IActionResult> Edit(int id)
         {
-            var qset = await _context.QuestionSet.Include(qs => qs.Questions).ThenInclude(q => q.Options)
-                                                 .FirstOrDefaultAsync(q => q.QuestionSetId == id);
+            var qset = await GetQuestionSet(id);
 
             if (qset == null)
                 return NotFound();
@@ -73,10 +85,20 @@ namespace Scholarships.Controllers
             if (!UserCanModifyQuestionSet(qset))
                 return NotFound();
 
-            // Fix sort orders
-            SortQuestionSet(qset);
-
             var model = new QuestionSetViewModel { FormId = "12345", QuestionSet = qset };
+
+            List<QuestionViewModel> questionvm = new List<QuestionViewModel>();
+
+            for (int i = 0; i < qset.Questions.Count; i++)
+            {
+                questionvm.Add(new QuestionViewModel
+                {
+                    Index = i,
+                    Question = qset.Questions[i]
+                });
+            }
+
+            model.Questions = questionvm;
 
             return View(model);
         }
@@ -196,10 +218,96 @@ namespace Scholarships.Controllers
             };
 
             qvm.QuestionForm = await _renderService.RenderToStringAsync("_QuestionEditPartial", qvm);
+            qvm.Question.QuestionSet.Questions = null;
 
             return qvm;
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<QuestionViewModel> RemoveQuestion(int id, [Bind("QuestionId")] Question question)  // id is of question set
+        {
+            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
+
+            if (qset == null)
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            var _question = await _context.Question.FirstOrDefaultAsync(q => q.QuestionSetId == id && q.QuestionId == question.QuestionId);
+
+            if (_question == null)
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            _context.Question.Remove(_question);
+            await _context.SaveChangesAsync();
+
+            qset = await GetQuestionSet(id);
+
+            List<QuestionViewModel> questionvm = new List<QuestionViewModel>();
+
+            for (int i = 0; i < qset.Questions.Count; i++)
+            {
+                questionvm.Add(new QuestionViewModel
+                {
+                    Index = i,
+                    Question = qset.Questions[i]
+                });
+            }
+
+            QuestionSetViewModel qvm = new QuestionSetViewModel
+            {
+                QuestionSet = qset,
+                Questions = questionvm
+            };
+
+            return new QuestionViewModel
+            {
+                QuestionForm = await _renderService.RenderToStringAsync("_QuestionFormPartial", qvm)
+            };
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
+        public async Task<QuestionOptionViewModel> AddQuestionOption(int id, [Bind("QuestionIndex")] QuestionOptionViewModel qvm)  // id is of the question, qindex is sortable list index
+        {
+            if (qvm.QuestionIndex < 0)
+                return new QuestionOptionViewModel {ErrorCode = QuestionSetError.FormIndexNotProvided};
+
+            var question = await _context.Question.Include(q => q.QuestionSet).FirstOrDefaultAsync(q => q.QuestionId == id);
+
+            if (question == null)
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            var qset = question.QuestionSet;
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            QuestionOption q = new QuestionOption
+            {
+                QuestionId = question.QuestionId,
+                Name = ""
+            };
+
+            _context.Add(q);
+            await _context.SaveChangesAsync();
+
+            int index = await _context.QuestionOption.Where(q => q.QuestionId == id).CountAsync() - 1;
+
+            qvm.Index = index;
+            qvm.ErrorCode = QuestionSetError.NoError;
+            qvm.QuestionOption = q;
+            qvm.QuestionOption.Question = null;
+            qvm.QuestionOptionForm = await _renderService.RenderToStringAsync("_QuestionOptionEditPartial", qvm);
+
+            return qvm;
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -221,94 +329,23 @@ namespace Scholarships.Controllers
         {
             QuestionSetError error = QuestionSetError.NoError;
 
+            var question = await _context.Question.Include(q => q.QuestionSet).FirstOrDefaultAsync(q => q.QuestionId == id);
+
+            if (question == null)
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            var qset = question.QuestionSet;
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+
+
             return new FormsBaseViewModel
             {
                 ErrorCode = error
             };
         }
-
-        /*
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name,Description,SingularName,PluralName,AllowMultiple")] QuestionSet questionSet)
-        {
-            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
-
-            if (qset == null)
-                return NotFound();
-
-            if (!UserCanModifyQuestionSet(qset))
-                return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                qset.Name = questionSet.Name;
-                qset.Description = questionSet.Description;
-                qset.SingularName = questionSet.SingularName;
-                qset.PluralName = questionSet.PluralName;
-                qset.AllowMultiple = questionSet.AllowMultiple;
-
-                _context.QuestionSet.Update(qset);
-                await _context.SaveChangesAsync();
-            }
-
-            return View(qset);
-        }
-        */
-
-        /*
-                public async Task<QuestionSetViewModel> Edit(int id)
-                {
-                    var qset = await _context.QuestionSet.Include(qs => qs.Questions).ThenInclude(q => q.Options)
-                                                         .FirstOrDefaultAsync(q => q.QuestionSetId == id);
-
-                    if (qset == null)
-                        return Error(QuestionSetError.NotFound);
-
-                    if (!UserCanModifyQuestionSet(qset))
-                        return new QuestionSetViewModel { ErrorCode = QuestionSetError.NotAuthorized };
-
-                    // Fix sort orders
-                    SortQuestionSet(qset);
-
-                    var model = new QuestionSetViewModel { FormId = "12345", QuestionSet = qset };
-
-                    var form = await _renderService.RenderToStringAsync("_EditQuestionSetPartial", model);
-                    model.PrimaryForm = form;
-
-                    return model;
-                }
-
-                [HttpPost]
-                [ValidateAntiForgeryToken]
-                public async Task<QuestionSetViewModel> Edit(int id, [Bind("Name,Description,SingularName,PluralName,AllowMultiple")] QuestionSet questionSet)
-                {
-                    var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
-
-                    if (qset == null)
-                        return Error(QuestionSetError.NotFound);
-
-                    if (!UserCanModifyQuestionSet(qset))
-                        return Error(QuestionSetError.NotAuthorized);
-
-                    if (ModelState.IsValid)
-                    {
-                        qset.Name = questionSet.Name;
-                        qset.Description = questionSet.Description;
-                        qset.SingularName = questionSet.SingularName;
-                        qset.PluralName = questionSet.PluralName;
-                        qset.AllowMultiple = questionSet.AllowMultiple;
-
-                        _context.QuestionSet.Update(qset);
-                        await _context.SaveChangesAsync();
-
-                        return new QuestionSetViewModel { QuestionSet = qset };
-                    }
-
-                    return Error(QuestionSetError.InvalidForm);
-                }
-
-        */
 
     }
 }
