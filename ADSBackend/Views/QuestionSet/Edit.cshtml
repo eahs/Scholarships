@@ -231,10 +231,40 @@
                 .fail(function(jqXHR, textStatus, errorThrown) {
 
                 })
-                .always(function() {
+                .always(function () {
+                    setupStyles();
                     setupEvents();
                 });
 
+        }
+
+        function removeQuestionOption(questionOptionId, questionIndex) {
+
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+            $.ajax({
+                    type: "POST",
+                    url: "/QuestionSet/RemoveQuestionOption/" + questionOptionId,
+                    data: {
+                        __RequestVerificationToken: token,
+                        QuestionIndex: questionIndex
+                    },
+                    dataType: "json"
+                }).done(function(response, textStatus, jqXHR) {
+
+                    if (!response.isError) {
+                        $("#questionoptionslist_" + response.questionOption.questionId).html(response.questionOptionForm);
+                    }
+
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+
+                })
+                .always(function () {
+                    setupStyles();
+                    setupEvents();
+                });
         }
 
 
@@ -287,6 +317,7 @@
 
         function setupEvents() {
 
+            $('.questioneditor-option-delete').off('click');
             $('.questioneditor-addbtn-add').off('click');
             $('.questioneditor-trash').off('click');
             $('select.qtypepicker').off('changed.bs.select');
@@ -326,6 +357,15 @@
 
                 removeQuestion(questionId);
             });
+
+            $('.questioneditor-option-delete').on('click', function() {
+
+                var questionOptionId = $(this).data("questionoptionid");
+                var questionIndex = $(this).data("questionindex");
+
+                removeQuestionOption(questionOptionId, questionIndex);
+            });
+
 
             $(".sortable").sortable({
                 handle: '.grippy',

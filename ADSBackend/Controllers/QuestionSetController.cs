@@ -312,9 +312,78 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Produces("application/json")]
+        public async Task<QuestionOptionViewModel> RemoveQuestionOption(int id, [Bind("QuestionIndex")] QuestionOptionViewModel qvm)  // id is of the question option
+        {
+            if (qvm.QuestionIndex < 0)
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.FormIndexNotProvided };
+
+            var questionoption = await _context.QuestionOption.FirstOrDefaultAsync(qo => qo.QuestionOptionId == id);
+
+            var question = await _context.Question.Include(q => q.QuestionSet)
+                                                  .Include(q => q.Options)
+                                                  .FirstOrDefaultAsync(q => q.QuestionId == questionoption.QuestionId);
+
+            if (question == null)
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            if (!UserCanModifyQuestionSet(question.QuestionSet))
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            QuestionOption q = new QuestionOption
+            {
+                QuestionOptionId = questionoption.QuestionOptionId
+            };
+
+            _context.QuestionOption.Remove(question.Options.Find(qo => qo.QuestionOptionId == questionoption.QuestionOptionId));
+
+            question.Options.RemoveAt(question.Options.FindIndex(qo => qo.QuestionOptionId == questionoption.QuestionOptionId));
+
+            await _context.SaveChangesAsync();
+
+            question.Options = question.Options.OrderBy(qo => qo.Order).ToList();
+
+            for (int index = 0; index < question.Options.Count; index++)
+            {
+                qvm.Index = index;
+                qvm.ErrorCode = QuestionSetError.NoError;
+                qvm.QuestionOption = question.Options[index];
+                qvm.QuestionOption.Question = null;
+                qvm.QuestionOptionForm += await _renderService.RenderToStringAsync("_QuestionOptionEditPartial", qvm);
+            }
+
+            return qvm;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Produces("application/json")]
         public async Task<object> SaveQuestionOrder(int id, [Bind("order")] List<int> order)
         {
             QuestionSetError error = QuestionSetError.NoError;
+
+            var questions = await _context.Question.Include(q => q.QuestionSet)
+                                                  .Where(q => q.QuestionSetId == id)
+                                                  .ToListAsync();
+
+            if (questions == null)
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            var qset = questions.FirstOrDefault().QuestionSet;
+
+            if (!UserCanModifyQuestionSet(qset))
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            if (order.Count != questions.Count)
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotAuthorized };
+
+            for (int i = 0; i < order.Count; i++)
+            {
+                var question = questions.FirstOrDefault(q => q.QuestionId == order[i]);
+                if (question != null)
+                    question.Order = i;
+            }
+            _context.Question.UpdateRange(questions);
+            await _context.SaveChangesAsync();
 
             return new FormsBaseViewModel
             {
@@ -329,7 +398,9 @@ namespace Scholarships.Controllers
         {
             QuestionSetError error = QuestionSetError.NoError;
 
-            var question = await _context.Question.Include(q => q.QuestionSet).FirstOrDefaultAsync(q => q.QuestionId == id);
+            var question = await _context.Question.Include(q => q.QuestionSet)
+                                                  .Include(q => q.Options)
+                                                  .FirstOrDefaultAsync(q => q.QuestionId == id);
 
             if (question == null)
                 return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
@@ -339,7 +410,15 @@ namespace Scholarships.Controllers
             if (!UserCanModifyQuestionSet(qset))
                 return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotAuthorized };
 
+            for (int i = 0; i < order.Count; i++)
+            {
+                var option = question.Options.FirstOrDefault(q => q.QuestionOptionId == order[i]);
+                if (option != null)
+                    option.Order = i;
+            }
 
+            _context.UpdateRange(question.Options);
+            await _context.SaveChangesAsync();
 
             return new FormsBaseViewModel
             {

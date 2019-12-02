@@ -21,6 +21,9 @@ namespace Scholarships.Models.Forms
         InvalidForm = 3,
 
         [Description("Form index required but not supplied in call")]
-        FormIndexNotProvided = 4
+        FormIndexNotProvided = 4,
+
+        [Description("The provided order does not match the number of questions in this set")]
+        InvalidOrderNotEnoughElements = 5
     }
 }
