@@ -1,0 +1,155 @@
+﻿@model Scholarships.Models.Scholarship
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Scholarship</h1>
+
+<div class="ibox">
+    <div class="ibox-title">
+        <h4>Scholarship</h4>
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-9">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="SponsorCompany" class="control-label"></label>
+                        <input asp-for="SponsorCompany" class="form-control" />
+                        <span asp-validation-for="SponsorCompany" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorName" class="control-label"></label>
+                        <input asp-for="SponsorName" class="form-control" />
+                        <span asp-validation-for="SponsorName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorAddress1" class="control-label"></label>
+                        <input asp-for="SponsorAddress1" class="form-control" />
+                        <span asp-validation-for="SponsorAddress1" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorAddress2" class="control-label"></label>
+                        <input asp-for="SponsorAddress2" class="form-control" />
+                        <span asp-validation-for="SponsorAddress2" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorPhone" class="control-label"></label>
+                        <input asp-for="SponsorPhone" class="form-control" />
+                        <span asp-validation-for="SponsorPhone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorEmail" class="control-label"></label>
+                        <input asp-for="SponsorEmail" class="form-control" />
+                        <span asp-validation-for="SponsorEmail" class="text-danger"></span>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea name="Description" id="Description" class="tinymce"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Eligibility" class="control-label"></label>
+                        <textarea name="Eligibility" class="tinymce"></textarea>
+                        <span asp-validation-for="Eligibility" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Standards" class="control-label"></label>
+                        <textarea name="Standards" class="tinymce"></textarea>
+                        <span asp-validation-for="Standards" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Amount" class="control-label"></label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ApplicationInstructions" class="control-label"></label>
+                        <textarea name="ApplicationInstructions" class="tinymce"></textarea>
+                        <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="ApplyOnline" /> @Html.DisplayNameFor(model => model.ApplyOnline)
+                        </label>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="TranscriptsRequired" /> @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ReleaseDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="ReleaseDate" data-mask="99/99/9999" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control" />
+                        </div>
+                        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DueDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="DueDate" data-mask="99/99/9999" class="form-control" />
+                        </div>
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Styles  {
+
+    <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
+    <link href="~/lib/jasny-bootstrap/dist/css/jasny-bootstrap.css" rel="stylesheet" />
+
+    <style type="text/css">
+    </style>
+}
+
+@section Scripts {
+
+    <script src="~/lib/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <script type="text/javascript">
+
+        
+
+        $(document).ready(function () {
+
+            tinymce.init({
+                selector: '.tinymce'
+            });
+
+            var mem = $('.input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "mm/dd/yyyy"
+            });
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

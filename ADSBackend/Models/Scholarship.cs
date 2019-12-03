@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Scholarships.Models.Forms;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Scholarships.Models
@@ -9,24 +11,43 @@ namespace Scholarships.Models
         [Key]
         public int ScholarshipId { get; set; }
 
+        [DisplayName("Sponsor Company")]
         public string SponsorCompany { get; set; }
+        [DisplayName("Sponsor Name")]
         public string SponsorName { get; set; }
+        [DisplayName("Sponsor Address (Line 1)")]
         public string SponsorAddress1 { get; set; }
+        [DisplayName("Sponsor Address (Line 2)")]
         public string SponsorAddress2 { get; set; }
+
+        [DataType(DataType.PhoneNumber)]
+        [DisplayName("Sponsor Phone Number")]
         public string SponsorPhone { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [DisplayName("Sponsor Contact Email")]
         public string SponsorEmail { get; set; }
 
+        [DisplayName("Scholarship Name")]
         public string Name { get; set; }
         public string Description { get; set; }
         public string Eligibility { get; set; }
         public string Standards { get; set; }
         public string Amount { get; set; }
+        [DisplayName("Application Instructions")]
         public string ApplicationInstructions { get; set; }
+        [DisplayName("Apply Online?")]
         public bool ApplyOnline { get; set; }
+        [DisplayName("Transcripts Required?")]
         public bool TranscriptsRequired { get; set; }
 
+        [DisplayName("Public Release Date")]
         public DateTime ReleaseDate { get; set; }   // Date when scholarship becomes available
+        [DisplayName("Scholarship Deadline")]
         public DateTime DueDate { get; set; } // Date when scholarship is due
+
+        public int QuestionSetId { get; set; }
+        public QuestionSet QuestionSet { get; set; }
 
         public List<ScholarshipCategory> Categories { get; set; }
     }

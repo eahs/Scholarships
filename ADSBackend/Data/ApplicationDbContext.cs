@@ -48,5 +48,7 @@ namespace Scholarships.Data
                 .WithMany(t => t.Scholarships)
                 .HasForeignKey(nt => nt.CategoryId);
         }
+
+        public DbSet<Scholarships.Models.Category> Category { get; set; }
     }
 }

@@ -1,0 +1,119 @@
+﻿@model Scholarships.Models.Scholarship
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Scholarship</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ScholarshipId" />
+            <div class="form-group">
+                <label asp-for="SponsorCompany" class="control-label"></label>
+                <input asp-for="SponsorCompany" class="form-control" />
+                <span asp-validation-for="SponsorCompany" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SponsorName" class="control-label"></label>
+                <input asp-for="SponsorName" class="form-control" />
+                <span asp-validation-for="SponsorName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SponsorAddress1" class="control-label"></label>
+                <input asp-for="SponsorAddress1" class="form-control" />
+                <span asp-validation-for="SponsorAddress1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SponsorAddress2" class="control-label"></label>
+                <input asp-for="SponsorAddress2" class="form-control" />
+                <span asp-validation-for="SponsorAddress2" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SponsorPhone" class="control-label"></label>
+                <input asp-for="SponsorPhone" class="form-control" />
+                <span asp-validation-for="SponsorPhone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SponsorEmail" class="control-label"></label>
+                <input asp-for="SponsorEmail" class="form-control" />
+                <span asp-validation-for="SponsorEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <div class="summernote">Test</div>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Eligibility" class="control-label"></label>
+                <input asp-for="Eligibility" class="form-control" />
+                <span asp-validation-for="Eligibility" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Standards" class="control-label"></label>
+                <input asp-for="Standards" class="form-control" />
+                <span asp-validation-for="Standards" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Amount" class="control-label"></label>
+                <input asp-for="Amount" class="form-control" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApplicationInstructions" class="control-label"></label>
+                <input asp-for="ApplicationInstructions" class="form-control" />
+                <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="ApplyOnline" /> @Html.DisplayNameFor(model => model.ApplyOnline)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TranscriptsRequired" /> @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReleaseDate" class="control-label"></label>
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="ReleaseDate" data-mask="99/99/9999" value="@Model.ReleaseDate.ToString("MM/dd/yyyy")" class="form-control" />
+                </div>
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DueDate" class="control-label"></label>
+                <div class="input-group date">
+                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="DueDate" data-mask="99/99/9999" value="@Model.DueDate.ToString("MM/dd/yyyy")" class="form-control" />
+                </div>
+                <span asp-validation-for="DueDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="form-group">
+                    <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="ViewBag.QuestionSetId" class="btn btn-lg btn-primary">Modify Attached Questions</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
