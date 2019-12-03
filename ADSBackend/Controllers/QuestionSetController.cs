@@ -192,6 +192,8 @@ namespace Scholarships.Controllers
             if (!UserCanModifyQuestionSet(qset))
                 return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
 
+            int index = await _context.Question.Where(q => q.QuestionSetId == id).CountAsync();
+
             Question q = new Question
             {
                 QuestionSetId = qset.QuestionSetId,
@@ -201,14 +203,13 @@ namespace Scholarships.Controllers
                 Config = "{}",
                 Options = new List<QuestionOption>(),
                 Required = false,
-                Type = QuestionType.MultipleChoice
+                Type = QuestionType.MultipleChoice,
+                Order = index
             };
 
             _context.Add(q);
             await _context.SaveChangesAsync();
 
-
-            int index = await _context.Question.Where(q => q.QuestionSetId == id).CountAsync() - 1;
 
             var qvm = new QuestionViewModel
             {
