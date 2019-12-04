@@ -50,18 +50,17 @@
             </div>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <div class="summernote">Test</div>
+                <textarea asp-for="Description" id="Description" class="summernote"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Eligibility" class="control-label"></label>
-                <input asp-for="Eligibility" class="form-control" />
+                <textarea asp-for="Eligibility" class="summernote"></textarea>
                 <span asp-validation-for="Eligibility" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Standards" class="control-label"></label>
-                <input asp-for="Standards" class="form-control" />
+                <textarea asp-for="Standards" class="summernote"></textarea>
                 <span asp-validation-for="Standards" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -71,7 +70,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="ApplicationInstructions" class="control-label"></label>
-                <input asp-for="ApplicationInstructions" class="form-control" />
+                <textarea asp-for="ApplicationInstructions" class="summernote"></textarea>
                 <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
@@ -100,7 +99,7 @@
             </div>
             <div class="form-group">
                 <div class="form-group">
-                    <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="ViewBag.QuestionSetId" class="btn btn-lg btn-primary">Modify Attached Questions</a>
+                    <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="@Model.QuestionSetId" class="btn btn-lg btn-primary">Modify Attached Questions</a>
                 </div>
             </div>
             <div class="form-group">
@@ -114,6 +113,52 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Styles  {
+
+    <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
+    <link href="~/lib/jasny-bootstrap/dist/css/jasny-bootstrap.css" rel="stylesheet" />
+    <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <style type="text/css">
+        </style>
+}
+
 @section Scripts {
+
+    <script src="~/lib/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+
+            $('.summernote').summernote({
+                height: 150,
+                dialogsInBody: true
+            });
+
+            jQuery.validator.setDefaults({
+                // This will ignore all hidden elements alongside `contenteditable` elements
+                // that have no `name` attribute
+                ignore: ":hidden:not(#summernote),.note-editable.card-block,.note-editable.panel-body"
+            });
+
+
+            var mem = $('.input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "mm/dd/yyyy"
+            });
+        });
+    </script>
+
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
 }

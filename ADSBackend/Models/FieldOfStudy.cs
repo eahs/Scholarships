@@ -12,5 +12,8 @@ namespace Scholarships.Models
         public int FieldOfStudyId { get; set; }
 
         public string Name { get; set; }
+
+        public List<ScholarshipFieldOfStudy> Scholarships { get; set; }
+
     }
 }

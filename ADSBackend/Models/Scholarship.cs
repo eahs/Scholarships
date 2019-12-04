@@ -42,13 +42,17 @@ namespace Scholarships.Models
         public bool TranscriptsRequired { get; set; }
 
         [DisplayName("Public Release Date")]
+        [DataType(DataType.Date)]
         public DateTime ReleaseDate { get; set; }   // Date when scholarship becomes available
         [DisplayName("Scholarship Deadline")]
+        [DataType(DataType.Date)]
         public DateTime DueDate { get; set; } // Date when scholarship is due
 
         public int QuestionSetId { get; set; }
         public QuestionSet QuestionSet { get; set; }
 
         public List<ScholarshipCategory> Categories { get; set; }
+        public List<ScholarshipFieldOfStudy> FieldsOfStudies { get; set; }
+
     }
 }

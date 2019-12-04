@@ -17,8 +17,8 @@ namespace Scholarships.Data
         public DbSet<Scholarship> Scholarship { get; set; }
         public DbSet<FieldOfStudy> FieldOfStudy { get; set; }
         public DbSet<ScholarshipCategory> ScholarshipCategory { get; set; }
+        public DbSet<ScholarshipFieldOfStudy> ScholarshipFieldOfStudy { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
-
         public DbSet<Answer> Answer { get; set; }
         public DbSet<AnswerOption> AnswerOption  { get; set; }
         public DbSet<AnswerSet> AnswerSet  { get; set; }
@@ -47,6 +47,20 @@ namespace Scholarships.Data
                 .HasOne(nt => nt.Category)
                 .WithMany(t => t.Scholarships)
                 .HasForeignKey(nt => nt.CategoryId);
+
+
+            builder.Entity<ScholarshipFieldOfStudy>()
+                .HasKey(t => new { t.FieldOfStudyId, t.ScholarshipId });
+
+            builder.Entity<ScholarshipFieldOfStudy>()
+                .HasOne(nt => nt.Scholarship)
+                .WithMany(n => n.FieldsOfStudies)
+                .HasForeignKey(nt => nt.ScholarshipId);
+
+            builder.Entity<ScholarshipFieldOfStudy>()
+                .HasOne(nt => nt.FieldOfStudy)
+                .WithMany(t => t.Scholarships)
+                .HasForeignKey(nt => nt.FieldOfStudyId);
         }
 
         public DbSet<Scholarships.Models.Category> Category { get; set; }

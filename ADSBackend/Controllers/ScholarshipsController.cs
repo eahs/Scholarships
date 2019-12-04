@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
+using Scholarships.Models.Forms;
 
 namespace Scholarships.Controllers
 {
@@ -61,11 +62,19 @@ namespace Scholarships.Controllers
         {
             if (ModelState.IsValid)
             {
+                QuestionSet qset = new QuestionSet
+                {
+                    Name = scholarship.Name ?? ""
+                };
+                _context.Add(qset);
+                await _context.SaveChangesAsync();
+
+                scholarship.QuestionSetId = qset.QuestionSetId;
+
                 _context.Add(scholarship);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["QuestionSetId"] = new SelectList(_context.QuestionSet, "QuestionSetId", "Name", scholarship.QuestionSetId);
             return View(scholarship);
         }
 
@@ -82,7 +91,6 @@ namespace Scholarships.Controllers
             {
                 return NotFound();
             }
-            ViewData["QuestionSetId"] = new SelectList(_context.QuestionSet, "QuestionSetId", "Name", scholarship.QuestionSetId);
             return View(scholarship);
         }
 
