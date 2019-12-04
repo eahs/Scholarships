@@ -2,113 +2,138 @@
 
 @{
     ViewData["Title"] = "Edit";
+
+    var questionSetParameters = new Dictionary<string, string>
+{
+           { "id", Model.QuestionSetId + "" },
+           { "returnUrl", "/Scholarships/Edit/" + Model.ScholarshipId },
+           { "buttonText", "Edit Scholarship"}
+    };
 }
 
-<h1>Edit</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Index">Manage Scholarships</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Edit Scholarship</strong>
+    </li>
+</ol>
 
-<h4>Scholarship</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ScholarshipId" />
-            <div class="form-group">
-                <label asp-for="SponsorCompany" class="control-label"></label>
-                <input asp-for="SponsorCompany" class="form-control" />
-                <span asp-validation-for="SponsorCompany" class="text-danger"></span>
+<h2>Edit Scholarship</h2>
+
+<div class="ibox">
+    <div class="ibox-title">
+        <div style="float: right" id="saveMessage"></div>
+
+        <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="@Model.QuestionSetId" asp-all-route-data="questionSetParameters" class="btn btn-success btn-lg">Modify Attached Questions</a>
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-9">
+                <form asp-action="Edit" id="ScholarshipEdit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="ScholarshipId" />
+                    <div class="form-group">
+                        <label class="control-label" style="width: 100%">Related Fields of Study</label>
+                        <select asp-for="FieldsOfStudies" asp-items="ViewBag.FieldsOfStudy" multiple="multiple" class="fos form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorCompany" class="control-label"></label>
+                        <input asp-for="SponsorCompany" class="form-control" />
+                        <span asp-validation-for="SponsorCompany" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorName" class="control-label"></label>
+                        <input asp-for="SponsorName" class="form-control" />
+                        <span asp-validation-for="SponsorName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorAddress1" class="control-label"></label>
+                        <input asp-for="SponsorAddress1" class="form-control" />
+                        <span asp-validation-for="SponsorAddress1" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorAddress2" class="control-label"></label>
+                        <input asp-for="SponsorAddress2" class="form-control" />
+                        <span asp-validation-for="SponsorAddress2" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorPhone" class="control-label"></label>
+                        <input asp-for="SponsorPhone" class="form-control" />
+                        <span asp-validation-for="SponsorPhone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SponsorEmail" class="control-label"></label>
+                        <input asp-for="SponsorEmail" class="form-control" />
+                        <span asp-validation-for="SponsorEmail" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" id="Description" class="summernote"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Eligibility" class="control-label"></label>
+                        <textarea asp-for="Eligibility" class="summernote"></textarea>
+                        <span asp-validation-for="Eligibility" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Standards" class="control-label"></label>
+                        <textarea asp-for="Standards" class="summernote"></textarea>
+                        <span asp-validation-for="Standards" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Amount" class="control-label"></label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ApplicationInstructions" class="control-label"></label>
+                        <textarea asp-for="ApplicationInstructions" class="summernote"></textarea>
+                        <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="ApplyOnline" /> @Html.DisplayNameFor(model => model.ApplyOnline)
+                        </label>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="TranscriptsRequired" /> @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ReleaseDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="ReleaseDate" data-mask="99/99/9999" value="@Model.ReleaseDate.ToString("MM/dd/yyyy")" class="form-control" />
+                        </div>
+                        <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DueDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="DueDate" data-mask="99/99/9999" value="@Model.DueDate.ToString("MM/dd/yyyy")" class="form-control" />
+                        </div>
+                        <span asp-validation-for="DueDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Save Scholarship" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="SponsorName" class="control-label"></label>
-                <input asp-for="SponsorName" class="form-control" />
-                <span asp-validation-for="SponsorName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SponsorAddress1" class="control-label"></label>
-                <input asp-for="SponsorAddress1" class="form-control" />
-                <span asp-validation-for="SponsorAddress1" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SponsorAddress2" class="control-label"></label>
-                <input asp-for="SponsorAddress2" class="form-control" />
-                <span asp-validation-for="SponsorAddress2" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SponsorPhone" class="control-label"></label>
-                <input asp-for="SponsorPhone" class="form-control" />
-                <span asp-validation-for="SponsorPhone" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SponsorEmail" class="control-label"></label>
-                <input asp-for="SponsorEmail" class="form-control" />
-                <span asp-validation-for="SponsorEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" id="Description" class="summernote"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Eligibility" class="control-label"></label>
-                <textarea asp-for="Eligibility" class="summernote"></textarea>
-                <span asp-validation-for="Eligibility" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Standards" class="control-label"></label>
-                <textarea asp-for="Standards" class="summernote"></textarea>
-                <span asp-validation-for="Standards" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Amount" class="control-label"></label>
-                <input asp-for="Amount" class="form-control" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ApplicationInstructions" class="control-label"></label>
-                <textarea asp-for="ApplicationInstructions" class="summernote"></textarea>
-                <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="ApplyOnline" /> @Html.DisplayNameFor(model => model.ApplyOnline)
-                </label>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="TranscriptsRequired" /> @Html.DisplayNameFor(model => model.TranscriptsRequired)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReleaseDate" class="control-label"></label>
-                <div class="input-group date">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="ReleaseDate" data-mask="99/99/9999" value="@Model.ReleaseDate.ToString("MM/dd/yyyy")" class="form-control" />
-                </div>
-                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DueDate" class="control-label"></label>
-                <div class="input-group date">
-                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="DueDate" data-mask="99/99/9999" value="@Model.DueDate.ToString("MM/dd/yyyy")" class="form-control" />
-                </div>
-                <span asp-validation-for="DueDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="form-group">
-                    <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="@Model.QuestionSetId" class="btn btn-lg btn-primary">Modify Attached Questions</a>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
@@ -118,9 +143,10 @@
     <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
     <link href="~/lib/jasny-bootstrap/dist/css/jasny-bootstrap.css" rel="stylesheet" />
     <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 
     <style type="text/css">
-        </style>
+    </style>
 }
 
 @section Scripts {
@@ -129,12 +155,68 @@
     <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
 
     <script type="text/javascript">
 
+        function saveForm(formid) {
+            var post_url = $(formid).attr("action"); //get form action url
+            var form_data = $(formid).serialize(); //Encode form elements for submission
+
+            $("#saveMessage").hide();
+
+            if ($(formid).valid()) {
+                $("#saveMessage").html("Saving...").fadeIn(200);
+
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    dataType: "json"
+                }).done(function (response, textStatus, jqXHR) {
+                    if (!response.isError) {
+                        $("#saveMessage").html("All changes saved");
+                    } else if (response.Status === "InvalidRequest") {
+                        $("#saveMessage").html("Unable to save - Please fix errors");
+                        displayValidationErrors(response.modelStateErrors);
+                    }
+                })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        $("#saveMessage").html("Error saving form!");
+                    })
+                    .always(function () {
+
+                        $("#saveMessage").delay(4000).fadeOut();
+                    });
+
+            }
+        }
 
 
         $(document).ready(function () {
+
+            /*
+            $('#ScholarshipEdit').change(function () {
+                saveForm('#ScholarshipEdit');
+            });
+            */
+            $(".fos").select2({
+                  tags: true,
+                  createTag: function (params) {
+                    // Don't offset to create a tag if there is no at symbol
+                    if (params.term.indexOf('@@') === -1) {
+                      // Return null to disable tag creation
+                      return null;
+                    }
+
+                    return {
+                      id: params.term,
+                      text: params.term
+                    }
+                  }
+            }
+            );
+
 
             $('.summernote').summernote({
                 height: 150,

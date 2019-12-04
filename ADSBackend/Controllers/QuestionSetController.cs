@@ -13,6 +13,7 @@ using Scholarships.Util;
 
 namespace Scholarships.Controllers
 {
+    [Authorize(Roles ="Admin,Manager")]
     public class QuestionSetController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -26,7 +27,7 @@ namespace Scholarships.Controllers
 
         public bool UserCanModifyQuestionSet(QuestionSet qset)
         {
-            if (User.IsInRole("Admin"))
+            if (User.IsInRole("Admin") || User.IsInRole("Manager"))
                 return true;
 
             return false;

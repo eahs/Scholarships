@@ -13,6 +13,7 @@ namespace Scholarships.Models
 
         [DisplayName("Sponsor Company")]
         public string SponsorCompany { get; set; }
+        [Required]
         [DisplayName("Sponsor Name")]
         public string SponsorName { get; set; }
         [DisplayName("Sponsor Address (Line 1)")]
@@ -28,6 +29,7 @@ namespace Scholarships.Models
         [DisplayName("Sponsor Contact Email")]
         public string SponsorEmail { get; set; }
 
+        [Required]
         [DisplayName("Scholarship Name")]
         public string Name { get; set; }
         public string Description { get; set; }

@@ -9,13 +9,14 @@
 
     var setupClass = "";
     var adminClass = "";
+    var manageClass = "";
 
 
     switch (handlingController)
     {
 
         // Scholarship Setup
-        case "Scholarships": setupClass = "active"; break;
+        case "Scholarships": manageClass = "active"; break;
 
         // Admininstration
         case "Users": adminClass = "active"; break;
@@ -61,6 +62,23 @@
                 <li is-active-route asp-controller="Admin">
                     <a asp-controller="Admin" asp-action="Index"><i class="fa fa-dashboard"></i><span class="nav-label">Dashboard</span></a>
                 </li>
+                @if (User.IsInRole("Student") || User.IsInRole("Admin"))
+                {
+                    <li is-active-route asp-controller="Profile" asp-action="Edit">
+                        <a asp-controller="Profile" asp-action="Edit"><i class="fa fa-user-circle"></i><span class="nav-label">Your Profile</span></a>
+                    </li>
+                }
+                @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+                {
+                    <li id="nav_manage" class="@manageClass">
+                        <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li is-active-route asp-controller="Scholarships">
+                                <a asp-controller="Scholarships" asp-action="Index">Manage Scholarships</a>
+                            </li>
+                        </ul>
+                    </li>
+                }
                 @if (User.IsInRole("Admin"))
                 {
                     <li id="nav_admin" class="@adminClass">

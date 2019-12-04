@@ -17,9 +17,12 @@ namespace Scholarships.Configuration
         {
             var roles = new List<string>
             {
-                "Admin",
+                "Admin",    // Controls everything
+                "Manager",  // Can oversee editing of scholarships
+                "Provider", // Provider of a scholarship
                 "User",
-                "Student"
+                "Teacher",  // Teacher of a student
+                "Student"   // Student
             };
 
             foreach (var roleName in roles)

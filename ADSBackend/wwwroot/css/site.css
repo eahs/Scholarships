@@ -181,3 +181,7 @@ span.grippyhorizontal {
         background: #fcfcfc;
     }
 
+.breadcrumb {
+    background-color: transparent;
+    margin-bottom: 10px;
+}

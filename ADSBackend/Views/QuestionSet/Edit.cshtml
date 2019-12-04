@@ -1,11 +1,33 @@
 ﻿@using Scholarships.Models.Forms
 @model Scholarships.Models.Forms.QuestionSetViewModel
 
+@{ 
+    var returnUrl = (Context.Request.Query["returnUrl"]);
+}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-controller="Admin" asp-action="Index">Home</a>
+        </li>
+        @if (returnUrl != "")
+        {
+            <li class="breadcrumb-item">
+                <a href="@returnUrl">@Context.Request.Query["buttonText"]</a>
+            </li>
+        }
+        <li class="breadcrumb-item active">
+            <strong>Modify Question Set</strong>
+        </li>
+    </ol>
 
 <div class="ibox">
     <div class="ibox-title">
         <div style="float: right" id="saveMessage"></div>
-        <h4>Question Set</h4>
+        <h2>Question Set</h2>
+        @if (returnUrl != "")
+        {
+            <a href="@returnUrl" style="margin-top: 10px" class="btn btn-success btn-lg">Back to @Context.Request.Query["buttonText"]</a>
+        }
     </div>
     <div class="ibox-content">
         <form asp-controller="QuestionSet" asp-action="Edit" id="QuestionSetForm_@Model.FormId">
