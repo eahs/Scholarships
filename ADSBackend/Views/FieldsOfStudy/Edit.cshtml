@@ -1,0 +1,51 @@
+﻿@model Scholarships.Models.FieldOfStudy
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="FieldsOfStudy" asp-action="Index">Fields Of Study</a> 
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Edit Field of Study</strong>
+    </li>
+</ol>
+
+<h2>Edit Field of Study</h2>
+
+<div class="ibox">
+    <div class="ibox-title">
+        <h4>Edit Field of Study</h4>
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="FieldOfStudyId" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Save" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

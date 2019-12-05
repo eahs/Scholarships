@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Scholarships.Models
 {
@@ -56,5 +57,7 @@ namespace Scholarships.Models
         public List<ScholarshipCategory> Categories { get; set; }
         public List<ScholarshipFieldOfStudy> FieldsOfStudies { get; set; }
 
+        [NotMapped]
+        public List<int> FieldsOfStudyIds { get; set; }
     }
 }

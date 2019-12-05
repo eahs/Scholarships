@@ -1,0 +1,50 @@
+﻿@model Scholarships.Models.FieldOfStudy
+
+@{
+    ViewData["Title"] = "Create Field of Study";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="FieldsOfStudy" asp-action="Index">Fields Of Study</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Create Field of Study</strong>
+    </li>
+</ol>
+
+<h2>Create Field of Study</h2>
+
+<div class="ibox">
+    <div class="ibox-title">
+        <h4>Field of Study</h4>
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

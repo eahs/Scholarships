@@ -5,9 +5,6 @@ namespace Scholarships.Models
 {
     public class ScholarshipFieldOfStudy
     {
-        [Key]
-        public int ScholarshipFieldOfStudyId { get; set; }
-
         public int ScholarshipId { get; set; }
         public Scholarship Scholarship { get; set; }
 

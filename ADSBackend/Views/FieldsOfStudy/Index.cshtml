@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Scholarships.Models.FieldOfStudy>
+
+@{
+    ViewData["Title"] = "Fields of Study";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Fields of Study</strong>
+    </li>
+</ol>
+
+
+<h2>Fields of Study</h2>
+<div class="ibox">
+    <div class="ibox-title"><a asp-action="Create" class="btn btn-w-m btn-primary">Create New</a></div>
+    <div class="ibox-content">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @await Html.PartialAsync("_CrudOptionsNoDetails", item.FieldOfStudyId)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>

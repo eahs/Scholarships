@@ -17,6 +17,7 @@
 
         // Scholarship Setup
         case "Scholarships": manageClass = "active"; break;
+        case "FieldsOfStudy": manageClass = "active"; break;
 
         // Admininstration
         case "Users": adminClass = "active"; break;
@@ -74,7 +75,10 @@
                         <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li is-active-route asp-controller="Scholarships">
-                                <a asp-controller="Scholarships" asp-action="Index">Manage Scholarships</a>
+                                <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+                            </li>
+                            <li is-active-route asp-controller="Scholarships">
+                                <a asp-controller="FieldsOfStudy" asp-action="Index">Fields Of Study</a>
                             </li>
                         </ul>
                     </li>
