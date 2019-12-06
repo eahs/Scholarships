@@ -185,3 +185,12 @@ span.grippyhorizontal {
     background-color: transparent;
     margin-bottom: 10px;
 }
+
+.scholarship-detail h4 {
+    text-decoration: underline;
+}
+
+.scholarship-detail .indent {
+    margin-left: 20px;
+    margin-bottom: 20px;
+}

@@ -4,117 +4,85 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Scholarship Details</strong>
+    </li>
+</ol>
+
+<h1>Scholarship Details</h1>
+<div class="ibox">
+    <div class="ibox-content scholarship-detail">
+        <div>
+            <h3>@Html.DisplayFor(model => model.Name)</h3>
+            <hr />
+
+            <h4>@Html.DisplayNameFor(model => model.Description)</h4>
+            <div class="indent">
+                @Html.Raw(Model.Description)
+            </div>
+
+            <h4>@Html.DisplayNameFor(model => model.Eligibility)</h4>
+
+            <div class="indent">
+                @Html.Raw(Model.Eligibility)
+            </div>
+
+            <h4>@Html.DisplayNameFor(model => model.Standards)</h4>
+            <div class="indent">
+                @Html.Raw(Model.Standards)
+            </div>
+
+
+            <h4>@Html.DisplayNameFor(model => model.Amount)</h4>
+            <div class="indent">
+                @Html.Raw(Model.Amount)
+            </div>
+
+            <h4>@Html.DisplayNameFor(model => model.ApplicationInstructions)</h4>
+            <div class="indent">
+                @Html.Raw(Model.ApplicationInstructions)
+            </div>
+
+            <p></p>
+            <p></p>
+
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ApplyOnline)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ApplyOnline)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.TranscriptsRequired)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ReleaseDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.ReleaseDate)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.DueDate)
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
 
 <div>
-    <h4>Scholarship</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorCompany)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorCompany)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorAddress1)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorAddress1)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorAddress2)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorAddress2)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorPhone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorPhone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SponsorEmail)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SponsorEmail)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Eligibility)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Eligibility)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Standards)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Standards)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Amount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ApplicationInstructions)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ApplicationInstructions)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ApplyOnline)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ApplyOnline)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TranscriptsRequired)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TranscriptsRequired)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReleaseDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReleaseDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DueDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DueDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.QuestionSet)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.QuestionSet.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.ScholarshipId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

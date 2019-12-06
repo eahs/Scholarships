@@ -16,7 +16,7 @@
         <a asp-controller="Admin" asp-action="Index">Home</a>
     </li>
     <li class="breadcrumb-item">
-        <a asp-controller="Scholarships" asp-action="Index">Manage Scholarships</a>
+        <a asp-controller="Scholarships" asp-action="Manage">Manage Scholarships</a>
     </li>
     <li class="breadcrumb-item active">
         <strong>Edit Scholarship</strong>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="Amount" class="control-label"></label>
-                        <input asp-for="Amount" class="form-control" />
+                        <textarea asp-for="Amount" class="summernote"></textarea>
                         <span asp-validation-for="Amount" class="text-danger"></span>
                     </div>
                     <div class="form-group">

@@ -22,8 +22,15 @@ namespace Scholarships.Controllers
         }
 
         // GET: Scholarships
-        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Index()
+        {
+            var scholarships = await _context.Scholarship.Include(s => s.QuestionSet).ToListAsync();
+            return View(scholarships);
+        }
+
+        // GET: Scholarships
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Manage()
         {
             var scholarships = await _context.Scholarship.Include(s => s.QuestionSet).ToListAsync();
             return View(scholarships);
@@ -97,6 +104,11 @@ namespace Scholarships.Controllers
             return View(scholarship);
         }
 
+        /// <summary>
+        /// Sets up the ViewBag to include a multiselectlist of the current fields of study
+        /// </summary>
+        /// <param name="selectedFieldsOfStudyIds"></param>
+        /// <returns></returns>
         public async Task SetupForm (List<int> selectedFieldsOfStudyIds)
         {
             var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
@@ -168,13 +180,13 @@ namespace Scholarships.Controllers
 
                     await _context.SaveChangesAsync();
 
+                    // Remove existing fields of study
+                    var oldFieldsOfStudy = await _context.ScholarshipFieldOfStudy.Where(x => x.ScholarshipId == id).ToListAsync();
+                    _context.ScholarshipFieldOfStudy.RemoveRange(oldFieldsOfStudy);
+                    await _context.SaveChangesAsync();
+
                     if (scholarship.FieldsOfStudyIds != null)
                     {
-                        // Remove existing fields of study
-                        var oldFieldsOfStudy = await _context.ScholarshipFieldOfStudy.Where(x => x.ScholarshipId == id).ToListAsync();
-                        _context.ScholarshipFieldOfStudy.RemoveRange(oldFieldsOfStudy);
-                        await _context.SaveChangesAsync();
-
                         // Add new fields of study
                         var newFieldsOfStudy = scholarship.FieldsOfStudyIds.Select(x => new ScholarshipFieldOfStudy
                         {

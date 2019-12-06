@@ -6,6 +6,7 @@
 
 @{ 
     var handlingController = this.ViewContext.RouteData.Values["controller"].ToString();
+    var handlingAction = this.ViewContext.RouteData.Values["action"].ToString();
 
     var setupClass = "";
     var adminClass = "";
@@ -16,7 +17,10 @@
     {
 
         // Scholarship Setup
-        case "Scholarships": manageClass = "active"; break;
+        case "Scholarships":
+            if (new[] { "Manage", "Create", "Edit", "Delete" }.Contains(handlingAction) )
+                manageClass = "active";
+            break;
         case "FieldsOfStudy": manageClass = "active"; break;
 
         // Admininstration
@@ -25,7 +29,6 @@
 
     }
 }
-
 
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
@@ -75,7 +78,7 @@
                         <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li is-active-route asp-controller="Scholarships">
-                                <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+                                <a asp-controller="Scholarships" asp-action="Manage">Scholarships</a>
                             </li>
                             <li is-active-route asp-controller="FieldsOfStudy">
                                 <a asp-controller="FieldsOfStudy" asp-action="Index">Fields Of Study</a>

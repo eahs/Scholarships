@@ -21,7 +21,7 @@ namespace Scholarships.Configuration
                 "Manager",  // Can oversee editing of scholarships
                 "Provider", // Provider of a scholarship
                 "User",
-                "Teacher",  // Teacher of a student
+                "Recommender",  // Recommender of a student
                 "Student"   // Student
             };
 
