@@ -25,8 +25,8 @@ namespace Scholarships.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Scholarship.Include(s => s.QuestionSet);
-            return View(await applicationDbContext.ToListAsync());
+            var scholarships = await _context.Scholarship.Include(s => s.QuestionSet).ToListAsync();
+            return View(scholarships);
         }
 
         // GET: Scholarships/Details/5
@@ -50,9 +50,11 @@ namespace Scholarships.Controllers
 
         // GET: Scholarships/Create
         [Authorize(Roles = "Admin,Manager")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             ViewData["QuestionSetId"] = new SelectList(_context.QuestionSet, "QuestionSetId", "Name");
+            await SetupForm(new List<int>());
+
             return View();
         }
 
@@ -62,7 +64,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
+        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds, ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
         {
             if (ModelState.IsValid)
             {
@@ -77,6 +79,19 @@ namespace Scholarships.Controllers
 
                 _context.Add(scholarship);
                 await _context.SaveChangesAsync();
+
+                // Add new fields of study
+                var newFieldsOfStudy = scholarship.FieldsOfStudyIds.Select(x => new ScholarshipFieldOfStudy
+                {
+                    ScholarshipId = scholarship.ScholarshipId,
+                    FieldOfStudyId = x
+                });
+
+                if (newFieldsOfStudy != null)
+                    _context.ScholarshipFieldOfStudy.AddRange(newFieldsOfStudy);
+
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(scholarship);
@@ -97,7 +112,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudies)
+            var scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
                                                         .ThenInclude(fos => fos.FieldOfStudy)
                                                         .FirstOrDefaultAsync(s => s.ScholarshipId == id);
             if (scholarship == null)
@@ -105,7 +120,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudies.Select(fos => fos.FieldOfStudyId).ToList();
+            scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             await SetupForm(scholarship.FieldsOfStudyIds);
 
             return View(scholarship);
@@ -124,7 +139,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            Scholarship _scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudies)
+            Scholarship _scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
                                                                  .ThenInclude(fos => fos.FieldOfStudy)
                                                                  .FirstOrDefaultAsync(s => s.ScholarshipId == id);
 
@@ -186,7 +201,7 @@ namespace Scholarships.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudies.Select(fos => fos.FieldOfStudyId).ToList();
+            _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             await SetupForm(_scholarship.FieldsOfStudyIds);
 
             return View(_scholarship);
@@ -209,7 +224,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudies.Select(fos => fos.FieldOfStudyId).ToList();
+            scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             await SetupForm(scholarship.FieldsOfStudyIds);
 
             return View(scholarship);

@@ -54,7 +54,7 @@ namespace Scholarships.Data
 
             builder.Entity<ScholarshipFieldOfStudy>()
                 .HasOne(nt => nt.Scholarship)
-                .WithMany(n => n.FieldsOfStudies)
+                .WithMany(n => n.FieldsOfStudy)
                 .HasForeignKey(nt => nt.ScholarshipId);
 
             builder.Entity<ScholarshipFieldOfStudy>()

@@ -55,7 +55,7 @@ namespace Scholarships.Models
         public QuestionSet QuestionSet { get; set; }
 
         public List<ScholarshipCategory> Categories { get; set; }
-        public List<ScholarshipFieldOfStudy> FieldsOfStudies { get; set; }
+        public List<ScholarshipFieldOfStudy> FieldsOfStudy { get; set; }
 
         [NotMapped]
         public List<int> FieldsOfStudyIds { get; set; }
