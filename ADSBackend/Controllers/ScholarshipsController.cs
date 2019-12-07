@@ -60,7 +60,8 @@ namespace Scholarships.Controllers
         public async Task<IActionResult> Create()
         {
             ViewData["QuestionSetId"] = new SelectList(_context.QuestionSet, "QuestionSetId", "Name");
-            await SetupForm(new List<int>());
+
+            await SetupForm(new List<int>(), new List<int>());
 
             return View();
         }
@@ -71,7 +72,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds, ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
+        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
         {
             if (ModelState.IsValid)
             {
@@ -109,10 +110,14 @@ namespace Scholarships.Controllers
         /// </summary>
         /// <param name="selectedFieldsOfStudyIds"></param>
         /// <returns></returns>
-        public async Task SetupForm (List<int> selectedFieldsOfStudyIds)
+        public async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds)
         {
             var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
             ViewBag.FieldsOfStudy = new MultiSelectList(fieldsOfStudy, "FieldOfStudyId", "Name", selectedFieldsOfStudyIds);
+
+            var profileProperties = await _context.ProfileProperty.OrderBy(prop => prop.ProfilePropertyId).ToListAsync();
+            ViewBag.ProfileProperties = new MultiSelectList(profileProperties, "ProfilePropertyId", "PropertyName",
+                selectedProfilePropertyIds);
         }
 
         // GET: Scholarships/Edit/5
@@ -124,8 +129,8 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
-                                                        .ThenInclude(fos => fos.FieldOfStudy)
+            var scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy).ThenInclude(fos => fos.FieldOfStudy)
+                                                        .Include(p => p.ProfileProperties).ThenInclude(prop => prop.ProfileProperty)
                                                         .FirstOrDefaultAsync(s => s.ScholarshipId == id);
             if (scholarship == null)
             {
@@ -133,7 +138,8 @@ namespace Scholarships.Controllers
             }
 
             scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
-            await SetupForm(scholarship.FieldsOfStudyIds);
+            scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
+            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds);
 
             return View(scholarship);
         }
@@ -144,7 +150,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate")] Scholarship scholarship)
+        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate")] Scholarship scholarship)
         {
             if (id != scholarship.ScholarshipId)
             {
@@ -153,6 +159,7 @@ namespace Scholarships.Controllers
 
             Scholarship _scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
                                                                  .ThenInclude(fos => fos.FieldOfStudy)
+                                                                 .Include(p => p.ProfileProperties).ThenInclude(prop => prop.ProfileProperty)
                                                                  .FirstOrDefaultAsync(s => s.ScholarshipId == id);
 
             if (ModelState.IsValid && _scholarship != null)
@@ -183,6 +190,10 @@ namespace Scholarships.Controllers
                     // Remove existing fields of study
                     var oldFieldsOfStudy = await _context.ScholarshipFieldOfStudy.Where(x => x.ScholarshipId == id).ToListAsync();
                     _context.ScholarshipFieldOfStudy.RemoveRange(oldFieldsOfStudy);
+
+                    var oldProfileProperties = await _context.ScholarshipProfileProperty.Where(x => x.ScholarshipId == id).ToListAsync();
+                    _context.ScholarshipProfileProperty.RemoveRange(oldProfileProperties);
+
                     await _context.SaveChangesAsync();
 
                     if (scholarship.FieldsOfStudyIds != null)
@@ -198,6 +209,21 @@ namespace Scholarships.Controllers
 
                         await _context.SaveChangesAsync();
                     }
+
+                    if (scholarship.ProfilePropertyIds != null)
+                    {
+                        // Add new fields of study
+                        var newProfileProperties = scholarship.ProfilePropertyIds.Select(x => new ScholarshipProfileProperty
+                        {
+                            ScholarshipId = _scholarship.ScholarshipId,
+                            ProfilePropertyId = x
+                        });
+                        if (newProfileProperties != null)
+                            _context.ScholarshipProfileProperty.AddRange(newProfileProperties);
+
+                        await _context.SaveChangesAsync();
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -214,7 +240,9 @@ namespace Scholarships.Controllers
             }
 
             _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
-            await SetupForm(_scholarship.FieldsOfStudyIds);
+            _scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
+
+            await SetupForm(_scholarship.FieldsOfStudyIds, _scholarship.ProfilePropertyIds);
 
             return View(_scholarship);
         }
@@ -237,7 +265,9 @@ namespace Scholarships.Controllers
             }
 
             scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
-            await SetupForm(scholarship.FieldsOfStudyIds);
+            scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
+
+            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds);
 
             return View(scholarship);
         }

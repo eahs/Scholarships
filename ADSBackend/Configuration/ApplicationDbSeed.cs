@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Scholarships.Configuration
 {
@@ -28,15 +29,25 @@ namespace Scholarships.Configuration
             return file;
         }
 
-        public void SeedDatabase<TEntity> (string jsonFile, DbSet<TEntity> dbset) where TEntity : class
+        public void SeedDatabase<TEntity> (string jsonFile, DbSet<TEntity> dbset, bool preserveOrder = false) where TEntity : class
         {
             var records = JsonConvert.DeserializeObject<List<TEntity>>(GetJson(jsonFile));
 
             if (records?.Count > 0)
             {
-                records.ForEach(s => dbset.Add(s));
-                _context.SaveChanges();
-                
+                if (!preserveOrder)
+                {
+                    _context.AddRange(records);
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    foreach (var record in records)
+                    {
+                        dbset.Add(record);
+                        _context.SaveChanges();
+                    }
+                }
             }
         }
 
@@ -58,10 +69,25 @@ namespace Scholarships.Configuration
 
         private void CreateProfileProperties()
         {
-            var properties = _context.ProfileProperty.FirstOrDefault();
-            if (properties == null)
+            var properties = _context.ProfileProperty.OrderBy(prop => prop.ProfilePropertyId).ToList();
+            if (properties == null || properties.Count == 0)
             {
-                SeedDatabase<ProfileProperty>("profileproperties.json", _context.ProfileProperty);
+                SeedDatabase<ProfileProperty>("profileproperties.json", _context.ProfileProperty, true);
+            }
+            else
+            {
+                var records = JsonConvert.DeserializeObject<List<ProfileProperty>>(GetJson("profileproperties.json"));
+                foreach (var prop in records)
+                {
+                    var exists = properties.FirstOrDefault(p => p.PropertyKey == prop.PropertyKey);
+
+                    if (exists == null)
+                    {
+                        _context.ProfileProperty.Add(prop);
+                        _context.SaveChanges();
+                    }
+                }
+
             }
 
         }
