@@ -56,8 +56,12 @@ namespace Scholarships.Models
 
         public List<ScholarshipCategory> Categories { get; set; }
         public List<ScholarshipFieldOfStudy> FieldsOfStudy { get; set; }
+        public List<ScholarshipProfileProperty> ProfileProperties { get; set; }
 
         [NotMapped]
         public List<int> FieldsOfStudyIds { get; set; }
+
+        [NotMapped]
+        public List<int> ProfilePropertyIds { get; set; }
     }
 }

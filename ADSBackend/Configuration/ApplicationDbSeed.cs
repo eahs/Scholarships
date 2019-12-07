@@ -43,6 +43,7 @@ namespace Scholarships.Configuration
         public void SeedDatabase ()
         {
             CreateFieldOfStudy();
+            CreateProfileProperties();
         }
 
         private void CreateFieldOfStudy ()
@@ -52,8 +53,18 @@ namespace Scholarships.Configuration
             {
                 SeedDatabase<FieldOfStudy>("fieldofstudies.json", _context.FieldOfStudy);
             }
+
         }
 
+        private void CreateProfileProperties()
+        {
+            var properties = _context.ProfileProperty.FirstOrDefault();
+            if (properties == null)
+            {
+                SeedDatabase<ProfileProperty>("profileproperties.json", _context.ProfileProperty);
+            }
+
+        }
 
     }
 }

@@ -1,0 +1,127 @@
+[
+  {
+    "PropertyName": "First Name",
+    "PropertyKey": "FirstName"
+  },
+  {
+    "PropertyName": "Last Name",
+    "PropertyKey": "LastName"
+  },
+  {
+    "PropertyName": "Student ID",
+    "PropertyKey": "StudentId"
+  },
+  {
+    "PropertyName": "Date of Birth",
+    "PropertyKey": "BirthDate"
+  },
+  {
+    "PropertyName": "Gender",
+    "PropertyKey": "Gender"
+  },
+  {
+    "PropertyName": "Email Address",
+    "PropertyKey": "Email"
+  },
+  {
+    "PropertyName": "Address Line 1",
+    "PropertyKey": "Address1"
+  },
+  {
+    "PropertyName": "Address Line 2",
+    "PropertyKey": "Address2"
+  },
+  {
+    "PropertyName": "City",
+    "PropertyKey": "City"
+  },
+  {
+    "PropertyName": "State",
+    "PropertyKey": "State"
+  },
+  {
+    "PropertyName": "ZipCode",
+    "PropertyKey": "ZipCode"
+  },
+  {
+    "PropertyName": "Phone Number",
+    "PropertyKey": "Phone"
+  },
+  {
+    "PropertyName": "Class Rank",
+    "PropertyKey": "ClassRank"
+  },
+  {
+    "PropertyName": "GPA",
+    "PropertyKey": "GPA"
+  },
+  {
+    "PropertyName": "SAT Math Score",
+    "PropertyKey": "SATScoreMath"
+  },
+  {
+    "PropertyName": "SAT Reading Score",
+    "PropertyKey": "SATScoreReading"
+  },
+  {
+    "PropertyName": "ACT Score",
+    "PropertyKey": "ACTScore"
+  },
+  {
+    "PropertyName": "College You Are Attending",
+    "PropertyKey": "CollegeAttending"
+  },
+  {
+    "PropertyName": "Yearly Tuition Cost",
+    "PropertyKey": "TuitionYearly"
+  },
+  {
+    "PropertyName": "Room and Board Cost",
+    "PropertyKey": "RoomBoard"
+  },
+  {
+    "PropertyName": "Total Tuition Cost",
+    "PropertyKey": "TuitionTotal"
+  },
+  {
+    "PropertyName": "Acceptance Confirmation",
+    "PropertyKey": "CollegeAccepted"
+  },
+  {
+    "PropertyName": "Intended College Major",
+    "PropertyKey": "CollegeIntendedMajor"
+  },
+  {
+    "PropertyName": "Field of Study",
+    "PropertyKey": "FieldOfStudy"
+  },
+  {
+    "PropertyName": "College Housing Plans",
+    "PropertyKey": "LivingSituation"
+  },
+  {
+    "PropertyName": "Other Financial Aid",
+    "PropertyKey": "OtherAid"
+  },
+  {
+    "PropertyName": "School Activities",
+    "PropertyKey": "ActivitiesSchool"
+  },
+  {
+    "PropertyName": "Community Activities and Community Service",
+    "PropertyKey": "ActivitiesCommunity"
+  },
+  {
+    "PropertyName": "School Offices and Awards",
+    "PropertyKey": "SchoolOffices"
+  },
+  {
+    "PropertyName": "Special Circumstances",
+    "PropertyKey": "SpecialCircumstances"
+  },
+  {
+    "PropertyName": "Guardian Assets",
+    "PropertyKey": "Guardians"
+  }
+
+]
