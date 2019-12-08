@@ -236,7 +236,7 @@ namespace Scholarships.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Manage));
             }
 
             _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
@@ -281,7 +281,7 @@ namespace Scholarships.Controllers
             var scholarship = await _context.Scholarship.FindAsync(id);
             _context.Scholarship.Remove(scholarship);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Manage));
         }
 
         private bool ScholarshipExists(int id)
