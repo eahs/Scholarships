@@ -2,6 +2,10 @@
 
 @{
     ViewData["Title"] = "Details";
+
+    var props = @Model.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName);
+    var fields = String.Join(", ", props.ToArray());
+
 }
 
 <ol class="breadcrumb">
@@ -77,6 +81,12 @@
                 </dt>
                 <dd class="col-sm-10">
                     @Html.DisplayFor(model => model.DueDate)
+                </dd>
+                <dt class="col-sm-2">
+                    Information Requested
+                </dt>
+                <dd class="col-sm-10">
+                    @fields
                 </dd>
             </dl>
         </div>

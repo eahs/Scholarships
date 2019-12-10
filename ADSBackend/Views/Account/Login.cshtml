@@ -4,12 +4,10 @@
 @inject SignInManager<ApplicationUser> SignInManager
 
 @{
-    Layout = "~/Views/Shared/_LayoutLanding.cshtml";
+    Layout = "~/Views/Shared/_LayoutLandingSecondary.cshtml";
     ViewData["Title"] = "Login";
     ViewData["CopyrightYear"] = DateTime.Now.Year;
 }
-
-<div style="width: 100%; height: 75px; background-color: #444444; background: url(../img/landing/header_one.jpg) 50% 0 no-repeat;"></div>
 
 <div class="middle-box text-center loginscreen animated fadeInDown">
     <div>
@@ -77,6 +75,10 @@
         <p class="m-t"><small>Easton Area School District &copy; @ViewData["CopyrightYear"]</small></p>
     </div>
 </div>
+
+@section  Styles {
+
+}
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

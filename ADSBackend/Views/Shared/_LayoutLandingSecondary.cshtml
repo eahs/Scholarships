@@ -11,12 +11,22 @@
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
+    <style type="text/css">
+        .landing-page .navbar-wrapper .navbar.navbar-scroll {
+            background: #eee;
+        }
+
+        body.landing-page {
+            margin-top: 70px;
+        }
+    </style>
+
     @RenderSection("Styles", required: false)
 </head>
 <body class="landing-page">
     
 <div class="navbar-wrapper">
-    <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md navbar-scroll" role="navigation">
         <div class="container">
             <a class="navbar-brand" href="/">EAHS Scholarships</a>
             <div class="navbar-header page-scroll">
@@ -24,15 +34,7 @@
                     <i class="fa fa-bars"></i>
                 </button>
             </div>
-            <div class="collapse navbar-collapse justify-content-end" id="navbar">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a class="nav-link page-scroll" href="/">Home</a></li>
-                    <li><a class="nav-link page-scroll" href="#features">News</a></li>
-                    <li><a class="nav-link page-scroll" href="#team">Student Resources</a></li>
-                    <li><a class="nav-link page-scroll" href="#testimonials">About</a></li>
-                    <li><a class="nav-link page-scroll" href="#contact">Login</a></li>
-                </ul>
-            </div>
+            @Html.Partial("_LayoutNavigationLinks")
         </div>
     </nav>
 </div>

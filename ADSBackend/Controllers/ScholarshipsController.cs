@@ -46,6 +46,8 @@ namespace Scholarships.Controllers
 
             var scholarship = await _context.Scholarship
                 .Include(s => s.QuestionSet)
+                .Include(s => s.ProfileProperties).ThenInclude(s => s.ProfileProperty)
+                .Include(s => s.FieldsOfStudy)
                 .FirstOrDefaultAsync(m => m.ScholarshipId == id);
             if (scholarship == null)
             {

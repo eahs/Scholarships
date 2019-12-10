@@ -172,7 +172,7 @@ namespace Scholarships.Controllers
         }
 
 
-        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,FieldOfStudy,CollegeIntendedMajor,LivingSituation,OtherAid";
+        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,FieldOfStudy,FieldOfStudyId,CollegeIntendedMajor,LivingSituation,OtherAid";
 
         // POST: Profiles/EditProfile
         [HttpPost]
@@ -192,7 +192,7 @@ namespace Scholarships.Controllers
             _profile.RoomBoard = profile.RoomBoard;
             _profile.TuitionTotal = profile.TuitionTotal;
             _profile.CollegeAccepted = profile.CollegeAccepted;
-            _profile.FieldOfStudy = profile.FieldOfStudy;
+            _profile.FieldOfStudyId = profile.FieldOfStudyId;
             _profile.CollegeIntendedMajor = profile.CollegeIntendedMajor;
             _profile.LivingSituation = profile.LivingSituation;
             _profile.OtherAid = profile.OtherAid;
