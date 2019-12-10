@@ -6,7 +6,7 @@
 <div class="navbar-wrapper">
     <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md" role="navigation">
         <div class="container">
-            <a class="navbar-brand" href="index.html">EAHS Scholarships</a>
+            <a class="navbar-brand" href="/">EAHS Scholarships</a>
             <div class="navbar-header page-scroll">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
                     <i class="fa fa-bars"></i>
@@ -35,19 +35,17 @@
             <div class="container">
                 <div class="carousel-caption">
                     <h1>
-                        We craft<br />
-                        brands, web apps,<br />
-                        and user interfaces<br />
-                        we are IN+ studio
+                        Help fund your education <br />
+                        through the generosity of<br />
+                        our many local donors<br />
                     </h1>
-                    <p>Lorem Ipsum is simply dummy text of the printing.</p>
+                    <p>Discover and apply for multiple scholarships online.</p>
                     <p>
-                        <a class="btn btn-lg btn-primary" href="#" role="button">READ MORE</a>
-                        <a class="caption-link" href="#" role="button">Inspinia Theme</a>
+                        <a class="btn btn-lg btn-primary" asp-controller="Admin" asp-action="Index" role="button">LOGIN</a>
                     </p>
                 </div>
                 <div class="carousel-image wow zoomIn">
-                    <img src="img/landing/laptop.png" alt="laptop" />
+                    <img src="img/landing/roverdog.png" alt="EAHS Rover" />
                 </div>
             </div>
             <!-- Set background for slide in css -->
@@ -57,9 +55,11 @@
         <div class="carousel-item">
             <div class="container">
                 <div class="carousel-caption blank">
-                    <h1>We create meaningful <br /> interfaces that inspire.</h1>
-                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam.</p>
-                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+                    <h1>New scholarships are added regularly<br />so check back for new matches!</h1>
+                    <p>Take advantage of every opportunity.</p>
+                    <p>
+                        <a class="btn btn-lg btn-primary" asp-controller="Admin" asp-action="Index" role="button">LOGIN</a>
+                    </p>
                 </div>
             </div>
             <!-- Set background for slide in css -->
@@ -622,11 +622,6 @@
     </div>
 </section>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to the Frontend of the ADS Backend!</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <a asp-controller="Admin" asp-action="Index" class="btn btn-success">Click Here to Login</a>
-</div>
 
 
 @section Scripts {
