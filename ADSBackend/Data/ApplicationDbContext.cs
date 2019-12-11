@@ -20,6 +20,7 @@ namespace Scholarships.Data
         public DbSet<ScholarshipFieldOfStudy> ScholarshipFieldOfStudy { get; set; }
         public DbSet<ScholarshipProfileProperty> ScholarshipProfileProperty { get; set; }
         public DbSet<ProfileProperty> ProfileProperty { get; set; }
+        public DbSet<Application> Application { get; set; }   // Holds scholarship applications
         public DbSet<Guardian> Guardian { get; set; }
         public DbSet<Answer> Answer { get; set; }
         public DbSet<AnswerOption> AnswerOption  { get; set; }
@@ -36,7 +37,9 @@ namespace Scholarships.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            // intermediate NotificationTags table
+            builder.Entity<Application>()
+                .HasKey(t => new { t.ProfileId, t.ScholarshipId });
+
             builder.Entity<ScholarshipCategory>()
                 .HasKey(t => new { t.CategoryId, t.ScholarshipId });
 

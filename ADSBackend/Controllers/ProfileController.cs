@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Identity;
+using Scholarships.Services;
 using Scholarships.Util;
 
 namespace Scholarships.Controllers
@@ -21,47 +22,27 @@ namespace Scholarships.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DataService _dataService;
 
-        public ProfileController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public ProfileController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, DataService dataService)
         {
             _context = context;
             _userManager = userManager;
+            _dataService = dataService;
         }
 
         // GET: Profiles
         public async Task<IActionResult> Index()
         {
-            var profile = await GetProfileAsync();
+            var profile = await _dataService.GetProfileAsync();
 
             return View(profile);
-        }
-
-        public async Task<Profile> GetProfileAsync ()
-        {
-            var user = await _userManager.GetUserAsync(User);
-
-            if (user == null)
-                return null;
-
-            var profile = await _context.Profile.Include(p => p.Guardians).FirstOrDefaultAsync(p => p.UserId == user.Id);
-            if (profile == null)
-            {
-                profile = new Profile
-                {
-                    UserId = user.Id,
-                    Email = user.Email                    
-                };
-                _context.Profile.Add(profile);
-                await _context.SaveChangesAsync();
-            }
-
-            return profile;
         }
 
         // GET: Profiles/Edit
         public async Task<IActionResult> Edit()
         {
-            var profile = await GetProfileAsync();
+            var profile = await _dataService.GetProfileAsync();
             var genders = new[]
             {
                 new { Name = "Male", GenderId = 0},
@@ -121,7 +102,7 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<string> EditProfile([Bind(ProfileBindingFields)] Profile profile)
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
 
             if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
@@ -152,7 +133,7 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<string> EditAcademic(int id, [Bind(AcademicBindingFields)] Profile profile)
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
 
             if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
@@ -179,7 +160,7 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<string> EditCollegePlans(int id, [Bind(CollegePlansBindingFields)] Profile profile)
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
 
             if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
@@ -209,7 +190,7 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<string> EditExtraCurricular([Bind(ExtraCurricularBindingFields)] Profile profile)
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
 
             if (_profile == null || _profile.ProfileId != profile.ProfileId)
             {
@@ -252,7 +233,7 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> EditGuardiansAjax ()
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
             var guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
 
             if (guardians == null || guardians.Count == 0)
@@ -278,7 +259,7 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditGuardiansAjax ([Bind("ProfileId,GuardianId,FullName,Relationship,EmploymentStatus,Occupation,Employer,AnnualIncome")] ICollection<Guardian> guardians, bool addGuardian = false, int removeGuardianId = -1)
         {
-            var _profile = await GetProfileAsync();
+            var _profile = await _dataService.GetProfileAsync();
 
             if (removeGuardianId != -1)
             {

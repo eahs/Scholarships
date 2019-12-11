@@ -45,6 +45,7 @@ namespace Scholarships
 
             // Add application services.
             services.AddTransient<Services.IEmailSender, Services.EmailSender>();
+            services.AddTransient<Services.DataService>();
             services.AddScoped<Services.IViewRenderService, Services.ViewRenderService>();
 
             // caching

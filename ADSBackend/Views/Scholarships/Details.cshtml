@@ -1,9 +1,9 @@
-﻿@model Scholarships.Models.Scholarship
+﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 
-    var props = @Model.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName);
+    var props = @Model.Scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName);
     var fields = String.Join(", ", props.ToArray());
 
 }
@@ -24,34 +24,34 @@
 <div class="ibox">
     <div class="ibox-content scholarship-detail">
         <div>
-            <h3>@Html.DisplayFor(model => model.Name)</h3>
+            <h3>@Html.DisplayFor(model => model.Scholarship.Name)</h3>
             <hr />
 
-            <h4>@Html.DisplayNameFor(model => model.Description)</h4>
+            <h4>@Html.DisplayNameFor(model => model.Scholarship.Description)</h4>
             <div class="indent">
-                @Html.Raw(Model.Description)
+                @Html.Raw(Model.Scholarship.Description)
             </div>
 
-            <h4>@Html.DisplayNameFor(model => model.Eligibility)</h4>
+            <h4>@Html.DisplayNameFor(model => model.Scholarship.Eligibility)</h4>
 
             <div class="indent">
-                @Html.Raw(Model.Eligibility)
+                @Html.Raw(Model.Scholarship.Eligibility)
             </div>
 
-            <h4>@Html.DisplayNameFor(model => model.Standards)</h4>
+            <h4>@Html.DisplayNameFor(model => model.Scholarship.Standards)</h4>
             <div class="indent">
-                @Html.Raw(Model.Standards)
+                @Html.Raw(Model.Scholarship.Standards)
             </div>
 
 
-            <h4>@Html.DisplayNameFor(model => model.Amount)</h4>
+            <h4>@Html.DisplayNameFor(model => model.Scholarship.Amount)</h4>
             <div class="indent">
-                @Html.Raw(Model.Amount)
+                @Html.Raw(Model.Scholarship.Amount)
             </div>
 
-            <h4>@Html.DisplayNameFor(model => model.ApplicationInstructions)</h4>
+            <h4>@Html.DisplayNameFor(model => model.Scholarship.ApplicationInstructions)</h4>
             <div class="indent">
-                @Html.Raw(Model.ApplicationInstructions)
+                @Html.Raw(Model.Scholarship.ApplicationInstructions)
             </div>
 
             <p></p>
@@ -59,39 +59,68 @@
 
             <dl class="row">
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ApplyOnline)
+                    @Html.DisplayNameFor(model => model.Scholarship.ApplyOnline)
                 </dt>
                 <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ApplyOnline)
+                    @Html.DisplayFor(model => model.Scholarship.ApplyOnline)
                 </dd>
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                    @Html.DisplayNameFor(model => model.Scholarship.TranscriptsRequired)
                 </dt>
                 <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.TranscriptsRequired)
+                    @Html.DisplayFor(model => model.Scholarship.TranscriptsRequired)
                 </dd>
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.ReleaseDate)
+                    @Html.DisplayNameFor(model => model.Scholarship.ReleaseDate)
                 </dt>
                 <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.ReleaseDate)
+                    @Html.DisplayFor(model => model.Scholarship.ReleaseDate)
                 </dd>
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.DueDate)
+                    @Html.DisplayNameFor(model => model.Scholarship.DueDate)
                 </dt>
                 <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.DueDate)
+                    @Html.DisplayFor(model => model.Scholarship.DueDate)
                 </dd>
-                <dt class="col-sm-2">
-                    Information Requested
-                </dt>
-                <dd class="col-sm-10">
-                    @fields
-                </dd>
+                @if (Model.Scholarship.ApplyOnline)
+                {
+                    <dt class="col-sm-2">
+                        Information Requested
+                    </dt>
+                    <dd class="col-sm-10">
+                        @fields
+                    </dd>
+                }
             </dl>
+
         </div>
     </div>
 </div>
+
+@if (Model.CanApply)
+{
+    <div class="ibox">
+        <div class="ibox-title"><h3>Your Application</h3></div>
+        <div class="ibox-content">
+            @if (Model.ApplicationCompleted)
+            {
+                <a href="" class="btn btn-success btn-lg">Apply For Scholarship</a>
+            }
+            else
+            {
+                <b>You aren't quite ready to apply for this scholarship because the following fields in your profile aren't completed:</b>
+                <p>
+                    <ul>
+                        @foreach (var status in Model.FieldStatus)
+                        {
+                            <li><a href="@status.FormURI">@status.FieldName</a> - <span style="color: red">@status.ErrorMessage</span></li>
+                        }
+                    </ul>
+                </p>
+            }
+        </div>
+    </div>
+}
 
 <div>
     <a asp-action="Index">Back to List</a>

@@ -9,9 +9,8 @@ namespace Scholarships.Models
 {
     public class Application
     {
-        [Key]
-        public int ApplicationId { get; set; }
         public int ProfileId { get; set; }
+        public int ScholarshipId { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime SubmittedDate { get; set; }
         public int SubmissionStage { get; set; } = 1;

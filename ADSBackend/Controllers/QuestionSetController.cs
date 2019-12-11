@@ -18,11 +18,13 @@ namespace Scholarships.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IViewRenderService _renderService;
+        private readonly DataService _dataService;
 
-        public QuestionSetController(ApplicationDbContext context, IViewRenderService renderService)
+        public QuestionSetController(ApplicationDbContext context, IViewRenderService renderService, DataService dataService)
         {
             _context = context;
             _renderService = renderService;
+            _dataService = dataService;
         }
 
         public bool UserCanModifyQuestionSet(QuestionSet qset)
@@ -38,47 +40,10 @@ namespace Scholarships.Controllers
             return new QuestionSetViewModel { ErrorCode = code, ModelStateErrors = ModelState.Values.Where(i => i.Errors.Count > 0).ToList() };
         }
 
-        private void SortQuestionSet(QuestionSet qset)
-        {
-            qset.Questions = qset.Questions.OrderBy(q => q.Order).ToList();
-
-            foreach (var question in qset.Questions)
-            {
-                if (question.Options != null)
-                {
-                    question.Options = question.Options.OrderBy(qo => qo.Order).ToList();
-                }
-            }
-
-        }
-
-        // Remove any modelstate errors that don't pertain to the actual fields we are binding to
-        private void ScrubModelState(string bindingFields)
-        {
-            string[] bindingKeys = bindingFields.Split(",");
-            foreach (string key in ModelState.Keys)
-            {
-                if (!bindingKeys.Contains(key))
-                    ModelState.Remove(key);
-            }
-        }
-
-        private async Task<QuestionSet> GetQuestionSet(int QuestionSetId)
-        {
-            var qset = await _context.QuestionSet.Include(qs => qs.Questions).ThenInclude(q => q.Options)
-                .FirstOrDefaultAsync(q => q.QuestionSetId == QuestionSetId);
-
-            // Fix sort orders
-            if (qset != null)
-                SortQuestionSet(qset);
-
-            return qset;
-        }
-
         // Admin level
         public async Task<IActionResult> Edit(int id)
         {
-            var qset = await GetQuestionSet(id);
+            var qset = await _dataService.GetQuestionSet(id);
 
             if (qset == null)
                 return NotFound();
@@ -247,7 +212,7 @@ namespace Scholarships.Controllers
             _context.Question.Remove(_question);
             await _context.SaveChangesAsync();
 
-            qset = await GetQuestionSet(id);
+            qset = await _dataService.GetQuestionSet(id);
 
             List<QuestionViewModel> questionvm = new List<QuestionViewModel>();
 

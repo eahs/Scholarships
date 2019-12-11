@@ -9,16 +9,20 @@ using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
+using Scholarships.Models.ScholarshipViewModels;
+using Scholarships.Services;
 
 namespace Scholarships.Controllers
 {
     public class ScholarshipsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly DataService _dataService;
 
-        public ScholarshipsController(ApplicationDbContext context)
+        public ScholarshipsController(ApplicationDbContext context, DataService dataService)
         {
             _context = context;
+            _dataService = dataService;
         }
 
         // GET: Scholarships
@@ -54,7 +58,44 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            return View(scholarship);
+            List<ScholarshipFieldStatus> fieldStatus = await _dataService.VerifyApplicationStatus(scholarship);
+
+            ScholarshipDetailsViewModel vm = new ScholarshipDetailsViewModel
+            {
+                Scholarship = scholarship,
+                ApplicationCompleted = fieldStatus.Count == 0,
+                FieldStatus = fieldStatus,
+                CanApply = (User.IsInRole("Student") || User.IsInRole("Admin")) && scholarship.ApplyOnline
+            };
+
+            return View(vm);
+        }
+
+        [Authorize(Roles = "Admin,Manager,Student")]
+        public async Task<IActionResult> Apply (int? id)  // id of scholarship
+        {
+            if (id == null)
+                return NotFound();
+
+            var scholarship = await _context.Scholarship
+                .Include(s => s.QuestionSet)
+                .FirstOrDefaultAsync(m => m.ScholarshipId == id);
+            if (scholarship == null)
+            {
+                return NotFound();
+            }
+
+            var profile = await _dataService.GetProfileAsync();
+
+            Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
+
+            ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
+            {
+                Scholarship = scholarship,
+                Application = app
+            };
+
+            return View(vm);
         }
 
         // GET: Scholarships/Create
