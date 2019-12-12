@@ -21,6 +21,8 @@ namespace Scholarships.Data
         public DbSet<ScholarshipProfileProperty> ScholarshipProfileProperty { get; set; }
         public DbSet<ProfileProperty> ProfileProperty { get; set; }
         public DbSet<Application> Application { get; set; }   // Holds scholarship applications
+        public DbSet<AnswerGroup> AnswerGroup { get; set; }  // Holds multiple answer sets for each application
+        public DbSet<AnswerGroupSets> AnswerGroupSets { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
         public DbSet<Answer> Answer { get; set; }
         public DbSet<AnswerOption> AnswerOption  { get; set; }
@@ -37,8 +39,7 @@ namespace Scholarships.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
 
-            builder.Entity<Application>()
-                .HasKey(t => new { t.ProfileId, t.ScholarshipId });
+            // Scholarship category relations
 
             builder.Entity<ScholarshipCategory>()
                 .HasKey(t => new { t.CategoryId, t.ScholarshipId });
@@ -54,6 +55,7 @@ namespace Scholarships.Data
                 .HasForeignKey(nt => nt.CategoryId);
 
 
+            // Scholarship fields of study relations
             builder.Entity<ScholarshipFieldOfStudy>()
                 .HasKey(t => new { t.FieldOfStudyId, t.ScholarshipId });
 
@@ -68,6 +70,7 @@ namespace Scholarships.Data
                 .HasForeignKey(nt => nt.FieldOfStudyId);
 
 
+            // Scholarship profile relations
             builder.Entity<ScholarshipProfileProperty>()
                 .HasKey(t => new { t.ProfilePropertyId, t.ScholarshipId });
 
@@ -80,6 +83,16 @@ namespace Scholarships.Data
                 .HasOne(nt => nt.ProfileProperty)
                 .WithMany(t => t.Scholarships)
                 .HasForeignKey(nt => nt.ProfilePropertyId);
+
+            // Scholarship application answer set relations
+            builder.Entity<AnswerGroupSets>()
+                .HasKey(t => new { t.AnswerSetId, t.AnswerGroupId });
+
+            builder.Entity<AnswerGroupSets>()
+                .HasOne(app => app.AnswerGroup)
+                .WithMany(app => app.AnswerSets)
+                .HasForeignKey(nt => nt.AnswerGroupId);
+
         }
 
         public DbSet<Scholarships.Models.Category> Category { get; set; }

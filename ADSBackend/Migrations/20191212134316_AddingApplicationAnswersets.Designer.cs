@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scholarships.Data;
 
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191212134316_AddingApplicationAnswersets")]
+    partial class AddingApplicationAnswersets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,9 +129,6 @@ namespace Scholarships.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AnswerGroupId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -153,9 +152,22 @@ namespace Scholarships.Migrations
 
                     b.HasKey("ApplicationId");
 
-                    b.HasIndex("AnswerGroupId");
-
                     b.ToTable("Application");
+                });
+
+            modelBuilder.Entity("Scholarships.Models.ApplicationAnswerSet", b =>
+                {
+                    b.Property<int>("AnswerSetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AnswerSetId", "ApplicationId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.ToTable("ApplicationAnswerSet");
                 });
 
             modelBuilder.Entity("Scholarships.Models.Category", b =>
@@ -236,33 +248,6 @@ namespace Scholarships.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Answer");
-                });
-
-            modelBuilder.Entity("Scholarships.Models.Forms.AnswerGroup", b =>
-                {
-                    b.Property<int>("AnswerGroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.HasKey("AnswerGroupId");
-
-                    b.ToTable("AnswerGroup");
-                });
-
-            modelBuilder.Entity("Scholarships.Models.Forms.AnswerGroupSets", b =>
-                {
-                    b.Property<int>("AnswerSetId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AnswerGroupId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AnswerSetId", "AnswerGroupId");
-
-                    b.HasIndex("AnswerGroupId");
-
-                    b.ToTable("AnswerGroupSets");
                 });
 
             modelBuilder.Entity("Scholarships.Models.Forms.AnswerOption", b =>
@@ -383,15 +368,9 @@ namespace Scholarships.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("DistrictMaintained")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfYears")
-                        .HasColumnType("int");
 
                     b.Property<string>("PluralName")
                         .IsRequired()
@@ -879,11 +858,17 @@ namespace Scholarships.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Scholarships.Models.Application", b =>
+            modelBuilder.Entity("Scholarships.Models.ApplicationAnswerSet", b =>
                 {
-                    b.HasOne("Scholarships.Models.Forms.AnswerGroup", "AnswerGroup")
+                    b.HasOne("Scholarships.Models.Forms.AnswerSet", "AnswerSet")
                         .WithMany()
-                        .HasForeignKey("AnswerGroupId")
+                        .HasForeignKey("AnswerSetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Scholarships.Models.Application", "Application")
+                        .WithMany("AnswerSets")
+                        .HasForeignKey("ApplicationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -899,21 +884,6 @@ namespace Scholarships.Migrations
                     b.HasOne("Scholarships.Models.Forms.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Scholarships.Models.Forms.AnswerGroupSets", b =>
-                {
-                    b.HasOne("Scholarships.Models.Forms.AnswerGroup", "AnswerGroup")
-                        .WithMany("AnswerSets")
-                        .HasForeignKey("AnswerGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Scholarships.Models.Forms.AnswerSet", "AnswerSet")
-                        .WithMany()
-                        .HasForeignKey("AnswerSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -942,7 +912,7 @@ namespace Scholarships.Migrations
                         .IsRequired();
 
                     b.HasOne("Scholarships.Models.Forms.QuestionSet", "QuestionSet")
-                        .WithMany()
+                        .WithMany("AnswerSets")
                         .HasForeignKey("QuestionSetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

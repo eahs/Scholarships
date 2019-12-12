@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
+using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
 
@@ -29,29 +30,38 @@ namespace Scholarships.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> QuestionFormAjax(int? id)  // id of answerSet
+        public async Task<IActionResult> QuestionFormAjax(int? id)  // id is an answerGroup
         {
             if (id == null)
                 return NotFound();
 
-            var aset = await _context.AnswerSet.FirstOrDefaultAsync(app => app.AnswerSetId == id);
-
-            if (aset == null)
+            var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
+                                                   .ThenInclude(q => q.AnswerSet)
+                                                   .ThenInclude(a => a.Answers)
+                                                   .FirstOrDefaultAsync(ag => ag.AnswerGroupId == id);
+                                               
+            if (agroup == null)
             {
                 return NotFound();
             }
 
-            QuestionSet qset = await _dataService.GetQuestionSet(aset.QuestionSetId);
+            var asets = agroup.AnswerSets.Select(ag => ag.AnswerSet).ToList();
+
+            QuestionSet qset = await _dataService.GetQuestionSet(asets.First().QuestionSetId);
+            Profile profile = await _dataService.GetProfileAsync();
 
             if (qset == null)
             {
                 return NotFound();
             }
 
-            aset.QuestionSet = qset;
-            aset.Profile = await _dataService.GetProfileAsync();
+            foreach (var aset in asets)
+            {
+                aset.Profile = profile;
+            }
+            qset.AnswerSets = asets;
 
-            return View(aset);
+            return View(qset);
         }
 
         private bool AnswerSetExists(int id)

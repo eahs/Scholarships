@@ -129,6 +129,7 @@ namespace Scholarships.Services
 
             if (application == null)
             {
+                // First we need to create a default answer set for the user
                 var answerSet = new AnswerSet
                 {
                     QuestionSetId = questionSetId,
@@ -137,14 +138,32 @@ namespace Scholarships.Services
                 _context.AnswerSet.Add(answerSet);
                 await _context.SaveChangesAsync();
 
+                // Create an answergroup, which is basically a generic container of answersets
+                // Really we only use answerGroups for their unique id
+                var answerGroup = new AnswerGroup();
+
+                _context.AnswerGroup.Add(answerGroup);
+                await _context.SaveChangesAsync();
+
+                // Next create an answergroupset that will hold our first answerset
+                var answerGroupSet = new AnswerGroupSets
+                {
+                    AnswerGroupId = answerGroup.AnswerGroupId,
+                    AnswerSetId = answerSet.AnswerSetId
+                };
+                _context.AnswerGroupSets.Add(answerGroupSet);
+                await _context.SaveChangesAsync();
+
+                // Last, we need to create an application and attach the answer group
                 application = new Application
                 {
                     ProfileId = profileId,
                     ScholarshipId = scholarshipId,
-                    AnswerSetId = answerSet.AnswerSetId
+                    AnswerGroupId = answerGroup.AnswerGroupId
                 };
                 _context.Application.Add(application);
                 await _context.SaveChangesAsync();
+
             }
 
             return application;
