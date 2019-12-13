@@ -105,6 +105,11 @@
                         <textarea asp-for="ApplicationInstructions" class="summernote"></textarea>
                         <span asp-validation-for="ApplicationInstructions" class="text-danger"></span>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="NumberOfYears" class="control-label"></label>
+                        <input asp-for="NumberOfYears" class="form-control" />
+                        <span asp-validation-for="NumberOfYears" class="text-danger"></span>
+                    </div>
                     <div class="form-group form-check">
                         <label class="form-check-label">
                             <input class="form-check-input" asp-for="ApplyOnline" /> @Html.DisplayNameFor(model => model.ApplyOnline)
@@ -113,6 +118,11 @@
                     <div class="form-group form-check">
                         <label class="form-check-label">
                             <input class="form-check-input" asp-for="TranscriptsRequired" /> @Html.DisplayNameFor(model => model.TranscriptsRequired)
+                        </label>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="DistrictMaintained" /> @Html.DisplayNameFor(model => model.DistrictMaintained)
                         </label>
                     </div>
                     <div class="form-group">
