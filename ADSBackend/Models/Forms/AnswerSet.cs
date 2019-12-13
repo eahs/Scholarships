@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,5 +16,8 @@ namespace Scholarships.Models.Forms
         public int QuestionSetId { get; set; }
         public QuestionSet QuestionSet { get; set; }
         public List<Answer> Answers { get; set; }
+
+        [NotMapped]
+        public int Index { get; set; } = 0;   // Used for forms
     }
 }

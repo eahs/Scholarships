@@ -25,7 +25,6 @@ namespace Scholarships.Data
         public DbSet<AnswerGroupSets> AnswerGroupSets { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
         public DbSet<Answer> Answer { get; set; }
-        public DbSet<AnswerOption> AnswerOption  { get; set; }
         public DbSet<AnswerSet> AnswerSet  { get; set; }
         public DbSet<Question> Question  { get; set; }
         public DbSet<QuestionOption> QuestionOption  { get; set; }

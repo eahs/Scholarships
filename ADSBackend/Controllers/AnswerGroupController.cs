@@ -12,12 +12,12 @@ using Scholarships.Services;
 
 namespace Scholarships.Controllers
 {
-    public class AnswerSetController : Controller
+    public class AnswerGroupController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
 
-        public AnswerSetController(ApplicationDbContext context, DataService dataService)
+        public AnswerGroupController(ApplicationDbContext context, DataService dataService)
         {
             _context = context;
             _dataService = dataService;
@@ -55,16 +55,48 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
+            int index = 0;
             foreach (var aset in asets)
             {
                 aset.Profile = profile;
+                aset.Index = index;
+
+                if (aset.Answers.Count != qset.Questions.Count)
+                {
+                    foreach (var question in qset.Questions)
+                    {
+                        var exists = aset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                        if (exists == null)
+                        {
+                            Answer answer = new Answer
+                            {
+                                AnswerSetId = aset.AnswerSetId,
+                                QuestionId = question.QuestionId,
+                                Question = question                                
+                            };
+                            aset.Answers.Add(answer);
+                        }
+                    }
+                }
+                
+                index++;
             }
             qset.AnswerSets = asets;
+
+
 
             return View(qset);
         }
 
-        private bool AnswerSetExists(int id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Save(int? id, ICollection<AnswerSet> asets)
+        {
+            return RedirectToAction("QuestionFormAjax", new { id });
+        }
+
+            private bool AnswerSetExists(int id)
         {
             return _context.AnswerSet.Any(e => e.AnswerSetId == id);
         }

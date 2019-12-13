@@ -1,0 +1,8 @@
+﻿@model Scholarships.Models.Forms.Question
+
+<div class="form-group">
+    <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response">@Model.Name</label>
+    <p>@Model.Description</p>
+    <textarea class="form-control" name="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" value="@Model.Answer.Response"></textarea>
+    <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" data-valmsg-replace="true"></span>
+</div>

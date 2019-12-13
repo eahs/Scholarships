@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace Scholarships.Models.Forms
 {
+    // Note that any new QuestionTypes or changes made to these enumerated types will need 
+    // to be accompanied by a corresponding similarly-named partial view in the AnswerGroup View folder
     public enum QuestionType
     {
         Checkboxes = 1,
@@ -33,6 +35,16 @@ namespace Scholarships.Models.Forms
         public bool Required { get; set; }
         public string ErrorMessage { get; set; }
         public List<QuestionOption> Options { get; set; }
+
+        // These fields are only used when producing a form
+        [NotMapped]
+        public Answer Answer { get; set; }  
+
+        [NotMapped]
+        public int Index { get; set; } = 0;
+
+        [NotMapped]
+        public int AnswerSetIndex { get; set; } = 0;
 
     }
 }
