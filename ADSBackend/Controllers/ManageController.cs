@@ -40,7 +40,7 @@ namespace Scholarships.Controllers
         public string StatusMessage { get; set; }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return RedirectToAction("ChangePassword", "Manage");
             /*
