@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Apply";
+
+    var props = @Model.Scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName).ToList();
+
+    if (Model.Scholarship.TranscriptsRequired)
+        props.Add("Student Transcripts");
+
+    var fields = String.Join(", ", props.ToArray());
 }
 
 <ol class="breadcrumb">
@@ -26,26 +33,79 @@
 
             <h3>Preview</h3>
             <fieldset>
-                <legend>Profile Information</legend>
+                <h2>Scholarship Applicant Preview Data Here</h2>
+            </fieldset>
 
-                <label for="name-2">First name *</label>
-                <input id="name-2" name="name" type="text" class="required">
-                <label for="surname-2">Last name *</label>
-                <input id="surname-2" name="surname" type="text" class="required">
-                <label for="email-2">Email *</label>
-                <input id="email-2" name="email" type="text" class="required email">
-                <label for="address-2">Address</label>
-                <input id="address-2" name="address" type="text">
-                <label for="age-2">Age (The warning step will show up if age is less than 18) *</label>
-                <input id="age-2" name="age" type="text" class="required number">
-                <p>(*) Mandatory</p>
+            <h3>FERPA Release</h3>
+            <fieldset>
+                <h2>FERPA Release Authorization</h2>
+
+                <form>
+
+                    <div>
+                        This screen is in regards to the release of and access to your educational records under FERPA, the Family Educational Rights and Privacy Act. Since FERPA is a complex law, we want to provide some key information before you respond.  We also suggest discussing FERPA with your counselor, parent, guardian, or other school official to be better informed about your rights.
+                        <br /><br />
+                        How does FERPA relate to your scholarship application?<br />
+                        <br />
+                        FERPA regulates the privacy of student education records, which could include your scholarship application to the provider of this scholarship.  FERPA also gives you the right to review confidential letters of recommendation provided as part of that application after you enroll.
+                        In a moment, you’ll be asked if you want to waive the right to review confidential letters of recommendation. What should you know about this waiver?
+                        Waiving your right lets scholarship providers know that you do not intend to read your recommendations, which helps reassure scholarship providers that the letters are candid and truthful.
+                        Some recommenders may decline to write a letter for you if you do not waive your rights. Check with your counselor or teachers to see if any of them follow such a policy.
+                        Still unsure how to respond?
+                        <br /><br />
+                        That’s OK. Many students are. Before you move on, take a moment to discuss your decision with your counselor, another school official, or your parent/legal guardian.<br /><br />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col-auto"><input id="acceptTerms-2" name="acceptTerms" type="checkbox" class="required"></div>
+                        <div class="col"><label for="acceptTerms-2">I have read and understood the FERPA Release Authorization explanation above.</label></div>
+                    </div>
+
+                </form>
             </fieldset>
 
             <h3>Finish</h3>
             <fieldset>
-                <legend>Terms and Conditions</legend>
+                <h2>FERPA Form</h2>
 
-                <input id="acceptTerms-2" name="acceptTerms" type="checkbox" class="required"> <label for="acceptTerms-2">I agree with the Terms and Conditions.</label>
+                <form>
+
+                    <div class="form-row">
+                        The scholarship provider has requested the following information, in addition to any questions listed in part 1 of this application:<br />
+                        @fields
+                    </div>
+
+                    <br />
+
+                    <div class="form-row">
+                        <div class="col-auto"><input id="acceptRelease" name="acceptRelease" type="checkbox" class="required"></div>
+                        <div class="col"><label for="acceptRelease">I acknowledge that every school that I have attended may release all requested records and recommendations to scholarship providers to which I am applying for a scholarship. I also understand that employees or representatives of these scholarships may confidentially contact my current and former schools should they have questions about the information submitted on my behalf.</label></div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label" for="ferpaTerms">Please select one:</label><br />
+                        <input type="radio" name="ferpaTerms" value="yes" /> I waive my right to review all recommendations and supporting documents.<br />
+                        <input type="radio" name="ferpaTerms" value="no" /> I DO NOT waive my right to review all recommendations and supporting documents.
+                    </div>
+
+                    <div class="form-row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="control-label" for="signature">Signature</label>
+                                <input type="text" class="form-control" placeholder="Enter your full name">
+                            </div>
+                        </div>
+                        <div class="col" id="sigdate">
+                            <div class="form-group">
+                                <div class="input-group date">
+                                    <label class="control-label" for="SignatureDate" style="width: 100%">Date</label><br/>                               
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="SignatureDate" data-mask="99/99/9999" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </fieldset>
         </div>
     </div>
@@ -55,17 +115,56 @@
 
 @section Styles {
 
+    <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
     <link href="~/lib/jquery-steps/jquery.steps.css" rel="stylesheet">
+    <link href="~/lib/iCheck/custom.css" rel="stylesheet">
 
 }
 
 @section Scripts {
 
+    <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
     <script src="~/lib/jquery-steps/jquery.steps.min.js"></script>
+    <script src="~/lib/iCheck/icheck.min.js"></script>
 
     <script type="text/javascript">
 
+        function saveForm(form) {
+            var post_url = $(form).attr("action"); //get form action url
+            var form_data = $(form).serialize(); //Encode form elements for submission
+
+            if ($(form).valid()) {
+
+                $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    dataType: "json"
+                }).done(function (response, textStatus, jqXHR) {
+                    if (!response.isError) {
+                    } else if (response.Status === "InvalidRequest") {
+                        displayValidationErrors(response.modelStateErrors);
+                    }
+                })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                    })
+                    .always(function () {
+
+                    });
+
+            }
+        }
+
         $(document).ready(function () {
+
+            var mem = $('#sigdate .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: true,
+                calendarWeeks: true,
+                autoclose: true,
+                format: "mm/dd/yyyy"
+            });
 
             var form = $("#app").show();
 
@@ -73,25 +172,34 @@
                 headerTag: "h3",
                 bodyTag: "fieldset",
                 transitionEffect: "slideLeft",
+                onContentLoaded: function (event, currentIndex) {
+                    var container = document.getElementById("app");
+                    var forms = container.getElementsByTagName("form");
+                    var newForm = forms[forms.length - 1];
+                    $.validator.unobtrusive.parse(newForm);
+                    $('input').iCheck({
+                        checkboxClass: 'icheckbox_square-green',
+                        radioClass: 'iradio_square-green'
+                    });
+                    $(newForm).change(function () {
+                        saveForm(newForm);
+                    });
+                },
                 onStepChanging: function (event, currentIndex, newIndex) {
                     // Allways allow previous action even if the current form is not valid!
                     if (currentIndex > newIndex) {
                         return true;
                     }
+                    /*
                     // Forbid next action on "Warning" step if the user is to young
                     if (newIndex === 3 && Number($("#age-2").val()) < 18) {
                         return false;
                     }
-                    // Needed in some cases if the user went back (clean up)
-                    if (currentIndex < newIndex) {
-                        // To remove error styles
-                        form.find(".body:eq(" + newIndex + ") label.error").remove();
-                        form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
-                    }
-                    form.validate().settings.ignore = ":disabled,:hidden";
-                    return form.valid();
+                    */
+                    return true;  // return form.valid()
                 },
                 onStepChanged: function (event, currentIndex, priorIndex) {
+                    /*
                     // Used to skip the "Warning" step if the user is old enough.
                     if (currentIndex === 2 && Number($("#age-2").val()) >= 18) {
                         form.steps("next");
@@ -100,6 +208,7 @@
                     if (currentIndex === 2 && priorIndex === 3) {
                         form.steps("previous");
                     }
+                    */
                 },
                 onFinishing: function (event, currentIndex) {
                     form.validate().settings.ignore = ":disabled";
@@ -107,13 +216,6 @@
                 },
                 onFinished: function (event, currentIndex) {
                     alert("Submitted!");
-                }
-            }).validate({
-                errorPlacement: function errorPlacement(error, element) { element.before(error); },
-                rules: {
-                    confirm: {
-                        equalTo: "#password-2"
-                    }
                 }
             });
 

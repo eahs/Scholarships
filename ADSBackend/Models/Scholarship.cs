@@ -39,10 +39,13 @@ namespace Scholarships.Models
         public string Amount { get; set; }
         [DisplayName("Application Instructions")]
         public string ApplicationInstructions { get; set; }
+
         [DisplayName("Apply Online?")]
         public bool ApplyOnline { get; set; }
         [DisplayName("Transcripts Required?")]
         public bool TranscriptsRequired { get; set; }
+        [DisplayName("Requires Income Verification?")]
+        public bool IncomeVerificationRequired { get; set; }
 
         [DisplayName("Maintained by District?")]
         public bool DistrictMaintained { get; set; } = false;

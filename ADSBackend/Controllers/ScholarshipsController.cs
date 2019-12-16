@@ -79,6 +79,8 @@ namespace Scholarships.Controllers
 
             var scholarship = await _context.Scholarship
                 .Include(s => s.QuestionSet)
+                .Include(s => s.ProfileProperties).ThenInclude(s => s.ProfileProperty)
+                .Include(s => s.FieldsOfStudy)
                 .FirstOrDefaultAsync(m => m.ScholarshipId == id);
             if (scholarship == null)
             {
@@ -115,7 +117,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
+        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
         {
             if (ModelState.IsValid)
             {
@@ -193,7 +195,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate")] Scholarship scholarship)
+        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate")] Scholarship scholarship)
         {
             if (id != scholarship.ScholarshipId)
             {
@@ -227,6 +229,7 @@ namespace Scholarships.Controllers
                     _scholarship.DueDate = scholarship.DueDate;
                     _scholarship.DistrictMaintained = scholarship.DistrictMaintained;
                     _scholarship.NumberOfYears = scholarship.NumberOfYears;
+                    _scholarship.IncomeVerificationRequired = scholarship.IncomeVerificationRequired;
 
                     _context.Update(_scholarship);
 

@@ -91,7 +91,8 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(int? id, ICollection<AnswerSet> asets)
+        [Produces("application/json")]
+        public async Task<FormsBaseViewModel> Save(int? id, ICollection<AnswerSet> asets)
         {
             foreach (var aset in asets)
             {
@@ -100,7 +101,11 @@ namespace Scholarships.Controllers
                     
                 }
             }
-            return RedirectToAction("QuestionFormAjax", new { id });
+
+            return new FormsBaseViewModel
+            {
+                ErrorCode = QuestionSetError.NoError
+            };
         }
 
             private bool AnswerSetExists(int id)

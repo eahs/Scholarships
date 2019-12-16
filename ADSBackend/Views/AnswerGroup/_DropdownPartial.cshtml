@@ -6,7 +6,10 @@
 
     <div class="form-group">
         <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response">@Model.Name</label>
-        <p>@Model.Description</p>
+        @if (@Model.Description.Length > 0)
+        {
+            <p>@Model.Description</p>
+        }
         <select name="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptionId" asp-items="selectList" class="form-control"></select>
         <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" data-valmsg-replace="true"></span>
     </div>

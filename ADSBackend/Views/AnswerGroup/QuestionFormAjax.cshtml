@@ -6,7 +6,7 @@
     Layout = null;
 }
 
-    <form asp-action="Save" asp-route-id="@Model.QuestionSetId">
+    <form asp-action="Save" asp-route-id="@Model.QuestionSetId" id="appform">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         @foreach (var answerset in Model.AnswerSets)
@@ -25,12 +25,13 @@
 
                 <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
 
-                @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question);  // Ex. "_ShortAnswerPartial"
+                <div class="row">
+                    @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question)
+                </div>
             }
 
 
         }
-        <input type="submit" value="Save" />
     </form>
 
 
