@@ -71,6 +71,9 @@
                     <li is-active-route asp-controller="Profile" asp-action="Edit">
                         <a asp-controller="Profile" asp-action="Edit"><i class="fa fa-user-circle"></i><span class="nav-label">Your Profile</span></a>
                     </li>
+                    <li is-active-route asp-controller="Scholarships" asp-action="Index">
+                        <a asp-controller="Scholarships" asp-action="Index"><i class="fa fa-graduation-cap"></i><span class="nav-label">Scholarships</span></a>
+                    </li>
                 }
                 @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
                 {
