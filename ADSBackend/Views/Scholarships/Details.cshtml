@@ -104,7 +104,7 @@
         <div class="ibox-content">
             @if (Model.ApplicationCompleted)
             {
-                <a href="" class="btn btn-success btn-lg">Apply For Scholarship</a>
+                <a asp-controller="Scholarships" asp-action="Apply" asp-route-id="@Model.Scholarship.ScholarshipId" class="btn btn-success btn-lg">Apply For Scholarship</a>
             }
             else
             {
