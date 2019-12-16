@@ -6,30 +6,31 @@
     Layout = null;
 }
 
-<form asp-action="Save">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Save" asp-route-id="@Model.QuestionSetId">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    @foreach (var answerset in Model.AnswerSets)
-    {
-        <input type="hidden" name="[@answerset.Index].AnswerSetId" value="@answerset.AnswerSetId" />
-
-        @for (int i = 0; i < Model.Questions.Count; i++)
+        @foreach (var answerset in Model.AnswerSets)
         {
-            var question = Model.Questions[i];
+            <input type="hidden" name="[@answerset.Index].AnswerSetId" value="@answerset.AnswerSetId" />
+            <input type="hidden" name="[@answerset.Index].QuestionSetId" value="@Model.QuestionSetId" />
+            
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var question = Model.Questions[i];
 
-            // Do we have an answer to this question?
-            question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-            question.Index = i;
-            question.AnswerSetIndex = @answerset.Index;
+                // Do we have an answer to this question?
+                question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                question.Index = i;
+                question.AnswerSetIndex = @answerset.Index;
 
-            <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
+                <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
 
-            @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question);  // Ex. "_ShortAnswerPartial"
+                @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question);  // Ex. "_ShortAnswerPartial"
+            }
+
+
         }
-
-
-    }
-    <input type="submit" value="Save"/>
-</form>
+        <input type="submit" value="Save" />
+    </form>
 
 

@@ -93,6 +93,13 @@ namespace Scholarships.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(int? id, ICollection<AnswerSet> asets)
         {
+            foreach (var aset in asets)
+            {
+                foreach (var answer in aset.Answers)
+                {
+                    
+                }
+            }
             return RedirectToAction("QuestionFormAjax", new { id });
         }
 
