@@ -121,11 +121,11 @@
 
     .wizard > .content {
         border: solid 1px #ccc;
-        background: #eee;
+        background: #fff;
         display: block;
         margin: 0.5em;
         min-height: 45em;
-        overflow-y: scroll;
+        /*overflow-y: scroll;*/
         position: relative;
         width: auto;
         -webkit-border-radius: 5px;

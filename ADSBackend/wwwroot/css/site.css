@@ -207,3 +207,20 @@ span.grippyhorizontal {
     font-weight: 500;
     font-size: 15px;
 }
+
+
+.wizard .content {
+    min-height: 100px;
+}
+
+.wizard .content > .body {
+    width: 100%;
+    height: auto;
+    padding: 15px;
+    position: absolute;
+}
+
+.wizard .content .body.current {
+    position: relative;
+}
+
