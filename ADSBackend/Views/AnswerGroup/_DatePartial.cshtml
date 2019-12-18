@@ -1,2 +1,14 @@
 ﻿@model Scholarships.Models.Forms.Question
 
+    <div class="form-group" style="width: 100%">
+        <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].DateTime">@Model.Name</label>
+        @if (@Model.Description.Length > 0)
+        {
+            <p>@Model.Description</p>
+        }
+        <div class="input-group date">
+            <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].DateTime" style="width: 100%">Date</label><br />
+            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="[@Model.AnswerSetIndex].Answers[@Model.Index].DateTime" data-mask="99/99/9999" value="@Model.Answer.DateTime.ToString("MM/dd/yyyy")" class="form-control" />
+        </div>
+        <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].DateTime" data-valmsg-replace="true"></span>
+    </div>

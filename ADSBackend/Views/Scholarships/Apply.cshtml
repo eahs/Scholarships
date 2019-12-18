@@ -123,6 +123,7 @@
     <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
     <link href="~/lib/jquery-steps/jquery.steps.css" rel="stylesheet">
     <link href="~/lib/iCheck/custom.css" rel="stylesheet">
+    <link href="~/lib/dropzone/dropzone.css" rel="stylesheet"/>
 
 }
 
@@ -132,6 +133,7 @@
     <script src="~/lib/jquery-steps/jquery.steps.min.js"></script>
     <script src="~/lib/iCheck/icheck.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="~/lib/dropzone/dropzone.js"></script>
 
     <script type="text/javascript">
 
@@ -162,6 +164,14 @@
         }
 
         $(document).ready(function () {
+
+            Dropzone.options.dropzoneForm = {
+                paramName: () => "files", // The name that will be used to transfer the file
+                maxFilesize: 2, // MB
+                uploadMultiple: true,
+                parallelUploads: 100,
+                dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>"
+            };
 
             var mem = $('#sigdate .input-group.date').datepicker({
                 todayBtn: "linked",
@@ -199,6 +209,36 @@
                     $(newForm).change(function () {
                         saveForm(newForm);
                     });
+                    $('#appform .input-group.date').datepicker({
+                        todayBtn: "linked",
+                        keyboardNavigation: false,
+                        forceParse: true,
+                        calendarWeeks: true,
+                        autoclose: true,
+                        format: "mm/dd/yyyy"
+                    });
+                    $(".dropzone").dropzone(
+                        {
+                            url: "/AnswerGroup/Upload/@Model.Application.AnswerGroupId", 
+                            paramName: () => "files", // The name that will be used to transfer the file
+                            maxFilesize: 10, // MB
+                            uploadMultiple: true,
+                            parallelUploads: 100,
+                            dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
+                            init: function() {
+                                var opt = this;
+                                var questionid = $(opt.element).data("questionid");
+                                var answersetid = $(opt.element).data("answersetid");
+
+                                opt.options.params = {
+                                    questionid: questionid,
+                                    answersetid: answersetid
+                                }
+                            },
+                            sending: function(file, xhr, formData) {
+                                //formData.append("_token", token);
+                            }
+                        });
                 },
                 onStepChanging: function (event, currentIndex, newIndex) {
                     // Allways allow previous action even if the current form is not valid!
