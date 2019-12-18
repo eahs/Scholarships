@@ -111,6 +111,8 @@ namespace Scholarships.Controllers
         }
 
 
+        // See https://stackoverflow.com/questions/17759286/how-can-i-show-you-the-files-already-stored-on-server-using-dropzone-js for how to integrate already existing files into display
+        // Scroll down to section that shows init function solution
         public async Task<ActionResult> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
             long size = files.Sum(f => f.Length);
