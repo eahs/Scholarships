@@ -22,6 +22,9 @@ namespace Scholarships.Models
         [DisplayName("Last Name")]
         public string LastName { get; set; } = "";
 
+        [DisplayName("Middle Name")]
+        public string MiddleName { get; set; } = "";
+
         [Required]
         [DisplayName("EAHS Student Id")]
         [StringLength(5, ErrorMessage = "Student ID numbers are five digits long")]

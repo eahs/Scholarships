@@ -90,6 +90,7 @@ namespace Scholarships.Controllers
             var profile = await _dataService.GetProfileAsync();
 
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
+            app.Profile = profile;
 
             ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
             {

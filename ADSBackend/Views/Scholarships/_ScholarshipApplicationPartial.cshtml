@@ -1,0 +1,81 @@
+﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipApplyViewModel
+
+@{
+    var props = @Model.Scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyKey).ToList();
+
+    string DisplayProp(string propertyName, string value)
+    {
+        return props.Contains(propertyName) ? value : "";
+    }
+
+    var StudentId = DisplayProp("StudentId", Model.Application.Profile.StudentId);
+
+    var HomeAddress = DisplayProp("Address1", Model.Application.Profile.Address1 + "<br/>") +
+                        DisplayProp("Address2", Model.Application.Profile.Address2 + (Model.Application.Profile.Address2?.Length > 0 ? "<br/>" : "")) +
+                        DisplayProp("City", Model.Application.Profile.City + ", ") +
+                        DisplayProp("State", Model.Application.Profile.State + ", ") +
+                        DisplayProp("ZipCode", Model.Application.Profile.ZipCode);
+
+    var PhoneNumber = DisplayProp("Phone", Model.Application.Profile.Phone);
+    
+    var BirthDate = DisplayProp("BirthDate", Model.Application.Profile.BirthDate.ToString("MM/dd/yyyy"));
+    var Email = DisplayProp("Email", Model.Application.Profile.Email);
+
+}
+
+<h2>@Model.Application.Profile.LastName, @Model.Application.Profile.FirstName @Model.Application.Profile.MiddleName?.ToCharArray().FirstOrDefault()</h2>
+
+<div class="ibox">
+    <div class="ibox-content">
+
+        @if (StudentId.Length > 0)
+        {
+            <div class="row">
+                <div class="col-2">Student ID:</div><div class="col-4">@StudentId</div>
+            </div>
+        }
+        @if (HomeAddress.Length > 0)
+        {
+            <div class="row">
+                <div class="col-2">Home Address:</div><div class="col-4">@Html.Raw(HomeAddress)</div>
+            </div>
+        }
+        @if (PhoneNumber.Length > 0)
+        {
+            <div class="row">
+                <div class="col-2">Phone Number:</div><div class="col-4">@PhoneNumber</div>
+            </div>
+        }
+        @if (Email.Length > 0)
+        {
+            <div class="row">
+                <div class="col-2">Email:</div><div class="col-4">@Email</div>
+            </div> 
+        }
+    </div>
+</div>
+
+<!--
+BirthDate,
+Gender,
+Email,
+ClassRank,
+GPA,
+SATScoreMath,
+SATScoreReading,
+ACTScore,
+CollegeAttending,
+TuitionYearly,
+RoomBoard,
+TuitionTotal,
+CollegeAccepted,
+CollegeIntendedMajor,
+FieldOfStudy,
+LivingSituation,
+OtherAid,
+ActivitiesSchool,
+ActivitiesCommunity,
+SchoolOffices,
+SpecialCircumstances,
+Guardians
+-->

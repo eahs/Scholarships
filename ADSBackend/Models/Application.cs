@@ -12,6 +12,7 @@ namespace Scholarships.Models
         [Key]
         public int ApplicationId { get; set; }
         public int ProfileId { get; set; }
+        public Profile Profile { get; set; }
         public int ScholarshipId { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime SubmittedDate { get; set; }

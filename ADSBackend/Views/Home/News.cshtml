@@ -1,0 +1,36 @@
+﻿@model  Scholarships.Models.Article
+
+@{
+    ViewData["Title"] = "News";
+    Layout = "~/Views/Shared/_LayoutLandingSecondary.cshtml";
+}
+
+
+        <h1>News</h1>
+        <div class="wrapper wrapper-content  animated fadeInRight article">
+            <div class="row justify-content-md-center">
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-content">
+                            <div class="article-title">
+                                <h1>
+                                    @Model.Title
+                                </h1>
+                                By @Model.Author  | <span class="text-muted"><i class="fa fa-clock-o"></i> @Model.PublishDate.ToLongDateString()</span>
+                            </div>
+
+                            @Html.Raw(Model.Body)
+
+                            <p style="margin: 0 0 100px 0;">
+
+                            </p>
+                            <hr>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-success">Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+

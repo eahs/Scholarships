@@ -1,0 +1,119 @@
+﻿@model Scholarships.Models.Article
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Articles" asp-action="Index">Articles</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Edit Article</strong>
+    </li>
+</ol>
+
+<h2>Create Article</h2>
+
+<div class="ibox">
+    <div class="ibox-title">
+        <h4>Create Article</h4>
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Author" class="control-label"></label>
+                        <input asp-for="Author" class="form-control" />
+                        <span asp-validation-for="Author" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Lead" class="control-label"></label>
+                        <textarea asp-for="Lead" id="Lead" class="summernote"></textarea>
+                        <span asp-validation-for="Lead" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Body" class="control-label"></label>
+                        <textarea asp-for="Body" id="Body" class="summernote"></textarea>
+                        <span asp-validation-for="Body" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PublishDate" class="control-label"></label>
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="PublishDate" data-mask="99/99/9999" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control" />
+                        </div>
+                        <span asp-validation-for="PublishDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="Published" /> @Html.DisplayNameFor(model => model.Published)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
+
+
+        @section Styles  {
+
+            <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
+            <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
+
+            <style type="text/css">
+            </style>
+        }
+
+        @section Scripts {
+
+            <script src="~/lib/bootstrap-datepicker/dist/js/bootstrap-datepicker.js"></script>
+            <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+
+                    $('.summernote').summernote({
+                        height: 150,
+                        dialogsInBody: true
+                    });
+
+                    jQuery.validator.setDefaults({
+                        // This will ignore all hidden elements alongside `contenteditable` elements
+                        // that have no `name` attribute
+                        ignore: ":hidden:not(#summernote),.note-editable.card-block,.note-editable.panel-body"
+                    });
+
+
+                    var mem = $('.input-group.date').datepicker({
+                        todayBtn: "linked",
+                        keyboardNavigation: false,
+                        forceParse: true,
+                        calendarWeeks: true,
+                        autoclose: true,
+                        format: "mm/dd/yyyy"
+                    });
+                });
+            </script>
+
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        }

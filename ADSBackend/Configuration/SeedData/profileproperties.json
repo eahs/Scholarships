@@ -8,6 +8,10 @@
     "PropertyKey": "LastName"
   },
   {
+    "PropertyName": "Middle Name",
+    "PropertyKey": "MiddleName"
+  },
+  {
     "PropertyName": "Student ID",
     "PropertyKey": "StudentId"
   },

@@ -22,6 +22,7 @@
                 manageClass = "active";
             break;
         case "FieldsOfStudy": manageClass = "active"; break;
+        case "Articles": manageClass = "active"; break;
 
         // Admininstration
         case "Users": adminClass = "active"; break;
@@ -85,6 +86,9 @@
                             </li>
                             <li is-active-route asp-controller="FieldsOfStudy">
                                 <a asp-controller="FieldsOfStudy" asp-action="Index">Fields Of Study</a>
+                            </li>
+                            <li is-active-route asp-controller="Articles">
+                                <a asp-controller="Articles" asp-action="Index">Articles</a>
                             </li>
                         </ul>
                     </li>

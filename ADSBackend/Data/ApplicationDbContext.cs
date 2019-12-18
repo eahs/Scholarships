@@ -95,5 +95,7 @@ namespace Scholarships.Data
         }
 
         public DbSet<Scholarships.Models.Category> Category { get; set; }
+
+        public DbSet<Scholarships.Models.Article> Article { get; set; }
     }
 }

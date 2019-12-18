@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scholarships.Data;
 
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191218125932_AddedArticles")]
+    partial class AddedArticles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,8 +156,6 @@ namespace Scholarships.Migrations
                     b.HasKey("ApplicationId");
 
                     b.HasIndex("AnswerGroupId");
-
-                    b.HasIndex("ProfileId");
 
                     b.ToTable("Application");
                 });
@@ -639,9 +639,6 @@ namespace Scholarships.Migrations
                     b.Property<string>("LivingSituation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MiddleName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("OtherAid")
                         .HasColumnType("nvarchar(max)");
 
@@ -904,12 +901,6 @@ namespace Scholarships.Migrations
                     b.HasOne("Scholarships.Models.Forms.AnswerGroup", "AnswerGroup")
                         .WithMany()
                         .HasForeignKey("AnswerGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Scholarships.Models.Profile", "Profile")
-                        .WithMany()
-                        .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

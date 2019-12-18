@@ -9,74 +9,91 @@
     ViewData["CopyrightYear"] = DateTime.Now.Year;
 }
 
-<div class="middle-box text-center loginscreen animated fadeInDown">
-    <div>
-        <div>
-            <h1 class="logo-name">
-                <i class="fa fa-paw"></i>
-            </h1>
+<div class="animated fadeInDown">
+    <div class="row">
+        <div class="col-md-12">
+            <div style="text-align:center">
+                <h1 class="logo-name">
+                    <i class="fa fa-paw"></i>
+                </h1>
+            </div>
+            <br />
+            <h2>Easton Area High School Scholarships</h2>
+            <p>
+                Students must sign in using their Roverkids.org accounts
+            </p>
         </div>
-        <br />
-        <h3>Easton Area High School Scholarships</h3>
-        <p>
-            Login instructions are sometimes helpful
-        </p>
-        <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Username"></label>
-                <input asp-for="Username" class="form-control" />
-                <span asp-validation-for="Username" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <div class="checkbox">
-                    <label asp-for="RememberMe">
-                        <input asp-for="RememberMe" />
-                        @Html.DisplayNameFor(m => m.RememberMe)
-                    </label>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
-            <div class="form-group">
-                <a asp-action="ForgotPassword">Forgot your password?</a>
-            </div>
-        </form>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
 
-@{
-        var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-        if (loginProviders.Count == 0)
-        {
             <div>
-                <p>
-                    There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                    for details on setting up this ASP.NET application to support logging in via external services.
-                </p>
+
+                <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input asp-for="Username" class="form-control" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password"></label>
+                        <input asp-for="Password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label asp-for="RememberMe">
+                                <input asp-for="RememberMe" />
+                                @Html.DisplayNameFor(m => m.RememberMe)
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+                    <div class="form-group">
+                        <a asp-action="ForgotPassword">Forgot your password?</a>
+                    </div>
+                </form>
+
+                <p class="m-t"><small>Easton Area School District &copy; @ViewData["CopyrightYear"]</small></p>
             </div>
-        }
-        else
-        {
-            <form asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
-                <div>
-                    <p>
-                        @foreach (var provider in loginProviders)
-                        {
-                            <button type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
-                        }
-                    </p>
-                </div>
-            </form>
-        }
-}
-        <p class="m-t"><small>Easton Area School District &copy; @ViewData["CopyrightYear"]</small></p>
+        </div>
+        <div class="col-md-6" style="border-left: solid 1px #eee;">
+
+            <div class="form-group">
+                <br/>
+                <label>Log in using your Roverkids.org or Eastonsd.org account:</label>
+                @{
+                    var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+                    if (loginProviders.Count == 0)
+                    {
+                        <div>
+                            <p>
+                                There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                                for details on setting up this ASP.NET application to support logging in via external services.
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <form asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+                            <div>
+                                <p>
+                                    <button type="submit" class="btn btn-block btn-social btn-lg btn-google" style="font-size: 1.15rem;" name="provider" value="Google" title="Log in using your Google account"><span class="fa fa-google"></span> Sign in with Google</button>
+                                </p>
+                            </div>
+                        </form>
+                    }
+                }
+            </div>
+        </div>
     </div>
 </div>
 
+
 @section  Styles {
+
+<link rel="stylesheet" href="~/lib/bootstrap-social-gh-pages/bootstrap-social.css" />
 
 }
 

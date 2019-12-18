@@ -24,40 +24,46 @@
     @RenderSection("Styles", required: false)
 </head>
 <body class="landing-page">
-    
-<div class="navbar-wrapper">
-    <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md navbar-scroll" role="navigation">
-        <div class="container">
-            <a class="navbar-brand" href="/">EAHS Scholarships</a>
-            <div class="navbar-header page-scroll">
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
-                    <i class="fa fa-bars"></i>
-                </button>
+
+    <div class="navbar-wrapper">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md navbar-scroll" role="navigation">
+            <div class="container">
+                <a class="navbar-brand" href="/">EAHS Scholarships</a>
+                <div class="navbar-header page-scroll">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+                @await Html.PartialAsync("_LayoutNavigationLinks")
             </div>
-            @await Html.PartialAsync("_LayoutNavigationLinks")
-        </div>
-    </nav>
-</div>
+        </nav>
+    </div>
 
-@RenderBody()
+    <div class="container">
 
-    <!-- Libraries -->
-    <script src="~/lib/jquery/dist/jquery.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
-    <script src="~/lib/Popper/popper.min.js" asp-append-version="true"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.js" asp-append-version="true"></script>
+        @RenderBody()
+    
+    </div>
 
-    <!-- Custom Scripts -->
-    <script src="~/js/site.js" asp-append-version="true"></script>
+@await Html.PartialAsync("_LayoutLandingFooter.cshtml")
 
-    <!-- INSPINIA -->
-    <script src="~/lib/metisMenu/dist/jquery.metisMenu.js" asp-append-version="true"></script>
-    <script src="~/lib/slimScroll/jquery.slimscroll.js" asp-append-version="true"></script>
-    <script src="~/lib/pace/pace.js" asp-append-version="true"></script>
-    <script src="~/lib/wow/wow.min.js" asp-append-version="true"></script>
-    <script src="~/js/script.js" asp-append-version="true"></script>
+<!-- Libraries -->
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+<script src="~/lib/Popper/popper.min.js" asp-append-version="true"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.js" asp-append-version="true"></script>
+
+<!-- Custom Scripts -->
+<script src="~/js/site.js" asp-append-version="true"></script>
+
+<!-- INSPINIA -->
+<script src="~/lib/metisMenu/dist/jquery.metisMenu.js" asp-append-version="true"></script>
+<script src="~/lib/slimScroll/jquery.slimscroll.js" asp-append-version="true"></script>
+<script src="~/lib/pace/pace.js" asp-append-version="true"></script>
+<script src="~/lib/wow/wow.min.js" asp-append-version="true"></script>
+<script src="~/js/script.js" asp-append-version="true"></script>
 
 
-    @RenderSection("Scripts", required: false)
+@RenderSection("Scripts", required: false)
 </body>
 </html>
