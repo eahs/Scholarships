@@ -71,7 +71,7 @@ namespace Scholarships.Models
         [DisplayName("ACT Score")]
         public int? ACTScore { get; set; }
 
-        [DisplayName("College You Are Attending")]
+        [DisplayName("College You Are Planning to Attend")]
         public string CollegeAttending { get; set; } = "";
         [DisplayName("Yearly Tuition Cost")]
         [DataType(DataType.Currency, ErrorMessage="You must enter the yearly tuition cost in dollars. Example: 35,000")]
@@ -85,6 +85,9 @@ namespace Scholarships.Models
 
         [DisplayName("Have you already been accepted?")]
         public bool CollegeAccepted { get; set; } = false;
+
+        [DisplayName("Other Colleges Under Consideration")]
+        public string OtherColleges { get; set; } = "";
 
         [DisplayName("Intended Major")]
         public string CollegeIntendedMajor { get; set; } = "";

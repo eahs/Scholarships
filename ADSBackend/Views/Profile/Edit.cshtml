@@ -204,6 +204,12 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label asp-for="OtherColleges" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">List any additional colleges under consideration followed by the tuition amount (one per line; example: University of Easton, $48,000)</small>
+                            <textarea asp-for="OtherColleges" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="OtherColleges" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
                             <label asp-for="FieldOfStudyId" style="width: 100%" class="control-label"></label>
                             <select asp-for="FieldOfStudyId" asp-items="ViewBag.FieldsOfStudy" style="width: 100%" class="form-control fos"></select>
                             <span asp-validation-for="FieldOfStudyId" class="text-danger"></span>
@@ -220,6 +226,7 @@
                         </div>
                         <div class="form-group">
                             <label asp-for="OtherAid" class="control-label"></label>
+                            <small class="form-text text-muted text-margin-shrink">List source of aid followed by the amount (one per line; Example: Rover Scholarship, $500)</small>
                             <textarea asp-for="OtherAid" class="form-control" rows="3"></textarea>
                             <span asp-validation-for="OtherAid" class="text-danger"></span>
                         </div>
@@ -276,7 +283,7 @@
                     @await Html.PartialAsync("_EditGuardiansPartial", Model.Guardians)
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-default saveGuardians">Save All</button> <button class="btn btn-default addGuardian">Add Family Member</button>
+                    <button class="btn btn-primary btn-lg saveGuardians">Save Family Income</button> <button class="btn btn-primary btn-lg addGuardian">Add Family Member</button>
                 </div>
             </div>
         </div>

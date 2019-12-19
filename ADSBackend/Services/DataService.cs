@@ -125,6 +125,17 @@ namespace Scholarships.Services
             return qset;
         }
 
+        public async Task<Scholarship> GetScholarship (int scholarshipId)
+        {
+            var scholarship = await _context.Scholarship
+                .Include(s => s.QuestionSet)
+                .Include(s => s.ProfileProperties).ThenInclude(s => s.ProfileProperty)
+                .Include(s => s.FieldsOfStudy)
+                .FirstOrDefaultAsync(m => m.ScholarshipId == scholarshipId);
+
+            return scholarship;
+        }
+
         public async Task<Application> GetApplication (int scholarshipId, int profileId, int questionSetId)
         {
             var application = await _context.Application.FirstOrDefaultAsync(app => app.ScholarshipId == scholarshipId && app.ProfileId == app.ProfileId);

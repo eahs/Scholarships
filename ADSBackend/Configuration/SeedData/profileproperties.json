@@ -96,6 +96,10 @@
     "PropertyKey": "CollegeIntendedMajor"
   },
   {
+    "PropertyName": "Other Colleges",
+    "PropertyKey": "OtherColleges"
+  },
+  {
     "PropertyName": "Field of Study",
     "PropertyKey": "FieldOfStudy"
   },

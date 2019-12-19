@@ -43,23 +43,12 @@ namespace Scholarships.Controllers
         public async Task<IActionResult> Edit()
         {
             var profile = await _dataService.GetProfileAsync();
-            var genders = new[]
-            {
-                new { Name = "Male", GenderId = 0},
-                new { Name = "Female", GenderId = 1},
-                new { Name = "Other", GenderId = 2}
-            }.ToList();
-            var livingSituations = new[]
-            {
-                new { Name = "Live On Campus", Key = "oncampus"},
-                new { Name = "Commute", Key = "commute"}
-            }.ToList();
 
             var fields = await _context.FieldOfStudy.OrderBy(f => f.Name).ToListAsync();
             fields.Insert(0, fields.FirstOrDefault(f => f.FieldOfStudyId == 1));
 
-            ViewBag.Genders = new SelectList(genders, "GenderId", "Name");
-            ViewBag.LivingSituations = new SelectList(livingSituations, "Key", "Name");
+            ViewBag.Genders = new SelectList(FormHelper.Genders, "Id", "Name");
+            ViewBag.LivingSituations = new SelectList(FormHelper.LivingSituations, "Key", "Name");
             ViewBag.States = FormHelper.States;
             ViewBag.FieldsOfStudy = new SelectList(fields, "FieldOfStudyId", "Name");
 
@@ -154,7 +143,7 @@ namespace Scholarships.Controllers
         }
 
 
-        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,FieldOfStudy,FieldOfStudyId,CollegeIntendedMajor,LivingSituation,OtherAid";
+        private const string CollegePlansBindingFields = "ProfileId,CollegeAttending,TuitionYearly,RoomBoard,TuitionTotal,CollegeAccepted,OtherColleges,FieldOfStudy,FieldOfStudyId,CollegeIntendedMajor,LivingSituation,OtherAid";
 
         // POST: Profiles/EditProfile
         [HttpPost]
@@ -174,6 +163,7 @@ namespace Scholarships.Controllers
             _profile.RoomBoard = profile.RoomBoard;
             _profile.TuitionTotal = profile.TuitionTotal;
             _profile.CollegeAccepted = profile.CollegeAccepted;
+            _profile.OtherColleges = profile.OtherColleges;
             _profile.FieldOfStudyId = profile.FieldOfStudyId;
             _profile.CollegeIntendedMajor = profile.CollegeIntendedMajor;
             _profile.LivingSituation = profile.LivingSituation;
@@ -212,24 +202,8 @@ namespace Scholarships.Controllers
 
         private void SetupGuardiansAjaxForm ()
         {
-            var relations = new[]
-            {
-                new { Name = "", Id = 0},
-                new { Name = "Self", Id = 1},
-                new { Name = "Father", Id = 2},
-                new { Name = "Mother", Id = 3},
-                new { Name = "Guardian", Id = 4}
-            }.ToList();
-            var employmentStatus = new[]
-            {
-                new { Name = "", Id = 0},
-                new { Name = "Full Time", Id = 1},
-                new { Name = "Part Time", Id = 2},
-                new { Name = "Unemployed", Id = 3}
-            }.ToList();
-
-            ViewBag.Relationships = new SelectList(relations, "Id", "Name");
-            ViewBag.EmploymentStatus = new SelectList(employmentStatus, "Id", "Name");
+            ViewBag.Relationships = new SelectList(FormHelper.Relationships, "Id", "Name");
+            ViewBag.EmploymentStatus = new SelectList(FormHelper.EmploymentStatus, "Id", "Name");            
         }
 
         public async Task<IActionResult> EditGuardiansAjax ()

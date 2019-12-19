@@ -39,22 +39,20 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
+                        <td style="vertical-align: middle">
                             @Html.DisplayFor(modelItem => item.Title)
                         </td>
-                        <td>
+                        <td style="vertical-align: middle">
                             @Html.DisplayFor(modelItem => item.Author)
                         </td>
-                        <td>
+                        <td style="vertical-align: middle">
                             @Html.DisplayFor(modelItem => item.PublishDate)
                         </td>
-                        <td>
+                        <td style="vertical-align: middle">
                             @Html.DisplayFor(modelItem => item.Published)
                         </td>
                         <td>
-                            <a asp-action="Edit" asp-route-id="@item.ArticleId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ArticleId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ArticleId">Delete</a>
+                            @await Html.PartialAsync("_CrudOptionsNoDetails", item.ArticleId)
                         </td>
                     </tr>
                 }

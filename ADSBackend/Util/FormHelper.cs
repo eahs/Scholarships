@@ -16,6 +16,12 @@ using System.Web;
 
 namespace Scholarships.Util
 {
+    public class FHItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Key { get; set; }
+    }
     public class FormHelper
     {
         public static string JsonStatus(string statusMessage)
@@ -27,6 +33,36 @@ namespace Scholarships.Util
         {
             return JsonConvert.SerializeObject(result);
         }
+
+        public static IEnumerable<FHItem> Genders = new[]
+        {
+                new FHItem { Name = "Male", Id = 0},
+                new FHItem { Name = "Female", Id = 1},
+                new FHItem { Name = "Other", Id = 2}
+            }.ToList();
+
+        public static IEnumerable<FHItem> LivingSituations = new[]
+        {
+                new FHItem { Name = "Live On Campus", Key = "oncampus"},
+                new FHItem { Name = "Commute", Key = "commute"}
+            }.ToList();
+
+        public static IEnumerable<FHItem> Relationships = new[]
+            {
+                new FHItem { Name = "", Id = 0},
+                new FHItem { Name = "Self", Id = 1},
+                new FHItem { Name = "Father", Id = 2},
+                new FHItem { Name = "Mother", Id = 3},
+                new FHItem { Name = "Guardian", Id = 4}
+            }.ToList();
+
+        public static IEnumerable<FHItem> EmploymentStatus = new[]
+        {
+                new FHItem { Name = "", Id = 0},
+                new FHItem { Name = "Full Time", Id = 1},
+                new FHItem { Name = "Part Time", Id = 2},
+                new FHItem { Name = "Unemployed", Id = 3}
+        }.ToList();
 
         public static SelectList States = new SelectList(
             new[]
