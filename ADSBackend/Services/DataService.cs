@@ -37,7 +37,9 @@ namespace Scholarships.Services
             if (user == null)
                 return null;
 
-            var profile = await _context.Profile.Include(p => p.Guardians).FirstOrDefaultAsync(p => p.UserId == user.Id);
+            var profile = await _context.Profile.Include(p => p.Guardians)
+                                                .Include(p => p.FieldOfStudy)
+                                                .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (profile == null)
             {
                 profile = new Profile

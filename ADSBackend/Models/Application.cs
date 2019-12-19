@@ -15,7 +15,7 @@ namespace Scholarships.Models
         public Profile Profile { get; set; }
         public int ScholarshipId { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public DateTime SubmittedDate { get; set; }
+        public DateTime SubmittedDate { get; set; } = DateTime.Now;
         public int SubmissionStage { get; set; } = 1;
         public bool Submitted { get; set; } = false;
         public AnswerGroup AnswerGroup { get; set; }
