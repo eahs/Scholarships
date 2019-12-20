@@ -125,6 +125,61 @@ namespace Scholarships.Services
             return qset;
         }
 
+        public async Task<QuestionSet> GetQuestionSetWithAnswers (int AnswerGroupId)
+        {
+            var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
+                                                    .ThenInclude(q => q.AnswerSet)
+                                                    .ThenInclude(a => a.Answers)
+                                                    .FirstOrDefaultAsync(ag => ag.AnswerGroupId == AnswerGroupId);
+
+            if (agroup == null)
+                return null;
+
+            var asets = agroup.AnswerSets.Select(ag => ag.AnswerSet).ToList();
+            var firstSet = asets.First();
+
+            Profile profile = await GetProfileAsync();
+
+            if (firstSet == null || firstSet.ProfileId != profile.ProfileId)
+                return null;
+            
+            QuestionSet qset = await GetQuestionSet(firstSet.QuestionSetId);
+            
+            if (qset == null)
+                return null;
+
+            int index = 0;
+            foreach (var aset in asets)
+            {
+                aset.Profile = profile;
+                aset.Index = index;
+
+                if (aset.Answers.Count != qset.Questions.Count)
+                {
+                    foreach (var question in qset.Questions)
+                    {
+                        var exists = aset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+
+                        if (exists == null)
+                        {
+                            Answer answer = new Answer
+                            {
+                                AnswerSetId = aset.AnswerSetId,
+                                QuestionId = question.QuestionId,
+                                Question = question
+                            };
+                            aset.Answers.Add(answer);
+                        }
+                    }
+                }
+
+                index++;
+            }
+            qset.AnswerSets = asets;
+
+            return qset;
+        }
+
         public async Task<Scholarship> GetScholarship (int scholarshipId)
         {
             var scholarship = await _context.Scholarship

@@ -32,74 +32,60 @@ namespace Scholarships.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> QuestionFormAjax(int? id)  // id is an answerGroup
-        {
+        /// <summary>
+        /// Returns a form built from a questionset
+        /// </summary>
+        /// <param name="id">AnswerGroupId from a previously constructed AnswerGroup</param>
+        /// <returns></returns>
+        public async Task<IActionResult> QuestionFormAjax(int? id)
+        { 
             if (id == null)
                 return NotFound();
 
-            var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
-                                                   .ThenInclude(q => q.AnswerSet)
-                                                   .ThenInclude(a => a.Answers)
-                                                   .FirstOrDefaultAsync(ag => ag.AnswerGroupId == id);
-                                               
-            if (agroup == null)
-            {
-                return NotFound();
-            }
-
-            var asets = agroup.AnswerSets.Select(ag => ag.AnswerSet).ToList();
-
-            QuestionSet qset = await _dataService.GetQuestionSet(asets.First().QuestionSetId);
-            Profile profile = await _dataService.GetProfileAsync();
+            ViewBag.AnswerGroupId = id;  // The form still needs the answer group Id
+            var qset = await _dataService.GetQuestionSetWithAnswers(ViewBag.AnswerGroupId);
 
             if (qset == null)
-            {
                 return NotFound();
-            }
-
-            int index = 0;
-            foreach (var aset in asets)
-            {
-                aset.Profile = profile;
-                aset.Index = index;
-
-                if (aset.Answers.Count != qset.Questions.Count)
-                {
-                    foreach (var question in qset.Questions)
-                    {
-                        var exists = aset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-
-                        if (exists == null)
-                        {
-                            Answer answer = new Answer
-                            {
-                                AnswerSetId = aset.AnswerSetId,
-                                QuestionId = question.QuestionId,
-                                Question = question                                
-                            };
-                            aset.Answers.Add(answer);
-                        }
-                    }
-                }
-                
-                index++;
-            }
-            qset.AnswerSets = asets;
-
-
 
             return View(qset);
         }
 
+        /// <summary>
+        /// Saves an ajax submitted form from /Scholarships/Apply/{id}
+        /// </summary>
+        /// <param name="id">AnswerGroup Id</param>
+        /// <param name="asets">List of partial answersets constructed from form data</param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Produces("application/json")]
         public async Task<FormsBaseViewModel> Save(int? id, ICollection<AnswerSet> asets)
         {
+            if (id == null)
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
+
+            // First let's see if we can load the relevant question set
+            var qset = await _dataService.GetQuestionSetWithAnswers((int)id);
+            
+            if (qset == null)
+                return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
+
             foreach (var aset in asets)
             {
+                var _safeAnswerSet = qset.AnswerSets.Where(a => a.AnswerSetId == aset.AnswerSetId);
+
+                // Check to see if the answerSet is already saved
+                if (_safeAnswerSet == null)
+                {
+                    // TODO: Create an answerset to hold this answer?
+                    continue;  // For now we don't have to worry about multiple answersets
+                }
+
+                // Iterate through the answers and save them 
                 foreach (var answer in aset.Answers)
                 {
+                    // Each answer must be validated, answerId likely to be invalid
                     
                 }
             }

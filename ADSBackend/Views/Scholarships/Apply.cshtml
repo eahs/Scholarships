@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Apply";
 
+    ViewBag.AnswerGroupId = Model.Application.AnswerGroupId;
+
     var props = @Model.Scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName).ToList();
 
     if (Model.Scholarship.TranscriptsRequired)
@@ -124,7 +126,6 @@
     <link href="~/lib/jquery-steps/jquery.steps.css" rel="stylesheet">
     <link href="~/lib/iCheck/custom.css" rel="stylesheet">
     <link href="~/lib/dropzone/dropzone.css" rel="stylesheet"/>
-
 }
 
 @section Scripts {
@@ -199,8 +200,7 @@
                 },
                 onContentLoaded: function (event, currentIndex) {
                     var container = document.getElementById("app");
-                    var forms = container.getElementsByTagName("form");
-                    var newForm = forms[forms.length - 1];
+                    var newForm = $("#appform");
                     $.validator.unobtrusive.parse(newForm);
                     $('input').iCheck({
                         checkboxClass: 'icheckbox_square-green',
