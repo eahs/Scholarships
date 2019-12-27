@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
@@ -18,11 +19,13 @@ namespace Scholarships.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
+        private readonly ViewRenderService _viewRenderService;
 
-        public AnswerGroupController(ApplicationDbContext context, DataService dataService)
+        public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService)
         {
             _context = context;
             _dataService = dataService;
+            _viewRenderService = viewRenderService;
         }
 
         // GET: AnswerSet
@@ -73,7 +76,7 @@ namespace Scholarships.Controllers
 
             foreach (var aset in asets)
             {
-                var _safeAnswerSet = qset.AnswerSets.Where(a => a.AnswerSetId == aset.AnswerSetId);
+                var _safeAnswerSet = qset.AnswerSets.FirstOrDefault(a => a.AnswerSetId == aset.AnswerSetId);
 
                 // Check to see if the answerSet is already saved
                 if (_safeAnswerSet == null)
@@ -83,17 +86,37 @@ namespace Scholarships.Controllers
                 }
 
                 // Iterate through the answers and save them 
-                foreach (var answer in aset.Answers)
+                for  (int i = 0; i < aset.Answers.Count; i++)
                 {
+                    var answer = aset.Answers[i];
+                    var _safeAnswer = _safeAnswerSet.Answers[i];
+
+                    _safeAnswer.Response = answer.Response ?? "";
+                    _safeAnswer.DateTime = answer.DateTime;
+                    _safeAnswer.Config = JsonConvert.SerializeObject(new { QuestionOptions = answer.QuestionOptions });
+                    _safeAnswer.QuestionOptionId = answer.QuestionOptionId;
+
                     // Each answer must be validated, answerId likely to be invalid
-                    
+                    if (answer.AnswerId == 0)
+                    {
+                        _context.Answer.Add(_safeAnswer);
+                    }
+                    else
+                    {
+                        _context.Answer.Update(_safeAnswer);
+                    }
                 }
+
+                await _context.SaveChangesAsync();
             }
 
-            return new FormsBaseViewModel
+            var vm = new QuestionSetViewModel
             {
-                ErrorCode = QuestionSetError.NoError
+                ErrorCode = QuestionSetError.NoError,
+                PrimaryForm = await _viewRenderService.RenderToStringAsync("QuestionFormAjax", qset)
             };
+
+            return vm;
         }
 
 

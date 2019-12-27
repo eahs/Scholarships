@@ -13,7 +13,7 @@
         {
             <input type="hidden" name="[@answerset.Index].AnswerSetId" value="@answerset.AnswerSetId" />
             <input type="hidden" name="[@answerset.Index].QuestionSetId" value="@Model.QuestionSetId" />
-            
+
             @for (int i = 0; i < Model.Questions.Count; i++)
             {
                 var question = Model.Questions[i];
@@ -23,6 +23,7 @@
                 question.Index = i;
                 question.AnswerSetIndex = @answerset.Index;
 
+                <input type="hidden" name="[@answerset.Index].Answers[@question.Index].AnswerId" value="@question.Answer.AnswerId" />
                 <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
 
                 <div class="row">

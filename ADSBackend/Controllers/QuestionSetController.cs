@@ -17,10 +17,10 @@ namespace Scholarships.Controllers
     public class QuestionSetController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IViewRenderService _renderService;
+        private readonly ViewRenderService _renderService;
         private readonly DataService _dataService;
 
-        public QuestionSetController(ApplicationDbContext context, IViewRenderService renderService, DataService dataService)
+        public QuestionSetController(ApplicationDbContext context, ViewRenderService renderService, DataService dataService)
         {
             _context = context;
             _renderService = renderService;

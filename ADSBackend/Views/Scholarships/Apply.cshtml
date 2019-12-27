@@ -38,7 +38,7 @@
             </fieldset>
 
             <h3>Preview</h3>
-            <fieldset>
+            <fieldset id="appformContainer">
                 @await  Html.PartialAsync("_ScholarshipApplicationPartial")
             </fieldset>
 
@@ -151,6 +151,7 @@
                     dataType: "json"
                 }).done(function (response, textStatus, jqXHR) {
                     if (!response.isError) {
+                        $("#appformContainer").html(response.primaryForm);
                     } else if (response.Status === "InvalidRequest") {
                         displayValidationErrors(response.modelStateErrors);
                     }
