@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Scholarships.Models.ScholarshipViewModels;
 using System.ComponentModel.DataAnnotations;
 using Scholarships.Models.Forms;
+using Newtonsoft.Json;
 
 namespace Scholarships.Services
 {
@@ -170,6 +171,20 @@ namespace Scholarships.Services
                             };
                             aset.Answers.Add(answer);
                         }
+                    }
+                }
+                else
+                {
+                    foreach (var answer in aset.Answers)
+                    {
+                        var config = JsonConvert.DeserializeObject<Answer>(answer.Config);
+
+                        if (config.QuestionOptions != null)
+                        {
+                            answer.QuestionOptions = config.QuestionOptions;
+                        }
+
+
                     }
                 }
 

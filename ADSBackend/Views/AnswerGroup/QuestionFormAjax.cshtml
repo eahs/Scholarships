@@ -21,7 +21,7 @@
                 // Do we have an answer to this question?
                 question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
                 question.Index = i;
-                question.AnswerSetIndex = @answerset.Index;
+                question.AnswerSetIndex = @answerset.Index;                
 
                 <input type="hidden" name="[@answerset.Index].Answers[@question.Index].AnswerId" value="@question.Answer.AnswerId" />
                 <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />

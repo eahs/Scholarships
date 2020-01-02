@@ -205,7 +205,11 @@
                     $.validator.unobtrusive.parse(newForm);
                     $('input').iCheck({
                         checkboxClass: 'icheckbox_square-green',
-                        radioClass: 'iradio_square-green'
+                        radioClass: 'iradio_square-green',
+
+                    });
+                    $('input').on('ifToggled', function (event) {
+                        saveForm(newForm);
                     });
                     $(newForm).change(function () {
                         saveForm(newForm);
