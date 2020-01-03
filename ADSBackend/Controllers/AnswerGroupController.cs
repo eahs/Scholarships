@@ -46,8 +46,10 @@ namespace Scholarships.Controllers
         /// </summary>
         /// <param name="id">AnswerGroupId from a previously constructed AnswerGroup</param>
         /// <returns></returns>
-        public async Task<IActionResult> QuestionFormAjax(int? id)
-        { 
+        ///         
+        [Produces("application/json")]
+        public async Task<object> QuestionFormAjax(int? id)
+        {
             if (id == null)
                 return NotFound();
 
@@ -57,7 +59,10 @@ namespace Scholarships.Controllers
             if (qset == null)
                 return NotFound();
 
-            return View(qset);
+            return new
+            {
+                PrimaryForm = await _viewRenderService.RenderToStringAsync("QuestionFormAjax", qset)
+            };
         }
 
         /// <summary>

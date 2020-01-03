@@ -35,7 +35,7 @@
     <div class="ibox-content">
         <div id="app">
             <h3>Additional Questions</h3>
-            <fieldset data-mode="async" data-url="/AnswerGroup/QuestionFormAjax/@Model.Application.AnswerGroupId">
+            <fieldset id="additionalQuestions">
             </fieldset>
 
             <h3>Preview</h3>
@@ -166,6 +166,55 @@
             }
         }
 
+        function processForm(response) {
+
+                var container = document.getElementById("app");
+                var newForm = $("#appform");
+                $.validator.unobtrusive.parse(newForm);
+                $('input').iCheck({
+                    checkboxClass: 'icheckbox_square-green',
+                    radioClass: 'iradio_square-green',
+
+                });
+                $('input').on('ifToggled', function (event) {
+                    saveForm(newForm);
+                });
+                $(newForm).change(function () {
+                    saveForm(newForm);
+                });
+                $('#appform .input-group.date').datepicker({
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    forceParse: true,
+                    calendarWeeks: true,
+                    autoclose: true,
+                    format: "mm/dd/yyyy"
+                });
+                $(".dropzone").dropzone(
+                    {
+                        url: "/AnswerGroup/Upload/@Model.Application.AnswerGroupId", 
+                        paramName: () => "files", // The name that will be used to transfer the file
+                        maxFilesize: 10, // MB
+                        uploadMultiple: true,
+                        parallelUploads: 100,
+                        dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
+                        init: function() {
+                            var opt = this;
+                            var questionid = $(opt.element).data("questionid");
+                            var answersetid = $(opt.element).data("answersetid");
+
+                            opt.options.params = {
+                                questionid: questionid,
+                                answersetid: answersetid
+                            }
+                        },
+                        sending: function(file, xhr, formData) {
+                            //formData.append("_token", token);
+                        }
+                    });
+
+        }
+
         $(document).ready(function () {
 
             Dropzone.options.dropzoneForm = {
@@ -185,6 +234,14 @@
                 format: "mm/dd/yyyy"
             });
 
+            $.ajax({
+                url: "/AnswerGroup/QuestionFormAjax/@Model.Application.AnswerGroupId",
+                dataType: "json"
+            }).done(function (response, textStatus, jqXHR) {
+                $("#app-p-0").html(response.primaryForm);
+                processForm(response);
+            });
+
             var form = $("#app").show();
 
             form.steps({
@@ -201,50 +258,6 @@
                     loading: "Loading ..."
                 },
                 onContentLoaded: function (event, currentIndex) {
-                    var container = document.getElementById("app");
-                    var newForm = $("#appform");
-                    $.validator.unobtrusive.parse(newForm);
-                    $('input').iCheck({
-                        checkboxClass: 'icheckbox_square-green',
-                        radioClass: 'iradio_square-green',
-
-                    });
-                    $('input').on('ifToggled', function (event) {
-                        saveForm(newForm);
-                    });
-                    $(newForm).change(function () {
-                        saveForm(newForm);
-                    });
-                    $('#appform .input-group.date').datepicker({
-                        todayBtn: "linked",
-                        keyboardNavigation: false,
-                        forceParse: true,
-                        calendarWeeks: true,
-                        autoclose: true,
-                        format: "mm/dd/yyyy"
-                    });
-                    $(".dropzone").dropzone(
-                        {
-                            url: "/AnswerGroup/Upload/@Model.Application.AnswerGroupId", 
-                            paramName: () => "files", // The name that will be used to transfer the file
-                            maxFilesize: 10, // MB
-                            uploadMultiple: true,
-                            parallelUploads: 100,
-                            dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
-                            init: function() {
-                                var opt = this;
-                                var questionid = $(opt.element).data("questionid");
-                                var answersetid = $(opt.element).data("answersetid");
-
-                                opt.options.params = {
-                                    questionid: questionid,
-                                    answersetid: answersetid
-                                }
-                            },
-                            sending: function(file, xhr, formData) {
-                                //formData.append("_token", token);
-                            }
-                        });
                 },
                 onStepChanging: function (event, currentIndex, newIndex) {
                     // Allways allow previous action even if the current form is not valid!
