@@ -16,6 +16,7 @@
                 <div class="col-md-10">
                     <div class="form-group">
                         <label asp-for="AttachmentFilePath" class="control-label"></label>
+                        <small class="form-text text-muted text-margin-shrink">Root Web Directory: @Model.RootWebPath</small>
                         <input asp-for="AttachmentFilePath" class="form-control" />
                         <span asp-validation-for="AttachmentFilePath" class="text-danger"></span>
                     </div>

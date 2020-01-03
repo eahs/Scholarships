@@ -159,7 +159,7 @@ namespace Scholarships.Services
                 {
                     foreach (var question in qset.Questions)
                     {
-                        var exists = aset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                        var exists = aset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId && a.AnswerSetId == aset.AnswerSetId);
 
                         if (exists == null)
                         {

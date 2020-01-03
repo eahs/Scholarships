@@ -14,5 +14,6 @@ namespace Scholarships.Models.ConfigurationViewModels
         [Display(Name = "Privacy Policy URL")]
         public string PrivacyPolicyUrl { get; set; }
 
+        public string RootWebPath { get; set; }
     }
 }

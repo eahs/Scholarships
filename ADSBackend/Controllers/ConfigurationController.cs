@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Scholarships.Controllers
 {
@@ -12,19 +13,22 @@ namespace Scholarships.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly Services.Configuration Configuration;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public ConfigurationController(ApplicationDbContext context, Services.Configuration configuration)
+        public ConfigurationController(ApplicationDbContext context, Services.Configuration configuration, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IActionResult Index()
         {
             var viewModel = new ConfigurationViewModel
             {
-                AttachmentFilePath = Configuration.Get("RSSFeedUrl"),
-                PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl")
+                AttachmentFilePath = Configuration.Get("AttachmentFilePath"),
+                PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl"),
+                RootWebPath = _hostingEnvironment.WebRootPath
             };
 
             return View(viewModel);

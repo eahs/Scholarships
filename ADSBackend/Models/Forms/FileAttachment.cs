@@ -12,10 +12,10 @@ namespace Scholarships.Models.Forms
         public int FileAttachmentId { get; set; }
 
         public int FileAttachmentGroupId { get; set; }
-        public FileAttachmentGroup FileAttachmentGroup { get; set; }
-
+        public FileAttachmentGroup FileAttachmentGroup { get; set; }        
         public string ContentType { get; set; }  // mime-type
         public string FileName { get; set; }
+        public string FileSubPath { get; set; }  // Path relative to root file storage directory
         public long Length { get; set; }
         public string SecureFileName { get; set; }
         public DateTime CreatedDate { get; set; }

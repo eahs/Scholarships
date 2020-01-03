@@ -79,6 +79,12 @@ namespace Scholarships
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "securedownload",
+                    pattern: "{controller=SecureDownload}/{id?}/{filename?}",
+                    defaults: new { controller = "SecureDownload", action = "Download" }
+                    );
             });
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())

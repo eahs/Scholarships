@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using Newtonsoft.Json;
 using Scholarships.Data;
 using Scholarships.Models;
@@ -20,14 +22,16 @@ namespace Scholarships.Controllers
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
         private readonly ViewRenderService _viewRenderService;
-        private readonly Services.Configuration _configurationService;
+        private readonly Services.Configuration Configuration;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService, Services.Configuration configurationService)
+        public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService, Services.Configuration configurationService, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
             _dataService = dataService;
             _viewRenderService = viewRenderService;
-            _configurationService = configurationService;
+            Configuration = configurationService;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: AnswerSet
@@ -126,24 +130,82 @@ namespace Scholarships.Controllers
         // Scroll down to section that shows init function solution
         public async Task<ActionResult> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
-            long size = files.Sum(f => f.Length);
+            string webRootPath = Configuration.Get("AttachmentFilePath");
+            var profile = await _dataService.GetProfileAsync();
 
+            var aset = await _context.AnswerSet.Include(a => a.Answers)
+                                               .FirstOrDefaultAsync(a => a.AnswerSetId == answersetid && a.ProfileId == profile.ProfileId);
+
+            if (aset == null)
+                return NotFound();
+
+            var answer = aset.Answers.FirstOrDefault(a => a.QuestionId == questionid);
+
+            if (answer == null)
+            {
+                return NotFound();  // This shouldn't happen
+            }
+
+            if (answer.FileAttachmentGroupId == null)
+            {
+                // We need to create a new file attachment group
+                FileAttachmentGroup fg = new FileAttachmentGroup { ProfileId = profile.ProfileId };
+                _context.FileAttachmentGroup.Add(fg);
+                await _context.SaveChangesAsync();
+
+                answer.FileAttachmentGroupId = fg.FileAttachmentGroupId;
+                _context.Answer.Update(answer);
+                await _context.SaveChangesAsync();
+            }
+
+            long size = files.Sum(f => f.Length);
+            
             // full path to file in temp location
-            var filePath = Path.GetTempFileName();
+            /// var filePath = Path.GetTempFileName();
 
             foreach (var formFile in files)
             {
                 if (formFile.Length > 0)
                 {
+                    FileAttachment fa = new FileAttachment
+                    {
+                        FileAttachmentGroupId = (int)answer.FileAttachmentGroupId,
+                        FileName = formFile.FileName,
+                        ContentType = formFile.ContentType,
+                        CreatedDate = DateTime.Now,
+                        Length = formFile.Length,
+                        SecureFileName = System.IO.Path.GetRandomFileName()
+                    };
+
+                    List<string> pathParts = new List<string>();
+                    pathParts.Add("" + DateTime.Now.Year);
+                    pathParts.Add("" + profile.ProfileId);
+                    pathParts.Add("" + fa.FileAttachmentGroupId);
+
+                    // Calculate the subpath based on the current year and the user's profile Id
+                    fa.FileSubPath = Path.Combine(pathParts.ToArray());
+
+                    _context.FileAttachment.Add(fa);
+                    await _context.SaveChangesAsync();
+
+                    // Now let's build the correct filepath
+                    pathParts.Insert(0, webRootPath);
+
+                    var filePath = Path.Combine(pathParts.ToArray());
+
+                    // Create the directory if it doesn't exist
+                    System.IO.Directory.CreateDirectory(filePath);
+                    
+                    // Now add the secure filename and build the full file path
+                    pathParts.Add(fa.SecureFileName);
+                    filePath = Path.Combine(pathParts.ToArray());
+
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await formFile.CopyToAsync(stream);
                     }
                 }
             }
-
-            // process uploaded files
-            // Don't rely on or trust the FileName property without validation.
 
             return Ok();
         }

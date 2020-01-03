@@ -11,6 +11,7 @@
         props.Add("Student Transcripts");
 
     var fields = String.Join(", ", props.ToArray());
+
 }
 
 <ol class="breadcrumb">
@@ -169,7 +170,7 @@
 
             Dropzone.options.dropzoneForm = {
                 paramName: () => "files", // The name that will be used to transfer the file
-                maxFilesize: 2, // MB
+                maxFilesize: 15, // MB
                 uploadMultiple: true,
                 parallelUploads: 100,
                 dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>"
