@@ -20,12 +20,14 @@ namespace Scholarships.Controllers
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
         private readonly ViewRenderService _viewRenderService;
+        private readonly Services.Configuration _configurationService;
 
-        public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService)
+        public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService, Services.Configuration configurationService)
         {
             _context = context;
             _dataService = dataService;
             _viewRenderService = viewRenderService;
+            _configurationService = configurationService;
         }
 
         // GET: AnswerSet

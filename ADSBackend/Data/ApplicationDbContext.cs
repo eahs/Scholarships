@@ -30,6 +30,9 @@ namespace Scholarships.Data
         public DbSet<QuestionOption> QuestionOption  { get; set; }
         public DbSet<QuestionSet> QuestionSet  { get; set; }
 
+        public DbSet<FileAttachmentGroup> FileAttachmentGroup { get; set; }
+        public DbSet<FileAttachment> FileAttachment { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -19,7 +19,9 @@ namespace Scholarships.Models.Forms
         public int QuestionOptionId { get; set; }  // For multiple choice, stores answer as the option id
         public DateTime DateTime { get; set; } = DateTime.Now;  // For datetime, stores answer as a Date
         public string Config { get; set; }  // Any extraneous JSON-encoded data for this answer
-
+        public int? FileAttachmentGroupId { get; set; }  // For file uploads
+        public FileAttachmentGroup FileAttachmentGroup { get; set; }
+        
         [NotMapped]
         public List<int> QuestionOptions { get; set; }
 

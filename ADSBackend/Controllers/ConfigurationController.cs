@@ -23,11 +23,8 @@ namespace Scholarships.Controllers
         {
             var viewModel = new ConfigurationViewModel
             {
-                RSSFeedUrl = Configuration.Get("RSSFeedUrl"),
-                PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl"),
-                AzureHubListenConnectionString = Configuration.Get("AzureHubListenConnectionString"),
-                AzureHubFullConnectionString = Configuration.Get("AzureHubFullConnectionString"),
-                AzureHubName = Configuration.Get("AzureHubName")
+                AttachmentFilePath = Configuration.Get("RSSFeedUrl"),
+                PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl")
             };
 
             return View(viewModel);
@@ -40,11 +37,8 @@ namespace Scholarships.Controllers
         {
             if (ModelState.IsValid)
             {
-                Configuration.Set("RSSFeedUrl", viewModel.RSSFeedUrl);
+                Configuration.Set("AttachmentFilePath", viewModel.AttachmentFilePath);
                 Configuration.Set("PrivacyPolicyUrl", viewModel.PrivacyPolicyUrl);
-                Configuration.Set("AzureHubListenConnectionString", viewModel.AzureHubListenConnectionString);
-                Configuration.Set("AzureHubFullConnectionString", viewModel.AzureHubFullConnectionString);
-                Configuration.Set("AzureHubName", viewModel.AzureHubName);
 
                 await Configuration.SaveChangesAsync();
 
