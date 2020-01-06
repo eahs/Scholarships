@@ -10,8 +10,8 @@ namespace Scholarships.Models.Forms
     {
         [Key]
         public int FileAttachmentId { get; set; }
-
         public int FileAttachmentGroupId { get; set; }
+        public string FileAttachmentUuid { get; set; } = System.Guid.NewGuid().ToString();
         public FileAttachmentGroup FileAttachmentGroup { get; set; }        
         public string ContentType { get; set; }  // mime-type
         public string FileName { get; set; }

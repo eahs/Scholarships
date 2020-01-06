@@ -28,7 +28,7 @@ namespace Scholarships.Controllers
 
         // How to create full url's for a particular file attachment in a controller:
         // string url = Url.Link("securedownload", new { id, filename });
-        public async Task<IActionResult> Download(int? id, string filename)
+        public async Task<IActionResult> Download(int id, string filename)
         {
             var profile = await _dataService.GetProfileAsync();
 

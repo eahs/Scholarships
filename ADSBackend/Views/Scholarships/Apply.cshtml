@@ -198,6 +198,8 @@
                         uploadMultiple: true,
                         parallelUploads: 100,
                         dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
+                        addRemoveLinks: true,
+                        acceptedFiles: "image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                         init: function() {
                             var opt = this;
                             var questionid = $(opt.element).data("questionid");
@@ -207,11 +209,41 @@
                                 questionid: questionid,
                                 answersetid: answersetid
                             }
+
+                            opt.on("success", function (file, response) {
+                                var match = response.find(fr => fr.fileName === file.name);
+
+                                if (typeof (match) !== "undefined")
+                                {
+                                    if (match.status === "verified") {
+                                        file.upload.attachid = match.attachid;
+                                        file.upload.uuid = match.uuid;
+                                    }
+                                    else {
+                                        opt.removeFile(file);
+
+                                        swal("Upload Failed",
+                                            "The file you are uploading is not a reconigizable allowable type.  Please upload only image, pdf, or word files.",
+                                            "error")
+                                            .then((value) => {
+
+                                            });
+                                    }
+                                }
+                            });
+
+                            opt.on("removedfile", function(file) {
+                                    $.ajax({
+                                        url: "/AnswerGroup/Remove/" + file.upload.attachid + "?uuid=" + file.upload.uuid
+                                    })
+                              });
+
                         },
                         sending: function(file, xhr, formData) {
                             //formData.append("_token", token);
                         }
                     });
+
 
         }
 

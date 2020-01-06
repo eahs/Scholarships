@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FileTypeChecker;
+using FileTypeChecker.Abstracts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -130,12 +132,49 @@ namespace Scholarships.Controllers
             return vm;
         }
 
+        public async Task<IActionResult> Remove(int id, string uuid)
+        {
+            string attachPath = Configuration.Get("AttachmentFilePath");
+
+            var profile = await _dataService.GetProfileAsync();
+
+            if (profile == null)
+                return NotFound();
+
+            var fa = await _context.FileAttachment.Include(a => a.FileAttachmentGroup)
+                                                  .FirstOrDefaultAsync(a => a.FileAttachmentId == id && a.FileAttachmentUuid == uuid);
+
+            // Does this file exist?
+            if (fa == null)
+            {
+                return NotFound();
+            }
+
+            if (fa.FileAttachmentGroup.ProfileId == profile.ProfileId)
+            {
+                var filePath = System.IO.Path.Combine(attachPath,
+                                                      fa.FileSubPath,
+                                                      fa.SecureFileName);
+
+                try
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                catch (Exception e)
+                {
+
+                }
+            }
+
+            return Ok();
+        }
 
         // See https://stackoverflow.com/questions/17759286/how-can-i-show-you-the-files-already-stored-on-server-using-dropzone-js for how to integrate already existing files into display
         // Scroll down to section that shows init function solution
-        public async Task<ActionResult> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
+        [Produces("application/json")]
+        public async Task<object> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
-            string webRootPath = Configuration.Get("AttachmentFilePath");
+            string attachPath = Configuration.Get("AttachmentFilePath");
             var profile = await _dataService.GetProfileAsync();
 
             var aset = await _context.AnswerSet.Include(a => a.Answers)
@@ -164,9 +203,10 @@ namespace Scholarships.Controllers
             }
 
             long size = files.Sum(f => f.Length);
-            
+
             // full path to file in temp location
             /// var filePath = Path.GetTempFileName();
+            List<object> response = new List<object>();
 
             foreach (var formFile in files)
             {
@@ -175,12 +215,15 @@ namespace Scholarships.Controllers
                     FileAttachment fa = new FileAttachment
                     {
                         FileAttachmentGroupId = (int)answer.FileAttachmentGroupId,
-                        FileName = formFile.FileName,
+                        FileName = Path.GetFileName(formFile.FileName),
                         ContentType = formFile.ContentType,
                         CreatedDate = DateTime.Now,
                         Length = formFile.Length,
                         SecureFileName = System.IO.Path.GetRandomFileName()
                     };
+
+                    if (!fa.ContentType.StartsWith("image/") && fa.ContentType != "application/pdf")
+                        continue;
 
                     List<string> pathParts = new List<string>();
                     pathParts.Add("" + DateTime.Now.Year);
@@ -190,11 +233,8 @@ namespace Scholarships.Controllers
                     // Calculate the subpath based on the current year and the user's profile Id
                     fa.FileSubPath = Path.Combine(pathParts.ToArray());
 
-                    _context.FileAttachment.Add(fa);
-                    await _context.SaveChangesAsync();
-
                     // Now let's build the correct filepath
-                    pathParts.Insert(0, webRootPath);
+                    pathParts.Insert(0, attachPath);
 
                     var filePath = Path.Combine(pathParts.ToArray());
 
@@ -204,15 +244,57 @@ namespace Scholarships.Controllers
                     // Now add the secure filename and build the full file path
                     pathParts.Add(fa.SecureFileName);
                     filePath = Path.Combine(pathParts.ToArray());
+                   
 
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    using (var ftStream = formFile.OpenReadStream())
                     {
-                        await formFile.CopyToAsync(stream);
+                        // Examine the file byte structure to validate the type
+                        IFileType fileType = FileTypeValidator.GetFileType(ftStream);
+
+                        switch (fileType.Extension)
+                        {
+                            case "jpg":
+                            case "png":
+                            case "gif":
+                            case "pdf":
+                            case "doc":
+                            case "docx":
+
+                                _context.FileAttachment.Add(fa);
+                                await _context.SaveChangesAsync();
+
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await formFile.CopyToAsync(stream);
+                                }
+
+                                response.Add(new
+                                {
+                                    status = "verified",
+                                    attachid = fa.FileAttachmentId,
+                                    uuid = fa.FileAttachmentUuid,
+                                    fa.FileName
+                                });
+
+                                break;
+                            default:
+                                response.Add(new
+                                {
+                                    status = "invalid",
+                                    uuid = "",
+                                    fa.FileName
+                                });
+
+                                break;
+                        }
                     }
+                    
+
+
                 }
             }
 
-            return Ok();
+            return response;
         }
 
         private bool AnswerSetExists(int id)
