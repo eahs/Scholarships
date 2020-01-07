@@ -131,6 +131,8 @@ namespace Scholarships.Services
             var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
                                                     .ThenInclude(q => q.AnswerSet)
                                                     .ThenInclude(a => a.Answers)
+                                                    .ThenInclude(ans => ans.FileAttachmentGroup)
+                                                    .ThenInclude(fa => fa.FileAttachments)
                                                     .FirstOrDefaultAsync(ag => ag.AnswerGroupId == AnswerGroupId);
 
             if (agroup == null)

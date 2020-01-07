@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting.Internal;
 using Newtonsoft.Json;
@@ -56,15 +57,42 @@ namespace Scholarships.Controllers
                 return NotFound();
 
             ViewBag.AnswerGroupId = id;  // The form still needs the answer group Id
-            var qset = await _dataService.GetQuestionSetWithAnswers(ViewBag.AnswerGroupId);
+            QuestionSet qset = await _dataService.GetQuestionSetWithAnswers(ViewBag.AnswerGroupId);
 
             if (qset == null)
                 return NotFound();
 
-            return new
+            var result = new Dictionary<string, object>
             {
-                PrimaryForm = await _viewRenderService.RenderToStringAsync("QuestionFormAjax", qset)
+                { "primaryForm", await _viewRenderService.RenderToStringAsync("QuestionFormAjax", qset) }
             };
+
+            Dictionary<string, IEnumerable<object>> files = new Dictionary<string, IEnumerable<object>>();
+
+            foreach (AnswerSet answerset in qset.AnswerSets)
+            {
+                foreach (Answer answer in answerset.Answers)
+                {
+                    if (answer.FileAttachmentGroup != null)
+                    {
+                        var attachments = answer.FileAttachmentGroup.FileAttachments.Select(fa => new
+                        {
+                            filename = fa.FileName,
+                            attachid = fa.FileAttachmentId,
+                            uuid = fa.FileAttachmentUuid,
+                            size = fa.Length,
+                            type = fa.ContentType,
+                            url = Url.ActionLink("Download", "SecureDownload", new { id = fa.FileAttachmentId, filename = fa.FileName })
+                    }).ToList();
+                        files.Add("" + answer.AnswerSetId + "." + answer.QuestionId, attachments);
+                    }
+                }
+            }
+            
+            
+            result.Add("attachments", files);
+
+            return result;
         }
 
         /// <summary>
@@ -159,6 +187,9 @@ namespace Scholarships.Controllers
                 try
                 {
                     System.IO.File.Delete(filePath);
+
+                    _context.FileAttachment.Remove(fa);
+                    await _context.SaveChangesAsync();
                 }
                 catch (Exception e)
                 {

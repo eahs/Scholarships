@@ -139,6 +139,8 @@
 
     <script type="text/javascript">
 
+        var attachmentsRepository = {};
+
         function saveForm(form) {
             var post_url = $(form).attr("action"); //get form action url
             var form_data = $(form).serialize(); //Encode form elements for submission
@@ -146,20 +148,20 @@
             if ($(form).valid()) {
 
                 $.ajax({
-                    type: "POST",
-                    url: post_url,
-                    data: form_data,
-                    dataType: "json"
-                }).done(function (response, textStatus, jqXHR) {
-                    if (!response.isError) {
-                        $("#appformContainer").html(response.primaryForm);
-                    } else if (response.Status === "InvalidRequest") {
-                        displayValidationErrors(response.modelStateErrors);
-                    }
-                })
-                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        type: "POST",
+                        url: post_url,
+                        data: form_data,
+                        dataType: "json"
+                    }).done(function(response, textStatus, jqXHR) {
+                        if (!response.isError) {
+                            $("#appformContainer").html(response.primaryForm);
+                        } else if (response.Status === "InvalidRequest") {
+                            displayValidationErrors(response.modelStateErrors);
+                        }
                     })
-                    .always(function () {
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                    })
+                    .always(function() {
 
                     });
 
@@ -168,96 +170,22 @@
 
         function processForm(response) {
 
-                var container = document.getElementById("app");
-                var newForm = $("#appform");
-                $.validator.unobtrusive.parse(newForm);
-                $('input').iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green',
+            var container = document.getElementById("app");
+            var newForm = $("#appform");
+            $.validator.unobtrusive.parse(newForm);
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
 
-                });
-                $('input').on('ifToggled', function (event) {
+            });
+            $('input').on('ifToggled',
+                function(event) {
                     saveForm(newForm);
                 });
-                $(newForm).change(function () {
-                    saveForm(newForm);
-                });
-                $('#appform .input-group.date').datepicker({
-                    todayBtn: "linked",
-                    keyboardNavigation: false,
-                    forceParse: true,
-                    calendarWeeks: true,
-                    autoclose: true,
-                    format: "mm/dd/yyyy"
-                });
-                $(".dropzone").dropzone(
-                    {
-                        url: "/AnswerGroup/Upload/@Model.Application.AnswerGroupId", 
-                        paramName: () => "files", // The name that will be used to transfer the file
-                        maxFilesize: 10, // MB
-                        uploadMultiple: true,
-                        parallelUploads: 100,
-                        dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
-                        addRemoveLinks: true,
-                        acceptedFiles: "image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                        init: function() {
-                            var opt = this;
-                            var questionid = $(opt.element).data("questionid");
-                            var answersetid = $(opt.element).data("answersetid");
-
-                            opt.options.params = {
-                                questionid: questionid,
-                                answersetid: answersetid
-                            }
-
-                            opt.on("success", function (file, response) {
-                                var match = response.find(fr => fr.fileName === file.name);
-
-                                if (typeof (match) !== "undefined")
-                                {
-                                    if (match.status === "verified") {
-                                        file.upload.attachid = match.attachid;
-                                        file.upload.uuid = match.uuid;
-                                    }
-                                    else {
-                                        opt.removeFile(file);
-
-                                        swal("Upload Failed",
-                                            "The file you are uploading is not a reconigizable allowable type.  Please upload only image, pdf, or word files.",
-                                            "error")
-                                            .then((value) => {
-
-                                            });
-                                    }
-                                }
-                            });
-
-                            opt.on("removedfile", function(file) {
-                                    $.ajax({
-                                        url: "/AnswerGroup/Remove/" + file.upload.attachid + "?uuid=" + file.upload.uuid
-                                    })
-                              });
-
-                        },
-                        sending: function(file, xhr, formData) {
-                            //formData.append("_token", token);
-                        }
-                    });
-
-
-        }
-
-        $(document).ready(function () {
-
-            Dropzone.options.dropzoneForm = {
-                paramName: () => "files", // The name that will be used to transfer the file
-                maxFilesize: 15, // MB
-                uploadMultiple: true,
-                parallelUploads: 100,
-                dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>"
-            };
-
-            var mem = $('#sigdate .input-group.date').datepicker({
+            $(newForm).change(function() {
+                saveForm(newForm);
+            });
+            $('#appform .input-group.date').datepicker({
                 todayBtn: "linked",
                 keyboardNavigation: false,
                 forceParse: true,
@@ -265,83 +193,194 @@
                 autoclose: true,
                 format: "mm/dd/yyyy"
             });
+            $(".dropzone").dropzone(
+                {
+                    url: "/AnswerGroup/Upload/@Model.Application.AnswerGroupId",
+                    paramName: () => "files", // The name that will be used to transfer the file
+                    maxFilesize: 10, // MB
+                    uploadMultiple: true,
+                    parallelUploads: 100,
+                    dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>",
+                    addRemoveLinks: true,
+                    acceptedFiles:
+                        "image/*,application/pdf", //,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                    init: function() {
+                        var opt = this;
+                        var questionid = $(opt.element).data("questionid");
+                        var answersetid = $(opt.element).data("answersetid");
 
-            $.ajax({
-                url: "/AnswerGroup/QuestionFormAjax/@Model.Application.AnswerGroupId",
-                dataType: "json"
-            }).done(function (response, textStatus, jqXHR) {
-                $("#app-p-0").html(response.primaryForm);
-                processForm(response);
-            });
+                        opt.options.params = {
+                            questionid: questionid,
+                            answersetid: answersetid
+                        }
 
-            var form = $("#app").show();
+                        var attachKey = answersetid + "." + questionid;
+                        var repo = attachmentsRepository[attachKey];
 
-            form.steps({
-                headerTag: "h3",
-                bodyTag: "fieldset",
-                transitionEffect: "slideLeft",
-                labels: {
-                    cancel: "Cancel",
-                    current: "current step:",
-                    pagination: "Pagination",
-                    finish: "Submit Application",
-                    next: "Next",
-                    previous: "Previous",
-                    loading: "Loading ..."
-                },
-                onContentLoaded: function (event, currentIndex) {
-                },
-                onStepChanging: function (event, currentIndex, newIndex) {
-                    // Allways allow previous action even if the current form is not valid!
-                    if (currentIndex > newIndex) {
-                        return true;
-                    }
+                        if (repo !== undefined) {
 
-                    if (currentIndex == 2) {
-                        if (!$('input[name="acceptTerms"]').prop("checked")) {
 
-                            swal("Cannot proceed",
-                                "In order to apply for this scholarship, you must agree to the FERPA Release Authorization.",
-                                "error")
-                                .then((value) => {
+                            for (var i = 0; i < repo.length; i++) {
 
-                                });
+                                var attachment = repo[i];
 
-                            return false;
+                                var mockFile = {
+                                    name: attachment.filename,
+                                    size: attachment.size,
+                                    type: attachment.type,
+                                    url: attachment.url,
+                                    upload: {
+                                        attachid: attachment.attachid,
+                                        uuid: attachment.uuid
+                                    }
+                                };
+                                this.files.push(mockFile);
+                                this.emit('addedfile', mockFile);
+                                this.createThumbnailFromUrl(mockFile, mockFile.url);
+                                this.emit('complete', mockFile);
+                                this._updateMaxFilesReachedClass();
+                            }
 
                         }
+
+                        opt.on("success",
+                            function(file, response) {
+                                var match = response.find(fr => fr.fileName === file.name);
+
+                                if (typeof (match) !== "undefined") {
+                                    if (match.status === "verified") {
+                                        file.upload.attachid = match.attachid;
+                                        file.upload.uuid = match.uuid;
+                                    } else {
+                                        opt.removeFile(file);
+
+                                        swal("Upload Failed",
+                                                "The file you are uploading is not a reconigizable allowable type.  Please upload only image, pdf, or word files.",
+                                                "error")
+                                            .then((value) => {
+
+                                            });
+                                    }
+                                }
+                            });
+
+                        opt.on("removedfile",
+                            function(file) {
+                                $.ajax({
+                                    url: "/AnswerGroup/Remove/" + file.upload.attachid + "?uuid=" + file.upload.uuid
+                                })
+                            });
+
+                    },
+                    sending: function(file, xhr, formData) {
+                        //formData.append("_token", token);
                     }
-                    /*
-                    // Forbid next action on "Warning" step if the user is to young
-                    if (newIndex === 3 && Number($("#age-2").val()) < 18) {
-                        return false;
-                    }
-                    */
-                    return true;  // return form.valid()
-                },
-                onStepChanged: function (event, currentIndex, priorIndex) {
-                    /*
-                    // Used to skip the "Warning" step if the user is old enough.
-                    if (currentIndex === 2 && Number($("#age-2").val()) >= 18) {
-                        form.steps("next");
-                    }
-                    // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
-                    if (currentIndex === 2 && priorIndex === 3) {
-                        form.steps("previous");
-                    }
-                    */
-                },
-                onFinishing: function (event, currentIndex) {
-                    form.validate().settings.ignore = ":disabled";
-                    return form.valid();
-                },
-                onFinished: function (event, currentIndex) {
-                    alert("Submitted!");
-                }
-            });
+                });
 
 
         }
+
+        $(document).ready(function() {
+
+                Dropzone.options.dropzoneForm = {
+                    paramName: () => "files", // The name that will be used to transfer the file
+                    maxFilesize: 15, // MB
+                    uploadMultiple: true,
+                    parallelUploads: 100,
+                    dictDefaultMessage: "<strong>Drop files here or click to upload. </strong>"
+                };
+
+                var mem = $('#sigdate .input-group.date').datepicker({
+                    todayBtn: "linked",
+                    keyboardNavigation: false,
+                    forceParse: true,
+                    calendarWeeks: true,
+                    autoclose: true,
+                    format: "mm/dd/yyyy"
+                });
+
+                var form = $("#app").show();
+
+                form.steps({
+                    headerTag: "h3",
+                    bodyTag: "fieldset",
+                    transitionEffect: "slideLeft",
+                    labels: {
+                        cancel: "Cancel",
+                        current: "current step:",
+                        pagination: "Pagination",
+                        finish: "Submit Application",
+                        next: "Next",
+                        previous: "Previous",
+                        loading: "Loading ..."
+                    },
+                    onInit: function(event, currentIndex) {
+
+                        $.ajax({
+                            url: "/AnswerGroup/QuestionFormAjax/@Model.Application.AnswerGroupId",
+                            dataType: "json"
+                        }).done(function(response, textStatus, jqXHR) {
+
+                            attachmentsRepository = response.attachments;
+
+                            $("#app-p-0").html(response.primaryForm);
+                            processForm(response);
+                        });
+
+                    },
+                    onContentLoaded: function(event, currentIndex) {
+                    },
+                    onStepChanging: function(event, currentIndex, newIndex) {
+                        // Allways allow previous action even if the current form is not valid!
+                        if (currentIndex > newIndex) {
+                            return true;
+                        }
+
+                        if (currentIndex == 2) {
+                            if (!$('input[name="acceptTerms"]').prop("checked")) {
+
+                                swal("Cannot proceed",
+                                        "In order to apply for this scholarship, you must agree to the FERPA Release Authorization.",
+                                        "error")
+                                    .then((value) => {
+
+                                    });
+
+                                return false;
+
+                            }
+                        }
+                        /*
+                        // Forbid next action on "Warning" step if the user is to young
+                        if (newIndex === 3 && Number($("#age-2").val()) < 18) {
+                            return false;
+                        }
+                        */
+                        return true; // return form.valid()
+                    },
+                    onStepChanged: function(event, currentIndex, priorIndex) {
+                        /*
+                        // Used to skip the "Warning" step if the user is old enough.
+                        if (currentIndex === 2 && Number($("#age-2").val()) >= 18) {
+                            form.steps("next");
+                        }
+                        // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
+                        if (currentIndex === 2 && priorIndex === 3) {
+                            form.steps("previous");
+                        }
+                        */
+                    },
+                    onFinishing: function(event, currentIndex) {
+                        form.validate().settings.ignore = ":disabled";
+                        return form.valid();
+                    },
+                    onFinished: function(event, currentIndex) {
+                        alert("Submitted!");
+                    }
+                });
+
+
+            }
         );
     </script>
 
