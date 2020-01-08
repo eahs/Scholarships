@@ -219,24 +219,39 @@
 
                         if (repo !== undefined) {
 
-
                             for (var i = 0; i < repo.length; i++) {
 
                                 var attachment = repo[i];
 
-                                var mockFile = {
+                                let mockFile = {
                                     name: attachment.filename,
                                     size: attachment.size,
                                     type: attachment.type,
-                                    url: attachment.url,
+                                    dataURL: attachment.url,
                                     upload: {
                                         attachid: attachment.attachid,
                                         uuid: attachment.uuid
                                     }
                                 };
+
                                 this.files.push(mockFile);
                                 this.emit('addedfile', mockFile);
-                                this.createThumbnailFromUrl(mockFile, mockFile.url);
+
+                                if (this.options.createImageThumbnails &&
+                                    mockFile.type.match(/image.*/) &&
+                                    mockFile.size <= this.options.maxThumbnailFilesize * 1024 * 1024) {
+
+                                    this.createThumbnailFromUrl(mockFile,
+                                        opt.options.thumbnailWidth,
+                                        opt.options.thumbnailHeight,
+                                        opt.options.thumbnailMethod,
+                                        true,
+                                        function(dataUrl) {
+                                            opt.emit("thumbnail", mockFile, dataUrl);
+                                            opt._processingThumbnail = false;
+                                        });
+                                }
+
                                 this.emit('complete', mockFile);
                                 this._updateMaxFilesReachedClass();
                             }
