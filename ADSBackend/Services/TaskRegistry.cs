@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace Scholarships.Services
 {
+    /*
+        With this injected as Tasks, controllers simply call
+
+        Tasks.Register(SomeAsyncMethod(Tasks.ApplicationStopping));     * 
+    */
     public class TaskRegistry : ITaskRegistry, IDisposable
     {
         public CancellationToken ApplicationStopping { get; }
