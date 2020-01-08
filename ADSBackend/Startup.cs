@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scholarships.Services;
+using Hangfire;
+using Scholarships.Tasks;
 
 namespace Scholarships
 {
@@ -48,7 +50,15 @@ namespace Scholarships
             services.AddTransient<Services.DataService>();
             services.AddScoped<Services.ViewRenderService, Services.ViewRenderService>();
 
-            services.AddSingleton<ITaskRegistry, TaskRegistry>();
+            // services.AddSingleton<ITaskRegistry, TaskRegistry>();
+            
+            // Hangfire and related services
+            services.AddHangfire(
+                x => x.UseSqlServerStorage(Configuration.GetConnectionString("ScholarshipsContext"))
+                );
+
+            services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();
+
 
             // caching
             services.AddMemoryCache();
@@ -75,6 +85,13 @@ namespace Scholarships
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // Set up hangfire capabilities
+            app.UseHangfireDashboard();
+            app.UseHangfireServer();
+
+            RecurringJob.AddOrUpdate<IGenerateTranscripts>(
+                    generator => generator.Execute(), Cron.Minutely);
 
             app.UseEndpoints(endpoints =>
             {
