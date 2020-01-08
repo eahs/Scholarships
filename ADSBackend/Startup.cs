@@ -48,6 +48,8 @@ namespace Scholarships
             services.AddTransient<Services.DataService>();
             services.AddScoped<Services.ViewRenderService, Services.ViewRenderService>();
 
+            services.AddSingleton<ITaskRegistry, TaskRegistry>();
+
             // caching
             services.AddMemoryCache();
             services.AddTransient<Services.Cache>();
