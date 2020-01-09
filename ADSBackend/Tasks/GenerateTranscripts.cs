@@ -42,7 +42,17 @@ namespace Scholarships.Tasks
             string transcriptProcessPath = Path.Combine(transcriptPath, schoolYear + "");
             Directory.CreateDirectory(transcriptProcessPath);
 
-            PdfDocument PDF = PdfDocument.FromFile(transcriptSourcePath);
+            PdfDocument PDF = null;
+
+            try
+            {
+                PDF = PdfDocument.FromFile(transcriptSourcePath);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to open transcripts pdf");
+                return;
+            }
             
             Dictionary<string, List<int>> studentIndex = new Dictionary<string, List<int>>();
             for (int i = 0; i < PDF.PageCount; i++)

@@ -59,11 +59,12 @@ namespace Scholarships.Controllers
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
                                 await file.CopyToAsync(stream);
-
-                                // Fire off task to process the pdf
-                                BackgroundJob.Enqueue<IGenerateTranscripts>(
-                                    generator => generator.Execute());
                             }
+
+                            // Fire off task to process the pdf
+                            BackgroundJob.Enqueue<IGenerateTranscripts>(
+                                generator => generator.Execute());
+
                         }
                         catch (Exception e)
                         {
