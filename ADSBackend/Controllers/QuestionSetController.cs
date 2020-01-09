@@ -114,7 +114,6 @@ namespace Scholarships.Controllers
 
             var _questions = await _context.Question.Where(q => q.QuestionSetId == qset.QuestionSetId).ToListAsync();
 
-            int order = 0;
             foreach (Question question in questions)
             {
                 var _question = _questions.FirstOrDefault(q => q.QuestionId == question.QuestionId && q.QuestionSetId == qset.QuestionSetId);
@@ -150,7 +149,7 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<QuestionViewModel> AddQuestion(int id)  // id is of question set
         {
-            var qset = await _context.QuestionSet.FirstOrDefaultAsync(q => q.QuestionSetId == id);
+            var qset = await _context.QuestionSet.FirstOrDefaultAsync(qs => qs.QuestionSetId == id);
 
             if (qset == null)
                 return new QuestionViewModel {ErrorCode = QuestionSetError.NotFound};
@@ -158,7 +157,7 @@ namespace Scholarships.Controllers
             if (!UserCanModifyQuestionSet(qset))
                 return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
 
-            int index = await _context.Question.Where(q => q.QuestionSetId == id).CountAsync();
+            int index = await _context.Question.Where(qs => qs.QuestionSetId == id).CountAsync();
 
             Question q = new Question
             {
@@ -246,7 +245,7 @@ namespace Scholarships.Controllers
             if (qvm.QuestionIndex < 0)
                 return new QuestionOptionViewModel {ErrorCode = QuestionSetError.FormIndexNotProvided};
 
-            var question = await _context.Question.Include(q => q.QuestionSet).FirstOrDefaultAsync(q => q.QuestionId == id);
+            var question = await _context.Question.Include(qs => qs.QuestionSet).FirstOrDefaultAsync(qs => qs.QuestionId == id);
 
             if (question == null)
                 return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotFound };
@@ -265,7 +264,7 @@ namespace Scholarships.Controllers
             _context.Add(q);
             await _context.SaveChangesAsync();
 
-            int index = await _context.QuestionOption.Where(q => q.QuestionId == id).CountAsync() - 1;
+            int index = await _context.QuestionOption.Where(qs => qs.QuestionId == id).CountAsync() - 1;
 
             qvm.Index = index;
             qvm.ErrorCode = QuestionSetError.NoError;
@@ -286,9 +285,9 @@ namespace Scholarships.Controllers
 
             var questionoption = await _context.QuestionOption.FirstOrDefaultAsync(qo => qo.QuestionOptionId == id);
 
-            var question = await _context.Question.Include(q => q.QuestionSet)
-                                                  .Include(q => q.Options)
-                                                  .FirstOrDefaultAsync(q => q.QuestionId == questionoption.QuestionId);
+            var question = await _context.Question.Include(qs => qs.QuestionSet)
+                                                  .Include(qs => qs.Options)
+                                                  .FirstOrDefaultAsync(qs => qs.QuestionId == questionoption.QuestionId);
 
             if (question == null)
                 return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotFound };

@@ -7,6 +7,6 @@ namespace Scholarships.Services
 {
     public interface ITaskRegistry
     {
-        public void Register(Task task);
+        void Register(Task task);
     }
 }

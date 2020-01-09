@@ -98,7 +98,7 @@ namespace Scholarships
             app.UseHangfireServer();
 
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
-                    generator => generator.Execute(), Cron.Minutely);
+                    generator => generator.Execute(), Cron.Daily);
             
             // If you want to run the job immediately
             /*

@@ -348,7 +348,7 @@ namespace Scholarships.Controllers
 
                     return ReturnValue;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return ReturnValue = "";
                 }

@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using FileTypeChecker;
 using FileTypeChecker.Abstracts;
+using Hangfire;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Scholarships.Data;
 using Scholarships.Services;
+using Scholarships.Tasks;
 using Serilog;
 
 namespace Scholarships.Controllers
@@ -26,7 +28,7 @@ namespace Scholarships.Controllers
             Configuration = configurationService;
         }
 
-        public async Task<ActionResult> Transcripts()
+        public ActionResult Transcripts()
         {
             return View();
         }
@@ -57,6 +59,10 @@ namespace Scholarships.Controllers
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
                                 await file.CopyToAsync(stream);
+
+                                // Fire off task to process the pdf
+                                BackgroundJob.Enqueue<IGenerateTranscripts>(
+                                    generator => generator.Execute());
                             }
                         }
                         catch (Exception e)

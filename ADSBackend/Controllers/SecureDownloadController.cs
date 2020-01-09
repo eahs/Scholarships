@@ -8,6 +8,7 @@ using Scholarships.Data;
 using Scholarships.Services;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
+using Serilog;
 
 namespace Scholarships.Controllers
 {
@@ -32,7 +33,7 @@ namespace Scholarships.Controllers
         {
             var profile = await _dataService.GetProfileAsync();
 
-            if (profile == null || id == null)
+            if (profile == null)
                 return NotFound();
 
             var fa = await _context.FileAttachment.Include(a => a.FileAttachmentGroup)
@@ -41,6 +42,7 @@ namespace Scholarships.Controllers
             // Does this file exist?
             if (fa == null || fa.FileName != filename)
             {
+                Log.Information("User with profile Id {0} tried accessing unavailable file {1}", profile.ProfileId, filename);
                 return NotFound();
             }
 
@@ -61,6 +63,7 @@ namespace Scholarships.Controllers
             }
             catch (Exception e)
             {
+                Log.Error(e, "Error downloading file: {0}", filePath);
                 return NotFound();
             }
 

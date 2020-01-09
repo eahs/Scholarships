@@ -17,6 +17,7 @@ using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
+using Serilog;
 
 namespace Scholarships.Controllers
 {
@@ -186,14 +187,14 @@ namespace Scholarships.Controllers
 
                 try
                 {
-                    System.IO.File.Delete(filePath);
-
                     _context.FileAttachment.Remove(fa);
                     await _context.SaveChangesAsync();
+
+                    System.IO.File.Delete(filePath);
                 }
                 catch (Exception e)
                 {
-
+                    Log.Error(e, "Unable to delete file: {0}", filePath);
                 }
             }
 
