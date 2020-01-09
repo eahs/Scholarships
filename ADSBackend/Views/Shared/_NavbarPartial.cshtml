@@ -5,31 +5,32 @@
 @inject UserManager<ApplicationUser> UserManager
 
 @{ 
-    var handlingController = this.ViewContext.RouteData.Values["controller"].ToString();
-    var handlingAction = this.ViewContext.RouteData.Values["action"].ToString();
+                var handlingController = this.ViewContext.RouteData.Values["controller"].ToString();
+                var handlingAction = this.ViewContext.RouteData.Values["action"].ToString();
 
-    var setupClass = "";
-    var adminClass = "";
-    var manageClass = "";
+                var setupClass = "";
+                var adminClass = "";
+                var manageClass = "";
 
 
-    switch (handlingController)
-    {
+                switch (handlingController)
+                {
 
-        // Scholarship Setup
-        case "Scholarships":
-            if (new[] { "Manage", "Create", "Edit", "Delete" }.Contains(handlingAction) )
-                manageClass = "active";
-            break;
-        case "FieldsOfStudy": manageClass = "active"; break;
-        case "Articles": manageClass = "active"; break;
+                    // Scholarship Setup
+                    case "Scholarships":
+                        if (new[] { "Manage", "Create", "Edit", "Delete" }.Contains(handlingAction) )
+                            manageClass = "active";
+                        break;
+                    case "FieldsOfStudy": manageClass = "active"; break;
+                    case "Articles": manageClass = "active"; break;
 
-        // Admininstration
-        case "Users": adminClass = "active"; break;
-        case "Configuration": adminClass = "active"; break;
+                    // Admininstration
+                    case "Users": adminClass = "active"; break;
+                    case "Configuration": adminClass = "active"; break;
+                    case "Task": adminClass = "active"; break;
 
-    }
-}
+                }
+            }
 
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
@@ -76,7 +77,7 @@
                         <a asp-controller="Scholarships" asp-action="Index"><i class="fa fa-graduation-cap"></i><span class="nav-label">Scholarships</span></a>
                     </li>
                 }
-                @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
+        @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
                 {
                     <li id="nav_manage" class="@manageClass">
                         <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
@@ -93,13 +94,19 @@
                         </ul>
                     </li>
                 }
-                @if (User.IsInRole("Admin"))
+    @if (User.IsInRole("Admin"))
                 {
                     <li id="nav_admin" class="@adminClass">
                         <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Administration </span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li is-active-route asp-controller="Users">
                                 <a asp-controller="Users" asp-action="Index">Manage Users</a>
+                            </li>
+                            <li is-active-route asp-controller="Tasks">
+                                <a asp-controller="Task" asp-action="Hangfire">Tasks</a>
+                            </li>
+                            <li is-active-route asp-controller="Tasks">
+                                <a asp-controller="Task" asp-action="Transcripts">Transcripts</a>
                             </li>
                             <li is-active-route asp-controller="Configuration">
                                 <a asp-controller="Configuration" asp-action="Index">Configuration</a>

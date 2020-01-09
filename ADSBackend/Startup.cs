@@ -10,7 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scholarships.Services;
 using Hangfire;
+using Hangfire.Dashboard;
 using Scholarships.Tasks;
+using Scholarships.Util;
 
 namespace Scholarships
 {
@@ -87,11 +89,22 @@ namespace Scholarships
             app.UseAuthorization();
 
             // Set up hangfire capabilities
-            app.UseHangfireDashboard();
+            var options = new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            };
+
+            app.UseHangfireDashboard("/hangfire", options);
             app.UseHangfireServer();
 
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
                     generator => generator.Execute(), Cron.Minutely);
+            
+            // If you want to run the job immediately
+            /*
+            BackgroundJob.Enqueue<IGenerateTranscripts>(
+                generator => generator.Execute());
+            */
 
             app.UseEndpoints(endpoints =>
             {

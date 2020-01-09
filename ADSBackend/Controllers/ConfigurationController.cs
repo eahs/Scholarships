@@ -22,11 +22,13 @@ namespace Scholarships.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int? error)
         {
             var viewModel = new ConfigurationViewModel
             {
+                ErrorMessage = error == null ? "" : "Site configuration is incomplete",
                 AttachmentFilePath = Configuration.Get("AttachmentFilePath"),
+                TranscriptFilePath = Configuration.Get("TranscriptFilePath"),
                 PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl"),
                 RootWebPath = _hostingEnvironment.WebRootPath
             };
@@ -42,6 +44,7 @@ namespace Scholarships.Controllers
             if (ModelState.IsValid)
             {
                 Configuration.Set("AttachmentFilePath", viewModel.AttachmentFilePath);
+                Configuration.Set("TranscriptFilePath", viewModel.TranscriptFilePath);
                 Configuration.Set("PrivacyPolicyUrl", viewModel.PrivacyPolicyUrl);
 
                 await Configuration.SaveChangesAsync();

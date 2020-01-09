@@ -1,0 +1,42 @@
+﻿@model Scholarships.Models.TaskViewModels.TranscriptViewModel
+
+
+@{
+    ViewData["Title"] = "Upload Transcripts";
+}
+
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a asp-controller="Admin" asp-action="Index">Home</a>
+        </li>
+        <li class="breadcrumb-item active">
+            <strong>Administration</strong>
+        </li>
+        <li class="breadcrumb-item active">
+            <strong>Transcripts</strong>
+        </li>
+    </ol>
+
+<h2>Upload Transcripts</h2>
+
+<div class="ibox">
+    <div class="ibox-title">
+        Upload a PDF containing the most up-to-date transcripts from the current senior class
+    </div>
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-md-9">
+                <form asp-action="UploadTranscripts" enctype="multipart/form-data" method="post">
+                    <div class="form-group">
+                        <label class="control-label" style="width: 100%">Upload Single Transcript PDF</label>
+                        <input type="file" name="file"/>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Upload Transcripts" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>

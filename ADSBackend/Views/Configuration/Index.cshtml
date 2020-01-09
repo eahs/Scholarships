@@ -4,6 +4,13 @@
     ViewData["Title"] = "Configuration";
 }
 
+@if (Model.ErrorMessage != "")
+{
+    <div class="alert alert-danger" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+
 <div class="ibox">
     <div class="ibox-title">
         <h1>Configuration</h1>
@@ -19,6 +26,16 @@
                         <small class="form-text text-muted text-margin-shrink">Root Web Directory: @Model.RootWebPath</small>
                         <input asp-for="AttachmentFilePath" class="form-control" />
                         <span asp-validation-for="AttachmentFilePath" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="form-group">
+                        <label asp-for="TranscriptFilePath" class="control-label"></label>
+                        <input asp-for="TranscriptFilePath" class="form-control" />
+                        <span asp-validation-for="TranscriptFilePath" class="text-danger"></span>
                     </div>
                 </div>
             </div>
