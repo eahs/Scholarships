@@ -13,21 +13,35 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Scholarships.Tasks;
 using Scholarships.Util;
+using System;
+using System.IO;
+using Smidge;
 
 namespace Scholarships
 {
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Env { get; set; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IMvcBuilder builder = services.AddRazorPages();
+
+#if DEBUG
+            if (Env.IsDevelopment())
+            {
+                builder.AddRazorRuntimeCompilation();
+            }
+#endif
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("ScholarshipsContext"));
@@ -69,6 +83,11 @@ namespace Scholarships
             services.AddTransient<Services.Configuration>();
 
             services.AddMvc();
+
+            // Add javascript minification library
+            services.AddSmidge(Configuration.GetSection("smidge"));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,12 +118,17 @@ namespace Scholarships
 
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
                     generator => generator.Execute(), Cron.Daily);
-            
+
             // If you want to run the job immediately
             /*
             BackgroundJob.Enqueue<IGenerateTranscripts>(
                 generator => generator.Execute());
             */
+
+            // Set up App_Data directory
+            // set
+            string baseDir = env.ContentRootPath;
+            AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(baseDir, "App_Data"));
 
             app.UseEndpoints(endpoints =>
             {
@@ -136,6 +160,37 @@ namespace Scholarships
                 var dbSeed = new ApplicationDbSeed(dbContext);
                 dbSeed.SeedDatabase();
             }
+
+            app.UseSmidge(bundles =>
+            {
+                bundles.CreateCss("scholarship-application-css",
+                                    "~/lib/bootstrap/dist/css/bootstrap.css",
+                                    "~/lib/font-awesome/css/font-awesome.css",
+                                    "~/css/animate.css",
+                                    "~/css/style.css",
+                                    "~/css/site.css");
+
+                // Libraries
+                bundles.CreateJs("scholarship-js-libraries",                                    
+                                    "~/lib/jquery/dist/jquery.js",
+                                    "~/lib/jquery-ui/jquery-ui.js",
+                                    "~/lib/Popper/popper.js",
+                                    "~/lib/bootstrap/dist/js/bootstrap.js"
+                                    );
+
+                // Custom scripts
+                bundles.CreateJs("scholarship-js-custom",
+                                    "~/js/site.js");
+
+                // Inspinia scripts
+                bundles.CreateJs("scholarship-js-inspinia",
+                                    "~/lib/metisMenu/dist/jquery.metisMenu.js",
+                                    "~/lib/slimScroll/jquery.slimscroll.js",
+                                    "~/lib/pace/pace.js",
+                                    "~/js/script.js");
+            });
         }
+
     }
 }
+

@@ -298,6 +298,7 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-ADSBackend/Util/TwitterConfigSecrets\.cs
+ADSBackend/App_Data/*
+!ADSBackend/App_Data/.gitkeep 
 
 \.DS_Store
