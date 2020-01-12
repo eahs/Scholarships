@@ -26,11 +26,18 @@ namespace Scholarships.Tasks
             string transcriptPath = Configuration.Get("TranscriptFilePath");
             Log.Information("Beginning processing of graduation transcripts PDF");
 
+            if (transcriptPath == null)
+            {
+                Log.Error("Transcripts path configuration variable has not been set by administrator");
+                return;
+            }
+
             string transcriptSourcePath = Path.Combine(transcriptPath, "transcripts.pdf");
 
             if (!File.Exists(transcriptSourcePath))
             {
                 Log.Error("Executing GenerateTranscripts - Unable to find transcripts.pdf");
+                return;
             }
 
             // Calculate the current graduating year for seniors
