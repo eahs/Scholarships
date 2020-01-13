@@ -25,9 +25,8 @@ steps:
         arguments: '-r linux-x64 --configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
         zipAfterPublish: true
 
-    - task: PublishBuildArtifacts@1
-      displayName: "Upload Artifacts"
-      inputs:
-        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-        artifactName: 'scholarshipsapp' 
-		
+#    - task: PublishBuildArtifacts@1
+#      displayName: "Upload Artifacts"
+#      inputs:
+#        pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+#        artifactName: 'scholarshipsapp' 
