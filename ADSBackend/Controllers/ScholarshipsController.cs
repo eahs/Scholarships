@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +92,50 @@ namespace Scholarships.Controllers
             };
 
             return View(vm);
+        }
+
+        [Authorize(Roles = "Admin,Manager,Student")]
+        [Produces("application/json")]
+        public async Task<FormsBaseViewModel> SaveApplication(Application _app)  // id of scholarship
+        {
+            if (_app.ScholarshipId == 0)
+                return new FormsBaseViewModel
+                {
+                    ErrorCode = QuestionSetError.NotFound
+                };
+
+            var scholarship = await _dataService.GetScholarship((int)_app.ScholarshipId);
+            if (scholarship == null)
+            {
+                return new FormsBaseViewModel
+                {
+                    ErrorCode = QuestionSetError.NotFound
+                };
+            }
+
+            var profile = await _dataService.GetProfileAsync();
+
+            foreach (var guardian in profile.Guardians)
+            {
+                guardian.Profile = null;
+            }
+
+            Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
+            app.Profile = profile;
+
+            app.SubmittedDate = DateTime.Now;
+            app.SubmissionStage = 2;
+            app.Submitted = true;
+            app.AcceptRelease = _app.AcceptRelease;
+            app.Signature = _app.Signature;
+            app.SignatureDate = _app.SignatureDate;
+            app.ProfileSnapshot = JsonSerializer.Serialize<Profile>(profile);
+
+
+            return new FormsBaseViewModel
+            {
+                ErrorCode = QuestionSetError.NoError
+            };
         }
 
         // GET: Scholarships/Create

@@ -75,7 +75,8 @@
             <fieldset>
                 <h2>FERPA Form</h2>
 
-                <form id="ferpaForm">
+                <form id="ferpaForm" asp-controller="Scholarships" asp-action="SaveApplication">
+                    <input type="hidden" name="scholarshipId" value="@Model.Scholarship.ScholarshipId"/>
 
                     <div class="form-row">
                         The scholarship provider has requested the following information, in addition to any questions listed in part 1 of this application:<br />
@@ -93,22 +94,22 @@
 
                     <div class="form-group">
                         <label class="control-label" for="ferpaTerms">Please select one:</label><br />
-                        <input type="radio" name="ferpaTerms" value="yes" /> <span style="font-weight: 500">I waive my right to review all recommendations and supporting documents.</span><br />
-                        <input type="radio" name="ferpaTerms" value="no" /> <span style="font-weight: 500">I DO NOT waive my right to review all recommendations and supporting documents.</span>
+                        <input type="radio" name="ferpaTerms" value="true" /> <span style="font-weight: 500">I waive my right to review all recommendations and supporting documents.</span><br />
+                        <input type="radio" name="ferpaTerms" value="false" /> <span style="font-weight: 500">I DO NOT waive my right to review all recommendations and supporting documents.</span>
                     </div>
 
                     <div class="form-row">
                         <div class="col">
                             <div class="form-group">
                                 <label class="control-label" for="signature">Signature</label>
-                                <input type="text" class="form-control" placeholder="Enter your full name">
+                                <input type="text" class="form-control" name="Signature" placeholder="Enter your full name">
                             </div>
                         </div>
                         <div class="col" id="sigdate">
                             <div class="form-group">
                                 <div class="input-group date">
                                     <label class="control-label" for="SignatureDate" style="width: 100%">Date</label><br />
-                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="SignatureDate" data-mask="99/99/9999" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control" />
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="SignatureDate" disabled="true" data-mask="99/99/9999" value="@DateTime.Now.ToString("MM/dd/yyyy")" class="form-control" />
                                 </div>
                             </div>
                         </div>
@@ -140,6 +141,37 @@
     <script type="text/javascript">
 
         var attachmentsRepository = {};
+
+        function submitApplication() {
+            var form = $("#ferpaForm");
+            var post_url = $(form).attr("action"); //get form action url
+            var form_data = $(form).serialize(); //Encode form elements for submission
+
+            $.ajax({
+                    type: "POST",
+                    url: post_url,
+                    data: form_data,
+                    dataType: "json"
+                }).done(function(response, textStatus, jqXHR) {
+                    if (!response.isError) {
+
+                        swal("Good luck! Your application has been submitted!", {
+                            icon: "success",
+                        }).then(value)
+                        {
+                            location.replace("/Scholarships");
+                        };
+
+                    } else if (response.Status === "InvalidRequest") {
+                            
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                })
+                .always(function() {
+
+                });
+        }
 
         function saveForm(form) {
             var post_url = $(form).attr("action"); //get form action url
@@ -387,10 +419,67 @@
                     },
                     onFinishing: function(event, currentIndex) {
                         form.validate().settings.ignore = ":disabled";
-                        return form.valid();
+
+                        if (!$('input[name="acceptRelease"]').prop("checked")) {
+
+                            swal("Cannot proceed",
+                                    "In order to apply for this scholarship, you must agree to allow each school you have attended to release requested records and recommendations.",
+                                    "error")
+                                .then((value) => {
+
+                                });
+
+                            return false;
+
+                        }
+
+                        var ferpaTerms = $('input[name="ferpaTerms"]:checked').val();
+                        if (ferpaTerms !== "true" && ferpaTerms !== "false") {
+
+                            swal("Cannot proceed",
+                                    "In order to apply for this scholarship, you must select whether you wish to waive or not waive your right to review recommendations and supporting documents.",
+                                    "error")
+                                .then((value) => {
+
+                                });
+
+                            return false;
+
+                        }
+
+                        var signature = $('input[name="Signature"]').val();
+                        if (signature.trim().length == 0) {
+
+                            swal("Signature Needed",
+                                    "In order to apply for this scholarship, you must sign your full name in the signature portion of the form.",
+                                    "error")
+                                .then((value) => {
+
+                                });
+
+                            return false;
+
+                        }
+
+                        return true;
                     },
                     onFinished: function(event, currentIndex) {
-                        alert("Submitted!");
+
+                        swal({
+                          title: "Are you sure?",
+                          text: "Application submission is final.  Once submitted, you will no longer be able to change any of your responses.  Press OK to complete your scholarship application.",
+                          icon: "warning",
+                          buttons: true,
+                          dangerMode: true,
+                        })
+                        .then((willSubmit) => {
+                            if (willSubmit) {
+                                submitApplication();
+                          } else {
+                            swal("Application submission aborted - You may continue working on your application.");
+                          }
+                        });
+
                     }
                 });
 
