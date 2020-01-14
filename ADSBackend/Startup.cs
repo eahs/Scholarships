@@ -17,6 +17,8 @@ using System;
 using System.IO;
 using Smidge;
 using System.Net.Mail;
+using Hangfire.Storage.MySql;
+using System.Transactions;
 
 namespace Scholarships
 {
@@ -83,10 +85,25 @@ namespace Scholarships
             services.AddScoped<Services.ViewRenderService, Services.ViewRenderService>();
 
             // services.AddSingleton<ITaskRegistry, TaskRegistry>();
-            
+
             // Hangfire and related services
+            var hfoptions =
+                new MySqlStorageOptions
+                {
+                    TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+                    QueuePollInterval = TimeSpan.FromSeconds(15),
+                    JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                    CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                    PrepareSchemaIfNecessary = true,
+                    DashboardJobListLimit = 50000,
+                    TransactionTimeout = TimeSpan.FromMinutes(1),
+                    TablesPrefix = "Hangfire"
+                };
+            var storage = new MySqlStorage(ConnString, hfoptions);
+
             services.AddHangfire(
-                x => x.UseSqlServerStorage(Configuration.GetConnectionString("ScholarshipsContext"))
+                  //x => x.UseSqlServerStorage(Configuration.GetConnectionString("ScholarshipsContext"))
+                  config => config.UseStorage(storage)
                 );
 
             services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();
