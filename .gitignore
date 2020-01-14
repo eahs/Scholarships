@@ -302,3 +302,5 @@ ADSBackend/App_Data/*
 !ADSBackend/App_Data/.gitkeep 
 
 \.DS_Store
+
+ADSBackend/appsettings.json

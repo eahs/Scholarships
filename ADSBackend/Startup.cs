@@ -16,6 +16,7 @@ using Scholarships.Util;
 using System;
 using System.IO;
 using Smidge;
+using System.Net.Mail;
 
 namespace Scholarships
 {
@@ -23,11 +24,18 @@ namespace Scholarships
     {
         public IConfiguration Configuration { get; }
         public IWebHostEnvironment Env { get; set; }
+        public string ConnString { get; set; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Env = env;
+
+#if DEBUG
+            ConnString = Configuration.GetConnectionString("ScholarshipsDevelopmentContext");
+#else
+            ConnString = Configuration.GetConnectionString("ScholarshipsProductionContext");
+#endif
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,7 +52,15 @@ namespace Scholarships
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("ScholarshipsContext"));
+                // options.UseSqlServer(Configuration.GetConnectionString("ScholarshipsContext"));
+                options.UseMySql(
+                    ConnString,
+                    mySqlOptions =>
+                    {
+                        mySqlOptions.ServerVersion(new Version(10, 4, 11),
+                            Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MariaDb); // replace with your Server Version and Type
+                    });
+
             });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -87,6 +103,18 @@ namespace Scholarships
             // Add javascript minification library
             services.AddSmidge(Configuration.GetSection("smidge"));
 
+            // https://support.google.com/a/answer/176600?hl=en
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 465);
+            
+            System.Net.NetworkCredential basicauthenticationinfo = new System.Net.NetworkCredential("scholarship@gmail.com", "Password");            
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.Credentials = basicauthenticationinfo;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+            services.AddFluentEmail("scholarship@eastonsd.org")
+                    .AddRazorRenderer()
+                    .AddSmtpSender(client);
 
         }
 

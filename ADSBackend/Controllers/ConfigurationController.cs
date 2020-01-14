@@ -29,7 +29,8 @@ namespace Scholarships.Controllers
                 ErrorMessage = error == null ? "" : "Site configuration is incomplete",
                 AttachmentFilePath = Configuration.Get("AttachmentFilePath"),
                 TranscriptFilePath = Configuration.Get("TranscriptFilePath"),
-                PrivacyPolicyUrl = Configuration.Get("PrivacyPolicyUrl"),
+                ApplicationEmail = Configuration.Get("ApplicationEmail"),
+                ApplicationEmailPassword = Configuration.Get("ApplicationEmailPassword"),
                 RootWebPath = _hostingEnvironment.WebRootPath
             };
 
@@ -45,7 +46,8 @@ namespace Scholarships.Controllers
             {
                 Configuration.Set("AttachmentFilePath", viewModel.AttachmentFilePath);
                 Configuration.Set("TranscriptFilePath", viewModel.TranscriptFilePath);
-                Configuration.Set("PrivacyPolicyUrl", viewModel.PrivacyPolicyUrl);
+                Configuration.Set("ApplicationEmail", viewModel.ApplicationEmail);
+                Configuration.Set("ApplicationEmailPassword", viewModel.ApplicationEmailPassword);
 
                 await Configuration.SaveChangesAsync();
 
