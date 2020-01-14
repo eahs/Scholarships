@@ -131,7 +131,8 @@ namespace Scholarships.Controllers
             app.SignatureDate = _app.SignatureDate;
             app.ProfileSnapshot = JsonSerializer.Serialize<Profile>(profile);
 
-            await _context.Application.Update(app);
+            _context.Update(app);
+            await _context.SaveChangesAsync();
 
             return new FormsBaseViewModel
             {
