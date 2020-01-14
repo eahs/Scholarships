@@ -55,12 +55,16 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
+            var profile = await _dataService.GetProfileAsync();
+            var app = await _context.Application.FirstOrDefaultAsync(a => a.ProfileId == profile.ProfileId);
+
             List<ScholarshipFieldStatus> fieldStatus = await _dataService.VerifyApplicationStatus(scholarship);
 
             ScholarshipDetailsViewModel vm = new ScholarshipDetailsViewModel
             {
-                Scholarship = scholarship,
-                ApplicationCompleted = fieldStatus.Count == 0,
+                Scholarship = scholarship, 
+                ApplicationCompleted = app != null ? app.Submitted : false,
+                ProfileCompleted = fieldStatus.Count == 0,
                 FieldStatus = fieldStatus,
                 CanApply = (User.IsInRole("Student") || User.IsInRole("Admin")) && scholarship.ApplyOnline
             };
@@ -84,6 +88,11 @@ namespace Scholarships.Controllers
 
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
             app.Profile = profile;
+
+            if (app.Submitted)
+            {
+                return RedirectToAction("Index");
+            }
 
             ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
             {
@@ -121,18 +130,22 @@ namespace Scholarships.Controllers
             }
 
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
-            app.Profile = profile;
 
-            app.SubmittedDate = DateTime.Now;
-            app.SubmissionStage = 2;
-            app.Submitted = true;
-            app.AcceptRelease = _app.AcceptRelease;
-            app.Signature = _app.Signature;
-            app.SignatureDate = _app.SignatureDate;
-            app.ProfileSnapshot = JsonSerializer.Serialize<Profile>(profile);
+            if (!app.Submitted)
+            {
+                app.Profile = profile;
 
-            _context.Update(app);
-            await _context.SaveChangesAsync();
+                app.SubmittedDate = DateTime.Now;
+                app.SubmissionStage = 2;
+                app.Submitted = true;
+                app.AcceptRelease = _app.AcceptRelease;
+                app.Signature = _app.Signature;
+                app.SignatureDate = _app.SignatureDate;
+                app.ProfileSnapshot = JsonSerializer.Serialize<Profile>(profile);
+
+                _context.Update(app);
+                await _context.SaveChangesAsync();
+            }
 
             return new FormsBaseViewModel
             {

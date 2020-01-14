@@ -157,10 +157,10 @@
 
                         swal("Good luck! Your application has been submitted!", {
                             icon: "success",
-                        }).then(value)
+                        }).then((value) => 
                         {
                             location.replace("/Scholarships");
-                        };
+                        });
 
                     } else if (response.Status === "InvalidRequest") {
                             

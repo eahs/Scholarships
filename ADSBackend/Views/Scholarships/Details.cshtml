@@ -108,6 +108,10 @@
         <div class="ibox-content">
             @if (Model.ApplicationCompleted)
             {
+                <p>You have already applied for this scholarship.  Stay tuned for announcements on results.</p>
+            }
+            else if (Model.ProfileCompleted)
+            {
                 <a asp-controller="Scholarships" asp-action="Apply" asp-route-id="@Model.Scholarship.ScholarshipId" class="btn btn-success btn-lg">Apply For Scholarship</a>
             }
             else
