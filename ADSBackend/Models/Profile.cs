@@ -40,6 +40,7 @@ namespace Scholarships.Models
         [Range(0,2, ErrorMessage = "Invalid Gender")] // 0 = male, 1 = female, 2 = other
         public int Gender { get; set; }
 
+        public int Ethnicity { get; set; } = 5;  // White (most common default)
 
         [Required, DataType(DataType.EmailAddress, ErrorMessage="Enter a valid contact email address")]
         [RegularExpression("^(.+)@(?!roverkids.org).+$", ErrorMessage = "Please enter a personal email address you will have access to after graduation - roverkids.org accounts are not allowed")]
@@ -60,6 +61,8 @@ namespace Scholarships.Models
         [DataType(DataType.PhoneNumber)]
         [DisplayName("Contact Phone Number")]
         public string Phone { get; set; } = "";
+
+        public int GraduationYear { get; set; }
 
         [DisplayName("Class Rank")]
         public int? ClassRank { get; set; }

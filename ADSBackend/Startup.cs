@@ -17,8 +17,9 @@ using System;
 using System.IO;
 using Smidge;
 using System.Net.Mail;
-using Hangfire.Storage.MySql;
-using System.Transactions;
+using System.Data;
+using Hangfire.MySql.Core;
+using Scholarships.Tasks.Importer;
 
 namespace Scholarships
 {
@@ -79,6 +80,8 @@ namespace Scholarships
                     options.ClientSecret = googleAuthNSection["ClientSecret"];
                 });
 
+            services.AddTransient<Services.Configuration>();
+
             // Add application services.
             services.AddTransient<Services.IEmailSender, Services.EmailSender>();
             services.AddTransient<Services.DataService>();
@@ -97,7 +100,7 @@ namespace Scholarships
                     PrepareSchemaIfNecessary = true,
                     DashboardJobListLimit = 50000,
                     TransactionTimeout = TimeSpan.FromMinutes(1),
-                    TablesPrefix = "Hangfire"
+                    TablePrefix = "Hangfire"
                 };
             var storage = new MySqlStorage(ConnString, hfoptions);
 
@@ -106,32 +109,21 @@ namespace Scholarships
                   config => config.UseStorage(storage)
                 );
 
+            // register tasks
             services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();
-
+            services.AddScoped<IEmailQueue, EmailQueue>();
+            services.AddScoped<IStudentDataImporter, StudentDataImporter>();
 
             // caching
             services.AddMemoryCache();
             services.AddTransient<Services.Cache>();
 
-            services.AddTransient<Services.Configuration>();
 
             services.AddMvc();
 
             // Add javascript minification library
             services.AddSmidge(Configuration.GetSection("smidge"));
 
-            // https://support.google.com/a/answer/176600?hl=en
-            SmtpClient client = new SmtpClient("smtp.gmail.com", 465);
-            
-            System.Net.NetworkCredential basicauthenticationinfo = new System.Net.NetworkCredential("scholarship@gmail.com", "Password");            
-            client.EnableSsl = true;
-            client.UseDefaultCredentials = false;
-            client.Credentials = basicauthenticationinfo;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-            services.AddFluentEmail("scholarship@eastonsd.org")
-                    .AddRazorRenderer()
-                    .AddSmtpSender(client);
 
         }
 
@@ -163,6 +155,12 @@ namespace Scholarships
 
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
                     generator => generator.Execute(), Cron.Daily);
+
+            BackgroundJob.Enqueue<IStudentDataImporter>(
+                generator => generator.Execute());
+
+            //BackgroundJob.Enqueue<IEmailQueue>(
+            //    queue => queue.SendMail("tanczosm@eastonsd.org", "Test Message", "this is a scholarship email test.. did you get this?"));
 
             // If you want to run the job immediately
             /*

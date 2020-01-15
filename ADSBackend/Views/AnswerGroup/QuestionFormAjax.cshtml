@@ -6,33 +6,40 @@
     Layout = null;
 }
 
-    <form asp-action="Save" asp-route-id="@ViewBag.AnswerGroupId" id="appform">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@if (Model.Questions.Count == 0)
+{
+    <div class="alert alert-success" role="alert">
+        This scholarship has no additional questions.  Click "Next" to preview your scholarship application.
+    </div>
+}
 
-        @foreach (var answerset in Model.AnswerSets)
+<form asp-action="Save" asp-route-id="@ViewBag.AnswerGroupId" id="appform">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    @foreach (var answerset in Model.AnswerSets)
+    {
+        <input type="hidden" name="[@answerset.Index].AnswerSetId" value="@answerset.AnswerSetId" />
+        <input type="hidden" name="[@answerset.Index].QuestionSetId" value="@Model.QuestionSetId" />
+
+        @for (int i = 0; i < Model.Questions.Count; i++)
         {
-            <input type="hidden" name="[@answerset.Index].AnswerSetId" value="@answerset.AnswerSetId" />
-            <input type="hidden" name="[@answerset.Index].QuestionSetId" value="@Model.QuestionSetId" />
+            var question = Model.Questions[i];
 
-            @for (int i = 0; i < Model.Questions.Count; i++)
-            {
-                var question = Model.Questions[i];
+            // Do we have an answer to this question?
+            question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+            question.Index = i;
+            question.AnswerSetIndex = @answerset.Index;
 
-                // Do we have an answer to this question?
-                question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-                question.Index = i;
-                question.AnswerSetIndex = @answerset.Index;                
+            <input type="hidden" name="[@answerset.Index].Answers[@question.Index].AnswerId" value="@question.Answer.AnswerId" />
+            <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
 
-                <input type="hidden" name="[@answerset.Index].Answers[@question.Index].AnswerId" value="@question.Answer.AnswerId" />
-                <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
-
-                <div class="row">
-                    @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question)
-                </div>
-            }
-
-
+            <div class="row">
+                @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question)
+            </div>
         }
-    </form>
+
+
+    }
+</form>
 
 

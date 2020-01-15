@@ -10,30 +10,58 @@ namespace Scholarships.Services
 
     public class EmailSender : IEmailSender
     {
-        private IConfiguration Configuration { get; set; }
+        private Services.Configuration Configuration { get; set; }
 
-        public EmailSender(IConfiguration configuration)
+        public EmailSender(Services.Configuration configuration)
         {
             Configuration = configuration;
         }
 
-        public Task SendEmailAsync(string email, string subject, string message)
+        public SmtpClient ConfigureClient ()
         {
-            SmtpClient client = new SmtpClient(Configuration["SMTP_HOST"])
+            // https://support.google.com/a/answer/176600?hl=en
+            System.Net.NetworkCredential basicauthenticationinfo = new System.Net.NetworkCredential(Configuration.Get("ApplicationEmail"), Configuration.Get("ApplicationEmailPassword"));
+
+            // https://myaccount.google.com/u/3/lesssecureapps?pli=1&pageId=none
+            SmtpClient client = new SmtpClient
             {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Port = int.Parse(Configuration["SMTP_PORT"]),
-                Credentials = new NetworkCredential(Configuration["SMTP_USER"], Configuration["SMTP_PASSWORD"])
+                Credentials = basicauthenticationinfo
             };
 
+            return client;
+        }
+
+        private MailMessage ConfigureMessage (string email, string subject, string message )
+        {
             MailMessage mailMessage = new MailMessage
             {
                 IsBodyHtml = true,
-                From = new MailAddress(Configuration["SMTP_USER"], "ADS Backend"),
+                From = new MailAddress("scholarship@eastonsd.org", "Scholarships"),
                 Body = message,
                 Subject = subject,
             };
             mailMessage.To.Add(email);
+
+            return mailMessage;
+        }
+
+        public void SendEmail(string email, string subject, string message)
+        {
+            SmtpClient client = ConfigureClient();
+            MailMessage mailMessage = ConfigureMessage(email, subject, message);
+
+            client.Send(mailMessage);
+        }
+
+        public Task SendEmailAsync(string email, string subject, string message)
+        {
+            SmtpClient client = ConfigureClient();
+            MailMessage mailMessage = ConfigureMessage(email, subject, message);
 
             return client.SendMailAsync(mailMessage);
         }

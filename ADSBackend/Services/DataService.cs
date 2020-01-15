@@ -43,13 +43,31 @@ namespace Scholarships.Services
                                                 .FirstOrDefaultAsync(p => p.UserId == user.Id);
             if (profile == null)
             {
-                profile = new Profile
+                // Let's see if there is one based off of email address
+                profile = await _context.Profile.Include(p => p.Guardians)
+                                                                .Include(p => p.FieldOfStudy)
+                                                                .FirstOrDefaultAsync(p => p.Email == user.Email); ;
+
+                if (profile != null)
                 {
-                    UserId = user.Id,
-                    Email = user.Email
-                };
-                _context.Profile.Add(profile);
-                await _context.SaveChangesAsync();
+                    // Claim this profile
+                    profile.UserId = user.Id;
+
+                    _context.Update(profile);
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    profile = new Profile
+                    {
+                        UserId = user.Id,
+                        Email = user.Email
+                    };
+                    _context.Profile.Add(profile);
+                    await _context.SaveChangesAsync();
+
+                }
+
             }
 
             return profile;
