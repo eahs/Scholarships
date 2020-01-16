@@ -49,7 +49,11 @@
                         </td>
 
                         <td style="vertical-align: middle; white-space: nowrap">
-                            @await Html.PartialAsync("_CrudOptions", item.ScholarshipId)
+                            <a class="btn btn-white btn-bitbucket" asp-action="Edit" asp-route-id="@item.ScholarshipId"><i class="fa fa-wrench"></i> Edit</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Applications" asp-route-id="@item.ScholarshipId"><i class="fa fa-id-card-o"></i> View Applications</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Details" asp-route-id="@item.ScholarshipId"><i class="fa fa-info"></i> Details</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Delete" asp-route-id="@item.ScholarshipId"><i class="fa fa-trash"></i> Delete</a>
+
                         </td>
                     </tr>
                 }

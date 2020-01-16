@@ -44,16 +44,17 @@ namespace Scholarships.Services
             if (profile == null)
             {
                 // Let's see if there is one based off of email address
-                profile = await _context.Profile.Include(p => p.Guardians)
-                                                                .Include(p => p.FieldOfStudy)
-                                                                .FirstOrDefaultAsync(p => p.Email == user.Email); ;
+                var iprofile = await _context.ImportedProfile.FirstOrDefaultAsync(p => p.Email == user.Email); 
 
-                if (profile != null)
+                if (iprofile != null)
                 {
                     // Claim this profile
+                    var iprofilejson = JsonConvert.SerializeObject(iprofile);
+                    profile = JsonConvert.DeserializeObject<Profile>(iprofilejson);
                     profile.UserId = user.Id;
+                    profile.Email = "";  // We cannot use a roverkids.org email in this field
 
-                    _context.Update(profile);
+                    _context.Add(profile);
                     await _context.SaveChangesAsync();
                 }
                 else
@@ -228,7 +229,7 @@ namespace Scholarships.Services
 
         public async Task<Application> GetApplication (int scholarshipId, int profileId, int questionSetId)
         {
-            var application = await _context.Application.FirstOrDefaultAsync(app => app.ScholarshipId == scholarshipId && app.ProfileId == app.ProfileId);
+            var application = await _context.Application.FirstOrDefaultAsync(app => app.ScholarshipId == scholarshipId && app.ProfileId == profileId);
 
             if (application == null)
             {

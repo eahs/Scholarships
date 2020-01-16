@@ -1,0 +1,20 @@
+﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipApplyViewModel
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>@Model.Scholarship.Name Applications</strong>
+    </li>
+</ol>
+
+<h2>Applications</h2>
+<div class="ibox">
+    <div class="ibox-content">
+        @await Html.PartialAsync("_ScholarshipApplicationPartial")
+    </div>
+</div>

@@ -17,6 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200116144401_ImportedProfiles.cs" />
+    <Compile Remove="Migrations\20200116144401_ImportedProfiles.Designer.cs" />
+    <Compile Remove="Migrations\20200116145103_ImportedProfile.cs" />
+    <Compile Remove="Migrations\20200116145103_ImportedProfile.Designer.cs" />
+    <Compile Remove="Migrations\20200116145220_ImportedProfile.cs" />
+    <Compile Remove="Migrations\20200116145220_ImportedProfile.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.3.2" />
     <PackageReference Include="File.TypeChecker" Version="1.0.4" />
     <PackageReference Include="HangFire" Version="1.7.8" />
@@ -40,6 +49,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.0" />
     <PackageReference Include="RestSharp" Version="106.10.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
     <PackageReference Include="Smidge" Version="3.1.0" />
   </ItemGroup>
 

@@ -84,7 +84,7 @@ namespace Scholarships.Controllers
 
         }
 
-        private const string ProfileBindingFields = "ProfileId,FirstName,LastName,MiddleName,StudentId,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone";
+        private const string ProfileBindingFields = "ProfileId,FirstName,LastName,MiddleName,BirthDate,Gender,Email,Address1,Address2,City,ZipCode,Phone";
 
         // POST: Profiles/EditProfile
         [HttpPost]
@@ -102,7 +102,7 @@ namespace Scholarships.Controllers
             _profile.FirstName = profile.FirstName;
             _profile.LastName = profile.LastName;
             _profile.MiddleName = profile.MiddleName;
-            _profile.StudentId = profile.StudentId;
+            // _profile.StudentId = profile.StudentId;  // Student Id is imported data now
             _profile.BirthDate = profile.BirthDate;
             _profile.Gender = profile.Gender;
             _profile.Email = profile.Email;

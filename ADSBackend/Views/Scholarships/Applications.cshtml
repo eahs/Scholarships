@@ -1,0 +1,53 @@
+﻿@model Scholarships.Models.ScholarshipViewModels.ApplicationViewModel
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>@Model.Scholarship.Name Applications</strong>
+    </li>
+</ol>
+
+<h2>Scholarships</h2>
+<div class="ibox">
+    <div class="ibox-content">
+
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th style="width: 40%">
+                    Applicant Name
+                </th>
+                <th>
+                    Submission Date
+                </th>
+                <th>
+
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var app in Model.Applications)
+            {
+                <tr>
+                    <td style="vertical-align: middle">
+                        <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
+                    </td>
+                    <td style="vertical-align: middle">
+                        @app.SubmittedDate
+                    </td>
+                    <td>
+                        <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
+</div>

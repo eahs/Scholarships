@@ -20,6 +20,7 @@ using System.Net.Mail;
 using System.Data;
 using Hangfire.MySql.Core;
 using Scholarships.Tasks.Importer;
+using Serilog;
 
 namespace Scholarships
 {
@@ -102,12 +103,21 @@ namespace Scholarships
                     TransactionTimeout = TimeSpan.FromMinutes(1),
                     TablePrefix = "Hangfire"
                 };
-            var storage = new MySqlStorage(ConnString, hfoptions);
 
-            services.AddHangfire(
-                  //x => x.UseSqlServerStorage(Configuration.GetConnectionString("ScholarshipsContext"))
-                  config => config.UseStorage(storage)
+            try
+            {
+                var storage = new MySqlStorage(ConnString, hfoptions);
+
+                services.AddHangfire(
+                    //x => x.UseSqlServerStorage(Configuration.GetConnectionString("ScholarshipsContext"))
+                    config => config.UseStorage(storage)
                 );
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Unable to connect to MySQL Database");
+                throw;
+            }
 
             // register tasks
             services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();

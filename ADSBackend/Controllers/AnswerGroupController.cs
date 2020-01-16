@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FileTypeChecker;
 using FileTypeChecker.Abstracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,6 +22,7 @@ using Serilog;
 
 namespace Scholarships.Controllers
 {
+    [Authorize]
     public class AnswerGroupController : Controller
     {
         private readonly ApplicationDbContext _context;

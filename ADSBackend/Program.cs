@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
 using System;
+using System.IO;
 
 namespace Scholarships
 {
@@ -11,21 +12,19 @@ namespace Scholarships
     {
         public static void Main(string[] args)
         {
+            string logPath = "App_Data\\Logs\\";
+            Directory.CreateDirectory(logPath);
+
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Debug()
+                .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, 
+                                        flushToDiskInterval: TimeSpan.FromSeconds(1),
+                                        shared: true)
                 .CreateLogger();
 
-            /*
-                .WriteTo.File(
-                @"D:\home\LogFiles\Application\myapp.txt",
-                fileSizeLimitBytes: 1_000_000,
-                rollOnFileSizeLimit: true,
-                shared: true,
-                flushToDiskInterval: TimeSpan.FromSeconds(1))
-            */
 
             try
             {

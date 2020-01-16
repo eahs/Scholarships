@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
 using Serilog;
@@ -7,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Scholarships.Util;
+
 
 namespace Scholarships.Tasks.Importer
 {
@@ -21,13 +24,52 @@ namespace Scholarships.Tasks.Importer
             Configuration = configurationService;
         }
 
-        private void UpdateStudentProfiles (IEnumerable<Profile> NewProfiles)
+        private async Task UpdateStudentProfilesAsync (IEnumerable<ImportedProfile> NewProfiles)
         {
-            //var existingStudents = await _context.Profile.Where(p => p.)
-            foreach (Profile p in NewProfiles)
-            {
+            // Calculate the current graduating year for seniors
+            int schoolYear = DateTime.Now.Year;
+            int currentMonth = DateTime.Now.Month;
+            if (currentMonth > 7)
+                schoolYear++;
 
+            await _context.Database.ExecuteSqlRawAsync("DELETE FROM ImportedProfile");
+
+            var existingStudents = await _context.Profile.Where(p => p.GraduationYear == schoolYear)
+                                                                    .ToListAsync();
+
+            foreach (ImportedProfile p in NewProfiles)
+            {
+                var student = existingStudents.Find(ep => ep.StudentId == p.StudentId);
+
+                // Does the student profile already exist?
+                if (student != null)
+                {
+                    bool update = student.SATScoreMath != p.SATScoreMath ||
+                                  student.SATScoreReading != p.SATScoreReading ||
+                                  student.GPA != p.GPA ||
+                                  student.ClassRank != p.ClassRank ||
+                                  student.StudentId != p.StudentId;
+
+                    if (update)
+                    {
+                        if (p.SATScoreMath != 0) student.SATScoreMath = p.SATScoreMath;
+                        if (p.SATScoreReading != 0) student.SATScoreReading = p.SATScoreReading;
+                        student.ClassRank = p.ClassRank;
+                        student.GPA = p.GPA;
+                        student.StudentId = p.StudentId;
+
+                        _context.Update(student);
+                    }
+                }
+
+                // Add this data to the imported profile table
+                if (p.SATScoreMath == 0) p.SATScoreMath = null;
+                if (p.SATScoreReading == 0) p.SATScoreReading = null;
+
+                _context.ImportedProfile.Add(p);
             }
+
+            await _context.SaveChangesAsync();
         }
 
         public void Execute()
@@ -58,9 +100,10 @@ namespace Scholarships.Tasks.Importer
                     csv.Configuration.RegisterClassMap<FieldMapping>();
                     csv.Configuration.Delimiter = "\t";
 
-                    var records = csv.GetRecords<Profile>();
+                    var records = csv.GetRecords<ImportedProfile>();
 
-                    UpdateStudentProfiles(records);
+                    AsyncHelpers.RunSync(() => UpdateStudentProfilesAsync(records));
+
                 }
             }
             catch (Exception e)

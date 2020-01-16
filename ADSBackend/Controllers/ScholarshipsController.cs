@@ -72,6 +72,60 @@ namespace Scholarships.Controllers
             return View(vm);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Applications(int id) // id = ScholarshipId
+        {
+            Scholarship scholarship = await _context.Scholarship.FirstOrDefaultAsync(s => s.ScholarshipId == id);
+
+            if (scholarship == null)
+                return NotFound();
+
+            List<Application> applications = await _context.Application.Include(ap => ap.Profile)
+                                                                       .Where(s => s.ScholarshipId == id && s.Submitted)
+                                                                       .ToListAsync();
+
+            ApplicationViewModel vm = new ApplicationViewModel
+            {
+                Scholarship = scholarship,
+                Applications = applications
+            };
+
+            return View(vm);
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> ApplicationView(int? id) // id = ApplicationId
+        {
+            if (id == null)
+                return NotFound();
+
+            var application = await _context.Application.FirstOrDefaultAsync(app => app.ApplicationId == id);
+
+            if (application == null)
+                return NotFound();
+
+            var scholarship = await _dataService.GetScholarship(application.ScholarshipId);
+
+            if (scholarship == null)
+                return NotFound();
+
+            var profile = await _context.Profile.Include(p => p.Guardians)
+                                                .Include(p => p.FieldOfStudy)
+                                                .FirstOrDefaultAsync(p => p.ProfileId == application.ProfileId);
+            application.Profile = profile;
+
+            var qset = await _dataService.GetQuestionSetWithAnswers(application.AnswerGroupId);
+
+            ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
+            {
+                Scholarship = scholarship,
+                Application = application,
+                QuestionSet = qset
+            };
+
+            return View(vm);
+        }
+
         [Authorize(Roles = "Admin,Manager,Student")]
         public async Task<IActionResult> Apply (int? id)  // id of scholarship
         {
