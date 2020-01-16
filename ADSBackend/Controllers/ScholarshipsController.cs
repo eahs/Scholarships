@@ -99,31 +99,13 @@ namespace Scholarships.Controllers
             if (id == null)
                 return NotFound();
 
-            var application = await _context.Application.FirstOrDefaultAsync(app => app.ApplicationId == id);
+            var vm = await _dataService.GetScholarshipApplicationViewModel((int)id);
 
-            if (application == null)
+            if (vm == null)
                 return NotFound();
-
-            var scholarship = await _dataService.GetScholarship(application.ScholarshipId);
-
-            if (scholarship == null)
-                return NotFound();
-
-            var profile = await _context.Profile.Include(p => p.Guardians)
-                                                .Include(p => p.FieldOfStudy)
-                                                .FirstOrDefaultAsync(p => p.ProfileId == application.ProfileId);
-            application.Profile = profile;
-
-            var qset = await _dataService.GetQuestionSetWithAnswers(application.AnswerGroupId);
-
-            ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
-            {
-                Scholarship = scholarship,
-                Application = application,
-                QuestionSet = qset
-            };
 
             return View(vm);
+
         }
 
         [Authorize(Roles = "Admin,Manager,Student")]

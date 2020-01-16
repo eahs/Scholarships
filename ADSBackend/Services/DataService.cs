@@ -227,6 +227,35 @@ namespace Scholarships.Services
             return scholarship;
         }
 
+        public async Task<ScholarshipApplyViewModel> GetScholarshipApplicationViewModel(int applicationId)
+        {
+            var application = await _context.Application.FirstOrDefaultAsync(app => app.ApplicationId == applicationId);
+
+            if (application == null)
+                return null;
+
+            var scholarship = await GetScholarship(application.ScholarshipId);
+
+            if (scholarship == null)
+                return null;
+
+            var profile = await _context.Profile.Include(p => p.Guardians)
+                .Include(p => p.FieldOfStudy)
+                .FirstOrDefaultAsync(p => p.ProfileId == application.ProfileId);
+            application.Profile = profile;
+
+            var qset = await GetQuestionSetWithAnswers(application.AnswerGroupId);
+
+            ScholarshipApplyViewModel vm = new ScholarshipApplyViewModel
+            {
+                Scholarship = scholarship,
+                Application = application,
+                QuestionSet = qset
+            };
+
+            return vm;
+        }
+
         public async Task<Application> GetApplication (int scholarshipId, int profileId, int questionSetId)
         {
             var application = await _context.Application.FirstOrDefaultAsync(app => app.ScholarshipId == scholarshipId && app.ProfileId == profileId);
