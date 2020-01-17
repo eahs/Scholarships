@@ -38,6 +38,10 @@
                     <tr>
                         <td style="vertical-align: middle">
                             <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@item.ScholarshipId">@Html.DisplayFor(modelItem => item.Name)</a>
+                            @if (item.IsFavorite)
+                            {
+                                <i class="fa fa-heart" style="color: #e2264d "></i>
+                            }
                         </td>
                         <td style="vertical-align: middle">
                             @Html.DisplayFor(modelItem => item.ReleaseDate)
