@@ -3,7 +3,7 @@
     height: 100px;
     position: absolute;
     right: 0%;
-    margin: -10px 0px 0px 0px;
+    /*margin: -10px 0px 0px 0px;*/
     /*top: 50%;*/
     transform: translate(-50%, -50%);
     background: url(heart.png) no-repeat;

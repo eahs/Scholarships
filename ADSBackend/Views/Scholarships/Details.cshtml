@@ -39,8 +39,7 @@
                 favoriteClass += " heart-blast";
             }
         }
-        Add Favorite:
-        <div class="@favoriteClass" data-scholarship-id="@Model.Scholarship.ScholarshipId"></div>
+        <div class="@favoriteClass" data-toggle="tooltip" data-placement="left" title="Add to Favorites" data-scholarship-id="@Model.Scholarship.ScholarshipId"></div>
     </div>
 </div>
 
@@ -160,6 +159,8 @@
 
     <script type="text/javascript">
         $(function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
 
             $(".heart").on("click", function () {
                 $(this).toggleClass("heart-blast");
