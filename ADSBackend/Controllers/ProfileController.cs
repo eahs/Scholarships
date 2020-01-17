@@ -191,7 +191,7 @@ namespace Scholarships.Controllers
             _profile.ActivitiesCommunity = profile.ActivitiesCommunity;
             _profile.SchoolOffices = profile.SchoolOffices;
             _profile.SpecialCircumstances = profile.SpecialCircumstances;
-            _profile.FormCompletedExtraCurriculur = true;
+            _profile.FormCompletedExtraCurricular = true;
 
             return await UpdateProfile(ExtraCurricularBindingFields, _profile);
 

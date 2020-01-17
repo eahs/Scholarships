@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
@@ -29,8 +30,50 @@ namespace Scholarships.Controllers
         // GET: Scholarships
         public async Task<IActionResult> Index()
         {
-            var scholarships = await _context.Scholarship.Include(s => s.QuestionSet).ToListAsync();
+            var scholarships = await _context.Scholarship
+                .Include(s => s.QuestionSet)
+                .ToListAsync();
+
+            var profile = await _dataService.GetProfileAsync();
+
+            await _dataService.IncludeFavorites(profile.ProfileId, scholarships);
+            await _dataService.IncludeApplications(profile.ProfileId, scholarships);
+
             return View(scholarships);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> ToggleFavorite(int? id, bool state)
+        {
+            if (id == null)
+                return Ok(new { Result = "NotFound" });
+
+            var scholarship = await _context.Scholarship.FirstOrDefaultAsync(s => s.ScholarshipId == (int) id);
+            var profile = await _dataService.GetProfileAsync();
+
+            if (scholarship == null || profile == null)
+                return Ok(new {Result = "NotFound"});
+
+            ScholarshipFavorite favorite = new ScholarshipFavorite
+            {
+                ScholarshipId = scholarship.ScholarshipId,
+                ProfileId = profile.ProfileId
+            };
+
+            if (state)
+            {
+                _context.AddOrUpdate(favorite);
+            }
+            else
+            {
+                _context.Remove(favorite);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         // GET: Scholarships
@@ -56,7 +99,11 @@ namespace Scholarships.Controllers
             }
 
             var profile = await _dataService.GetProfileAsync();
-            var app = await _context.Application.FirstOrDefaultAsync(a => a.ProfileId == profile.ProfileId);
+            var app = await _context.Application.FirstOrDefaultAsync(a => a.ProfileId == profile.ProfileId && a.ScholarshipId == scholarship.ScholarshipId );
+            var favorite = await _context.ScholarshipFavorite.FirstOrDefaultAsync(fav =>
+                fav.ScholarshipId == scholarship.ScholarshipId && fav.ProfileId == profile.ProfileId);
+
+            scholarship.IsFavorite = favorite != null;
 
             List<ScholarshipFieldStatus> fieldStatus = await _dataService.VerifyApplicationStatus(scholarship);
 
@@ -218,7 +265,12 @@ namespace Scholarships.Controllers
                 await _context.SaveChangesAsync();
 
                 scholarship.QuestionSetId = qset.QuestionSetId;
-
+                scholarship.ApplicationInstructions ??= "";
+                scholarship.Amount ??= "";
+                scholarship.Description ??= "";
+                scholarship.Standards ??= "";
+                scholarship.Eligibility ??= "";
+                
                 _context.Add(scholarship);
                 await _context.SaveChangesAsync();
 
@@ -300,18 +352,18 @@ namespace Scholarships.Controllers
             {
                 try
                 {
-                    _scholarship.SponsorCompany = scholarship.SponsorCompany;
-                    _scholarship.SponsorName = scholarship.SponsorName;
-                    _scholarship.SponsorAddress1 = scholarship.SponsorAddress1;
-                    _scholarship.SponsorAddress2 = scholarship.SponsorAddress2;
-                    _scholarship.SponsorPhone = scholarship.SponsorPhone;
-                    _scholarship.SponsorEmail = scholarship.SponsorEmail;
-                    _scholarship.Name = scholarship.Name;
-                    _scholarship.Description = scholarship.Description;
-                    _scholarship.Eligibility = scholarship.Eligibility;
-                    _scholarship.Standards = scholarship.Standards;
-                    _scholarship.Amount = scholarship.Amount;
-                    _scholarship.ApplicationInstructions = scholarship.ApplicationInstructions;
+                    _scholarship.SponsorCompany = scholarship.SponsorCompany ?? "";
+                    _scholarship.SponsorName = scholarship.SponsorName ?? "";
+                    _scholarship.SponsorAddress1 = scholarship.SponsorAddress1 ?? "";
+                    _scholarship.SponsorAddress2 = scholarship.SponsorAddress2 ?? "";
+                    _scholarship.SponsorPhone = scholarship.SponsorPhone ?? "";
+                    _scholarship.SponsorEmail = scholarship.SponsorEmail ?? "";
+                    _scholarship.Name = scholarship.Name ?? "";
+                    _scholarship.Description = scholarship.Description ?? "";
+                    _scholarship.Eligibility = scholarship.Eligibility ?? "";
+                    _scholarship.Standards = scholarship.Standards ?? "";
+                    _scholarship.Amount = scholarship.Amount ?? "";
+                    _scholarship.ApplicationInstructions = scholarship.ApplicationInstructions ?? "";
                     _scholarship.ApplyOnline = scholarship.ApplyOnline;
                     _scholarship.TranscriptsRequired = scholarship.TranscriptsRequired;
                     _scholarship.ReleaseDate = scholarship.ReleaseDate;

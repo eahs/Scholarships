@@ -38,9 +38,12 @@ namespace Scholarships.Services
             if (user == null)
                 return null;
 
-            var profile = await _context.Profile.Include(p => p.Guardians)
-                                                .Include(p => p.FieldOfStudy)
-                                                .FirstOrDefaultAsync(p => p.UserId == user.Id);
+            Profile profile;
+
+            profile = await _context.Profile.Include(p => p.Guardians)
+                                            .Include(p => p.FieldOfStudy)
+                                            .FirstOrDefaultAsync(p => p.UserId == user.Id);
+
             if (profile == null)
             {
                 // Let's see if there is one based off of email address
@@ -73,6 +76,35 @@ namespace Scholarships.Services
 
             return profile;
         }
+
+        public async Task IncludeFavorites(int profileId, List<Scholarship> scholarships)
+        {
+            var favorites = await _context.ScholarshipFavorite.Where(p => p.ProfileId == profileId)
+                .Select(x => x.ScholarshipId)
+                .ToListAsync();
+
+            foreach (var scholarship in scholarships)
+            {
+                if (favorites.Contains(scholarship.ScholarshipId))
+                    scholarship.IsFavorite = true;
+            }
+
+            return;
+        }
+
+        public async Task IncludeApplications(int profileId, List<Scholarship> scholarships)
+        {
+            var applications = await _context.Application.Where(app => app.ProfileId == profileId && app.Submitted)
+                                                                 .Select(x => x.ScholarshipId)
+                                                                 .ToListAsync();
+
+            scholarships.ForEach(s =>
+            {
+                if (applications.Contains(s.ScholarshipId))
+                    s.HasApplied = true;
+            });
+        }
+
 
         public async Task<List<ScholarshipFieldStatus>> VerifyApplicationStatus(Scholarship scholarship)
         {

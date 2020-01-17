@@ -133,7 +133,9 @@ namespace Scholarships.Models
         public bool FormCompletedBasic { get; set; } = false;
         public bool FormCompletedAcademicPerformance { get; set; } = false;
         public bool FormCompletedCollegePlans { get; set; } = false;
-        public bool FormCompletedExtraCurriculur { get; set; } = false;
+        public bool FormCompletedExtraCurricular { get; set; } = false;
         public bool FormCompletedFamilyIncome { get; set; } = false;
+
+        public List<ScholarshipFavorite> Favorites { get; set; }
     }
 }

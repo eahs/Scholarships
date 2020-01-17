@@ -21,6 +21,8 @@ using System.Data;
 using Hangfire.MySql.Core;
 using Scholarships.Tasks.Importer;
 using Serilog;
+using Smidge.Cache;
+using Smidge.Options;
 
 namespace Scholarships
 {
@@ -132,7 +134,12 @@ namespace Scholarships
             services.AddMvc();
 
             // Add javascript minification library
-            services.AddSmidge(Configuration.GetSection("smidge"));
+            services.AddSmidge(Configuration.GetSection("smidge"))
+                    .Configure<SmidgeOptions>(options =>
+                    {
+                        options.DefaultBundleOptions.DebugOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
+                        options.DefaultBundleOptions.ProductionOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
+                    });
 
 
         }
@@ -221,7 +228,8 @@ namespace Scholarships
                                     "~/lib/font-awesome/css/font-awesome.css",
                                     "~/css/animate.css",
                                     "~/css/style.css",
-                                    "~/css/site.css");
+                                    "~/css/site.css",
+                                    "~/lib/heart/heart.css");
 
                 // Libraries
                 bundles.CreateJs("scholarship-js-libraries",                                    

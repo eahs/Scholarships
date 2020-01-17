@@ -16,6 +16,7 @@ namespace Scholarships.Data
         public DbSet<Profile> Profile { get; set; }
         public DbSet<ImportedProfile> ImportedProfile { get; set; }
         public DbSet<Scholarship> Scholarship { get; set; }
+        public DbSet<ScholarshipFavorite> ScholarshipFavorite { get; set; }
         public DbSet<FieldOfStudy> FieldOfStudy { get; set; }
         public DbSet<ScholarshipCategory> ScholarshipCategory { get; set; }
         public DbSet<ScholarshipFieldOfStudy> ScholarshipFieldOfStudy { get; set; }
@@ -96,6 +97,14 @@ namespace Scholarships.Data
                 .WithMany(app => app.AnswerSets)
                 .HasForeignKey(nt => nt.AnswerGroupId);
 
+            // Scholarship favorites
+            builder.Entity<ScholarshipFavorite>()
+                .HasKey(t => new {t.ProfileId, t.ScholarshipId});
+
+            builder.Entity<ScholarshipFavorite>()
+                .HasOne(fav => fav.Profile)
+                .WithMany(fav => fav.Favorites)
+                .HasForeignKey(f => f.ProfileId);
         }
 
         public DbSet<Scholarships.Models.Category> Category { get; set; }

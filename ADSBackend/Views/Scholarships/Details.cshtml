@@ -25,11 +25,28 @@
 </ol>
 
 <h1>Scholarship Details</h1>
+<div class="row">
+    <div class="col-9">
+        <h3>
+            @Html.DisplayFor(model => model.Scholarship.Name)
+        </h3>
+    </div>
+    <div class="col-3">
+        @{
+            var favoriteClass = "heart";
+            if (Model.Scholarship.IsFavorite)
+            {
+                favoriteClass += " heart-blast";
+            }
+        }
+        Add Favorite:
+        <div class="@favoriteClass" data-scholarship-id="@Model.Scholarship.ScholarshipId"></div>
+    </div>
+</div>
+
 <div class="ibox">
     <div class="ibox-content scholarship-detail">
         <div>
-            <h3>@Html.DisplayFor(model => model.Scholarship.Name)</h3>
-            <hr />
 
             <h4>@Html.DisplayNameFor(model => model.Scholarship.Description)</h4>
             <div class="indent">
@@ -130,6 +147,48 @@
     </div>
 }
 
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
+
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        $(function () {
+
+            $(".heart").on("click", function () {
+                $(this).toggleClass("heart-blast");
+
+                var favToggle = $(this).hasClass("heart-blast");
+                var scholarshipId = $(this).data("scholarship-id");
+
+                var form = $('#__AjaxAntiForgeryForm');
+                var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Scholarships/ToggleFavorite",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: scholarshipId,
+                        state: favToggle
+                    },
+                    dataType: "json"
+                }).done(function (response, textStatus, jqXHR) {
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                        $(this).toggleClass("heart-blast");
+                }).always(function () {
+
+                });
+            });
+        });
+
+    </script>
+
+}
