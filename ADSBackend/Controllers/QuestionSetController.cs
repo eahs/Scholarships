@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
-using Scholarships.Util;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
@@ -295,10 +292,6 @@ namespace Scholarships.Controllers
             if (!UserCanModifyQuestionSet(question.QuestionSet))
                 return new QuestionOptionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
 
-            QuestionOption q = new QuestionOption
-            {
-                QuestionOptionId = questionoption.QuestionOptionId
-            };
 
             _context.QuestionOption.Remove(question.Options.Find(qo => qo.QuestionOptionId == questionoption.QuestionOptionId));
 
@@ -325,8 +318,6 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<object> SaveQuestionOrder(int id, [Bind("order")] List<int> order)
         {
-            QuestionSetError error = QuestionSetError.NoError;
-
             var questions = await _context.Question.Include(q => q.QuestionSet)
                                                   .Where(q => q.QuestionSetId == id)
                                                   .ToListAsync();
@@ -334,7 +325,7 @@ namespace Scholarships.Controllers
             if (questions == null)
                 return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
 
-            var qset = questions.FirstOrDefault().QuestionSet;
+            var qset = questions.FirstOrDefault()?.QuestionSet;
 
             if (!UserCanModifyQuestionSet(qset))
                 return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotAuthorized };
@@ -353,7 +344,7 @@ namespace Scholarships.Controllers
 
             return new FormsBaseViewModel
             {
-                ErrorCode = error
+                ErrorCode = QuestionSetError.NoError
             };
         }
 
@@ -362,8 +353,6 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<FormsBaseViewModel> SaveQuestionOptionOrder(int id, [Bind("order")] List<int> order)
         {
-            QuestionSetError error = QuestionSetError.NoError;
-
             var question = await _context.Question.Include(q => q.QuestionSet)
                                                   .Include(q => q.Options)
                                                   .FirstOrDefaultAsync(q => q.QuestionId == id);
@@ -388,7 +377,7 @@ namespace Scholarships.Controllers
 
             return new FormsBaseViewModel
             {
-                ErrorCode = error
+                ErrorCode = QuestionSetError.NoError
             };
         }
 

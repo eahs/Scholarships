@@ -149,7 +149,7 @@ namespace Scholarships.Controllers
                     ErrorCode = QuestionSetError.NotFound
                 };
 
-            var scholarship = await _dataService.GetScholarship((int)_app.ScholarshipId);
+            var scholarship = await _dataService.GetScholarship(_app.ScholarshipId);
             if (scholarship == null)
             {
                 return new FormsBaseViewModel
@@ -177,7 +177,7 @@ namespace Scholarships.Controllers
                 app.AcceptRelease = _app.AcceptRelease;
                 app.Signature = _app.Signature;
                 app.SignatureDate = _app.SignatureDate;
-                app.ProfileSnapshot = JsonSerializer.Serialize<Profile>(profile);
+                app.ProfileSnapshot = JsonSerializer.Serialize(profile);
 
                 _context.Update(app);
                 await _context.SaveChangesAsync();

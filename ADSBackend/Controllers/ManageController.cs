@@ -316,7 +316,7 @@ namespace Scholarships.Controllers
             {
                 HasAuthenticator = await _userManager.GetAuthenticatorKeyAsync(user) != null,
                 Is2faEnabled = user.TwoFactorEnabled,
-                RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user),
+                RecoveryCodesLeft = await _userManager.CountRecoveryCodesAsync(user)
             };
 
             return View(model);

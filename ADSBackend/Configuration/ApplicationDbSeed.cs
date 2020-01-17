@@ -14,7 +14,7 @@ namespace Scholarships.Configuration
 {
     public class ApplicationDbSeed
     {
-        ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
  
         public ApplicationDbSeed (ApplicationDbContext context)
         {

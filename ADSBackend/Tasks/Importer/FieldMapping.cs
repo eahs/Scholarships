@@ -45,7 +45,7 @@ namespace Scholarships.Tasks.Importer
 
         }
 
-        private int ConvertFieldToInt(string num)
+        private static int ConvertFieldToInt(string num)
         {
             if (string.IsNullOrEmpty(num))
                 return 0;
@@ -59,7 +59,7 @@ namespace Scholarships.Tasks.Importer
             return 0;
         }
 
-        private double ConvertFieldToDouble(string num)
+        private static double ConvertFieldToDouble(string num)
         {
             if (string.IsNullOrEmpty(num))
                 return 0;

@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Services;
-using Microsoft.EntityFrameworkCore;
-using System.IO;
 using Serilog;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {

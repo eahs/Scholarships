@@ -10,7 +10,7 @@ namespace Scholarships.Services
 
     public class EmailSender : IEmailSender
     {
-        private Services.Configuration Configuration { get; set; }
+        private Services.Configuration Configuration { get; }
 
         public EmailSender(Services.Configuration configuration)
         {
@@ -36,7 +36,7 @@ namespace Scholarships.Services
             return client;
         }
 
-        private MailMessage ConfigureMessage (string email, string subject, string message )
+        private static MailMessage ConfigureMessage (string email, string subject, string message )
         {
             MailMessage mailMessage = new MailMessage
             {

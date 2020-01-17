@@ -119,7 +119,7 @@ namespace Scholarships.Services
             }
         }
 
-        private void SortQuestionSet(QuestionSet qset)
+        private static void SortQuestionSet(QuestionSet qset)
         {
             qset.Questions = qset.Questions.OrderBy(q => q.Order).ToList();
 
@@ -302,7 +302,7 @@ namespace Scholarships.Services
             return application;
         }
 
-        private string ProfileFieldToURI (string fieldname)
+        private static string ProfileFieldToURI (string fieldname)
         {
             return "/Profile/Edit";
         }

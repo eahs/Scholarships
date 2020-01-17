@@ -12,7 +12,7 @@ namespace Scholarships
     {
         public static void Main(string[] args)
         {
-            string logPath = "App_Data\\Logs\\";
+            const string logPath = "App_Data\\Logs\\";
             Directory.CreateDirectory(logPath);
 
             Log.Logger = new LoggerConfiguration()

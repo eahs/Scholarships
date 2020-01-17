@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
@@ -14,6 +8,10 @@ using Scholarships.Models;
 using Scholarships.Models.Identity;
 using Scholarships.Services;
 using Scholarships.Util;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
@@ -70,7 +68,7 @@ namespace Scholarships.Controllers
                 {
                     if (!ProfileExists(profile.ProfileId))
                     {
-                        return FormHelper.JsonStatus("NotFound"); ;
+                        return FormHelper.JsonStatus("NotFound"); 
                     }
                     else
                     {
@@ -80,7 +78,7 @@ namespace Scholarships.Controllers
                 return FormHelper.JsonStatus("Success");
             }
 
-            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); ;
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); 
 
         }
 

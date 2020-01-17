@@ -9,13 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting.Internal;
 using Newtonsoft.Json;
 using Scholarships.Data;
-using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
 using Serilog;
@@ -40,12 +36,6 @@ namespace Scholarships.Controllers
             _hostingEnvironment = hostingEnvironment;
         }
 
-        // GET: AnswerSet
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.AnswerSet.Include(a => a.Profile).Include(a => a.QuestionSet);
-            return View(await applicationDbContext.ToListAsync());
-        }
 
         /// <summary>
         /// Returns a form built from a questionset
@@ -137,7 +127,7 @@ namespace Scholarships.Controllers
 
                     _safeAnswer.Response = answer.Response ?? "";
                     _safeAnswer.DateTime = answer.DateTime;
-                    _safeAnswer.Config = JsonConvert.SerializeObject(new { QuestionOptions = answer.QuestionOptions });
+                    _safeAnswer.Config = JsonConvert.SerializeObject(new { answer.QuestionOptions });
                     _safeAnswer.QuestionOptionId = answer.QuestionOptionId;
 
                     // Each answer must be validated, answerId likely to be invalid
@@ -183,7 +173,7 @@ namespace Scholarships.Controllers
 
             if (fa.FileAttachmentGroup.ProfileId == profile.ProfileId)
             {
-                var filePath = System.IO.Path.Combine(attachPath,
+                var filePath = Path.Combine(attachPath,
                                                       fa.FileSubPath,
                                                       fa.SecureFileName);
 
@@ -236,7 +226,7 @@ namespace Scholarships.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            long size = files.Sum(f => f.Length);
+            //long totalsize = files.Sum(f => f.Length);
 
             // full path to file in temp location
             /// var filePath = Path.GetTempFileName();
@@ -253,7 +243,7 @@ namespace Scholarships.Controllers
                         ContentType = formFile.ContentType,
                         CreatedDate = DateTime.Now,
                         Length = formFile.Length,
-                        SecureFileName = System.IO.Path.GetRandomFileName()
+                        SecureFileName = Path.GetRandomFileName()
                     };
 
                     if (!fa.ContentType.StartsWith("image/") && fa.ContentType != "application/pdf")
@@ -273,7 +263,7 @@ namespace Scholarships.Controllers
                     var filePath = Path.Combine(pathParts.ToArray());
 
                     // Create the directory if it doesn't exist
-                    System.IO.Directory.CreateDirectory(filePath);
+                    Directory.CreateDirectory(filePath);
                     
                     // Now add the secure filename and build the full file path
                     pathParts.Add(fa.SecureFileName);
@@ -331,9 +321,6 @@ namespace Scholarships.Controllers
             return response;
         }
 
-        private bool AnswerSetExists(int id)
-        {
-            return _context.AnswerSet.Any(e => e.AnswerSetId == id);
-        }
+
     }
 }

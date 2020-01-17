@@ -37,7 +37,7 @@ namespace Scholarships.Controllers
         {
             string transcriptPath = Configuration.Get("TranscriptFilePath");
 
-            if (transcriptPath == null || transcriptPath == "")
+            if (string.IsNullOrEmpty(transcriptPath))
                 return RedirectToAction("Index", "Configuration", new { error = 1 });
 
             // Create the directory if it doesn't exist
