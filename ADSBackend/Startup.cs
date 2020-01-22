@@ -18,6 +18,7 @@ using System.IO;
 using Smidge;
 using System.Net.Mail;
 using System.Data;
+using System.Linq;
 using Hangfire.MySql.Core;
 using Scholarships.Tasks.Importer;
 using Serilog;
@@ -37,11 +38,13 @@ namespace Scholarships
             Configuration = configuration;
             Env = env;
 
-#if DEBUG
-            ConnString = Configuration.GetConnectionString("ScholarshipsDevelopmentContext");
-#else
-            ConnString = Configuration.GetConnectionString("ScholarshipsProductionContext");
-#endif
+            if (Env.IsDevelopment())
+                ConnString = Configuration.GetConnectionString("ScholarshipsDevelopmentContext");
+            else if (Env.IsStaging())
+                ConnString = Configuration.GetConnectionString("ScholarshipsStagingContext");
+            else if (Env.IsProduction())
+                ConnString = Configuration.GetConnectionString("ScholarshipsProductionContext");
+
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -55,6 +58,30 @@ namespace Scholarships
                 builder.AddRazorRuntimeCompilation();
             }
 #endif
+            IConfigurationSection section = null;
+
+            // Depending on development environment, copy variables into a new configuration prefixed by "Paths"
+            if (Env.IsDevelopment())
+                section = Configuration.GetSection("FilePaths:Development");
+            else if (Env.IsStaging())
+                section = Configuration.GetSection("FilePaths:Staging");
+            else if (Env.IsProduction())
+                section = Configuration.GetSection("FilePaths:Production");
+
+            if (section == null)
+            {
+                Log.Error("FilePaths section missing from appsettings.json!");
+            }
+
+            var pairs = section.AsEnumerable();
+            foreach (var (key, value) in pairs)
+            {
+                if (value == null)
+                    continue;
+
+                var lastkey = key.Split(":").LastOrDefault();
+                Configuration["Paths:" + lastkey] = value;
+            }
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

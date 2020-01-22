@@ -12,7 +12,20 @@ namespace Scholarships
     {
         public static void Main(string[] args)
         {
-            const string logPath = "App_Data\\Logs\\";
+            
+            // Temporarily use the appsettings.json file to get the log directory
+            var bconfig = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true)
+                .Build();
+
+#if DEBUG
+            var section = bconfig.GetSection("FilePaths:Development");
+#else
+            var section = bconfig.GetSection("FilePaths:Production");
+#endif
+            string lpath = section["LogPath"];
+            string logPath = Path.Combine(lpath, "") ?? Path.Combine("App_Data", "Logs");
             Directory.CreateDirectory(logPath);
 
             Log.Logger = new LoggerConfiguration()
