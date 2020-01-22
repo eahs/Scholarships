@@ -13,8 +13,12 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Scholarships.Models.ScholarshipViewModels;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Scholarships.Models.Forms;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Scholarships.Services
 {
@@ -23,12 +27,12 @@ namespace Scholarships.Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly HttpContext _httpcontext;
-
+        
         public DataService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
-            _httpcontext = httpContextAccessor.HttpContext;            
+            _httpcontext = httpContextAccessor.HttpContext;
         }
 
         public async Task<Profile> GetProfileAsync()

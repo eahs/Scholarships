@@ -58,30 +58,7 @@ namespace Scholarships
                 builder.AddRazorRuntimeCompilation();
             }
 #endif
-            IConfigurationSection section = null;
 
-            // Depending on development environment, copy variables into a new configuration prefixed by "Paths"
-            if (Env.IsDevelopment())
-                section = Configuration.GetSection("FilePaths:Development");
-            else if (Env.IsStaging())
-                section = Configuration.GetSection("FilePaths:Staging");
-            else if (Env.IsProduction())
-                section = Configuration.GetSection("FilePaths:Production");
-
-            if (section == null)
-            {
-                Log.Error("FilePaths section missing from appsettings.json!");
-            }
-
-            var pairs = section.AsEnumerable();
-            foreach (var (key, value) in pairs)
-            {
-                if (value == null)
-                    continue;
-
-                var lastkey = key.Split(":").LastOrDefault();
-                Configuration["Paths:" + lastkey] = value;
-            }
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

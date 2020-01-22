@@ -155,7 +155,7 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> Remove(int id, string uuid)
         {
-            string attachPath = Configuration.Get("AttachmentFilePath");
+            string attachPath = Configuration.Get("Paths:AttachmentPath");
 
             var profile = await _dataService.GetProfileAsync();
 
@@ -198,7 +198,7 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<object> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
-            string attachPath = Configuration.Get("AttachmentFilePath");
+            string attachPath = Configuration.Get("Paths:AttachmentPath");
             var profile = await _dataService.GetProfileAsync();
 
             var aset = await _context.AnswerSet.Include(a => a.Answers)
@@ -211,7 +211,11 @@ namespace Scholarships.Controllers
 
             if (answer == null)
             {
-                return NotFound();  // This shouldn't happen
+                answer = new Answer
+                {
+                    AnswerSetId = aset.AnswerSetId,
+                    QuestionId = questionid
+                };
             }
 
             if (answer.FileAttachmentGroupId == null)

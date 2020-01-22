@@ -50,7 +50,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var filePath = System.IO.Path.Combine(Configuration.Get("AttachmentFilePath"),
+            var filePath = System.IO.Path.Combine(Configuration.Get("Paths:AttachmentPath"),
                                                   fa.FileSubPath,
                                                   fa.SecureFileName);
 

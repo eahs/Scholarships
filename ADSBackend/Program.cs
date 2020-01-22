@@ -24,8 +24,9 @@ namespace Scholarships
 #else
             var section = bconfig.GetSection("FilePaths:Production");
 #endif
-            string lpath = section["LogPath"];
-            string logPath = Path.Combine(lpath, "") ?? Path.Combine("App_Data", "Logs");
+            string lpath = section["LogPath"] ?? Path.Combine("App_Data", "Logs");
+
+            string logPath = Path.Combine(lpath, "");
             Directory.CreateDirectory(logPath);
 
             Log.Logger = new LoggerConfiguration()
