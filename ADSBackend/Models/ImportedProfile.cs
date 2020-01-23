@@ -13,6 +13,7 @@ namespace Scholarships.Models
         [Key]
         public int ImportedProfileId { get; set; }
 
+        public string LunchStatus { get; set; } = "";
 
         [Required]
         [DisplayName("First Name")]

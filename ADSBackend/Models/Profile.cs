@@ -63,6 +63,7 @@ namespace Scholarships.Models
         public string Phone { get; set; } = "";
 
         public int GraduationYear { get; set; }
+        public string LunchStatus { get; set; } = "";
 
         [DisplayName("Class Rank")]
         public int? ClassRank { get; set; }
