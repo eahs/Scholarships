@@ -49,8 +49,8 @@ namespace Scholarships.Controllers
             if (id == null)
                 return NotFound();
 
-            ViewBag.AnswerGroupId = id;  // The form still needs the answer group Id
-            QuestionSet qset = await _dataService.GetQuestionSetWithAnswers(ViewBag.AnswerGroupId);
+            // The form still needs the answer group Id
+            QuestionSet qset = await _dataService.GetQuestionSetWithAnswers((int)id);
 
             if (qset == null)
                 return NotFound();
@@ -123,15 +123,17 @@ namespace Scholarships.Controllers
                 for  (int i = 0; i < aset.Answers.Count; i++)
                 {
                     var answer = aset.Answers[i];
-                    var _safeAnswer = _safeAnswerSet.Answers[i];
+                    var _safeAnswer = _safeAnswerSet.Answers.FirstOrDefault(q => q.QuestionId == answer.QuestionId);
+
+                    if (_safeAnswer == null) continue;
 
                     _safeAnswer.Response = answer.Response ?? "";
                     _safeAnswer.DateTime = answer.DateTime;
                     _safeAnswer.Config = JsonConvert.SerializeObject(new { answer.QuestionOptions });
                     _safeAnswer.QuestionOptionId = answer.QuestionOptionId;
-
+                    
                     // Each answer must be validated, answerId likely to be invalid
-                    if (answer.AnswerId == 0)
+                    if (_safeAnswer.AnswerId == 0)
                     {
                         _context.Answer.Add(_safeAnswer);
                     }
@@ -155,7 +157,7 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> Remove(int id, string uuid)
         {
-            string attachPath = Configuration.Get("Paths:AttachmentPath");
+            string attachPath = Configuration.ConfigPath.AttachmentPath;
 
             var profile = await _dataService.GetProfileAsync();
 
@@ -198,7 +200,7 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<object> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
-            string attachPath = Configuration.Get("Paths:AttachmentPath");
+            string attachPath = Configuration.ConfigPath.AttachmentPath;
             var profile = await _dataService.GetProfileAsync();
 
             var aset = await _context.AnswerSet.Include(a => a.Answers)

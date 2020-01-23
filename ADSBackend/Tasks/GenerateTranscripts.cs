@@ -23,7 +23,7 @@ namespace Scholarships.Tasks
 
         public void Execute()
         {
-            string transcriptPath = Configuration.Get("TranscriptFilePath");
+            string transcriptPath = Configuration.ConfigPath.TranscriptsPath;
             Log.Information("Beginning processing of graduation transcripts PDF");
 
             if (transcriptPath == null)

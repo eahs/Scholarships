@@ -13,7 +13,7 @@
     </div>
 }
 
-<form asp-action="Save" asp-route-id="@ViewBag.AnswerGroupId" id="appform">
+<form asp-action="Save" asp-route-id="@Model.AnswerGroupId" id="appform">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     @foreach (var answerset in Model.AnswerSets)

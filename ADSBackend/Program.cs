@@ -5,6 +5,7 @@ using Serilog;
 using Serilog.Events;
 using System;
 using System.IO;
+using Scholarships.Models.ConfigurationViewModels;
 
 namespace Scholarships
 {
@@ -12,21 +13,23 @@ namespace Scholarships
     {
         public static void Main(string[] args)
         {
-            
+            // Get the environment
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             // Temporarily use the appsettings.json file to get the log directory
             var bconfig = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile($"appsettings.{environment}.json")
                 .Build();
 
-#if DEBUG
-            var section = bconfig.GetSection("FilePaths:Development");
-#else
-            var section = bconfig.GetSection("FilePaths:Production");
-#endif
-            string lpath = section["LogPath"] ?? Path.Combine("App_Data", "Logs");
 
-            string logPath = Path.Combine(lpath, "");
+            // Now load the paths object and bind to a new configPath object
+            var configPath = new ConfigPath();
+            bconfig.GetSection("Paths").Bind(configPath);
+
+            // Set up the logger now that we have the log path
+            string logPath = configPath.LogPath;
             Directory.CreateDirectory(logPath);
 
             Log.Logger = new LoggerConfiguration()
@@ -57,7 +60,11 @@ namespace Scholarships
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+
+            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()) // the path where the json file should be loaded from
+                                                          .AddEnvironmentVariables()
+                                                          .Build();
+
 
             return WebHost.CreateDefaultBuilder(args)
                           .UseConfiguration(configuration)

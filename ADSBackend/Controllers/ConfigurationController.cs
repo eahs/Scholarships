@@ -26,9 +26,6 @@ namespace Scholarships.Controllers
             var viewModel = new ConfigurationViewModel
             {
                 ErrorMessage = error == null ? "" : "Site configuration is incomplete",
-                AttachmentFilePath = Configuration.Get("AttachmentFilePath"),
-                TranscriptFilePath = Configuration.Get("TranscriptFilePath"),
-                StudentDataFilePath = Configuration.Get("StudentDataFilePath"),
                 ApplicationEmail = Configuration.Get("ApplicationEmail"),
                 ApplicationEmailPassword = Configuration.Get("ApplicationEmailPassword"),
                 RootWebPath = _hostingEnvironment.WebRootPath
@@ -44,9 +41,6 @@ namespace Scholarships.Controllers
         {
             if (ModelState.IsValid)
             {
-                Configuration.Set("AttachmentFilePath", viewModel.AttachmentFilePath);
-                Configuration.Set("TranscriptFilePath", viewModel.TranscriptFilePath);
-                Configuration.Set("StudentDataFilePath", viewModel.StudentDataFilePath);
                 Configuration.Set("ApplicationEmail", viewModel.ApplicationEmail);
 
                 if (viewModel.ApplicationEmailPassword != null)

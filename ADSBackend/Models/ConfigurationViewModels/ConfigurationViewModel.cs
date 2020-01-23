@@ -6,19 +6,6 @@ namespace Scholarships.Models.ConfigurationViewModels
     {
         public string ErrorMessage { get; set; }
 
-        [Required]
-        [Display(Name = "Attachment File Path")]
-        public string AttachmentFilePath { get; set; }
-
-        [Required]
-        [Display(Name = "Transcript File Path")]
-        public string TranscriptFilePath { get; set; }
-
-        [Required]
-        [Display(Name = "Student Data File Path")]
-        public string StudentDataFilePath { get; set; }
-
-
         [DataType(DataType.EmailAddress)]
         [Display(Name = "Application Email")]
         public string ApplicationEmail { get; set; } = "scholarship@eastonsd.org";

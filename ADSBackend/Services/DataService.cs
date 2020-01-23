@@ -248,6 +248,7 @@ namespace Scholarships.Services
                 index++;
             }
             qset.AnswerSets = asets;
+            qset.AnswerGroupId = AnswerGroupId;
 
             return qset;
         }

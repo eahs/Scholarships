@@ -35,7 +35,7 @@ namespace Scholarships.Controllers
 
         public async Task<ActionResult> UploadTranscripts(IFormFile file)
         {
-            string transcriptPath = Configuration.Get("TranscriptFilePath");
+            string transcriptPath = Configuration.ConfigPath.TranscriptsPath;
 
             if (string.IsNullOrEmpty(transcriptPath))
                 return RedirectToAction("Index", "Configuration", new { error = 1 });

@@ -29,5 +29,7 @@ namespace Scholarships.Models.Forms
         [NotMapped]
         public List<AnswerSet> AnswerSets { get; set; }
 
+        [NotMapped]
+        public int AnswerGroupId { get; set; }  // Only used by scholarship application form to provide info to generate form correctly
     }
 }
