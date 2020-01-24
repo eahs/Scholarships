@@ -15,16 +15,18 @@ namespace Scholarships.Tasks.Importer
             Map(m => m.LastName).Name("LastName");
             Map(m => m.MiddleName).Name("MiddleName");
             Map(m => m.StudentId).Name("StudentNumber");
-            Map(m => m.Email).Name("NetworkId").ConvertUsing(row => row.GetField("NetworkId") + "@roverkids.org");
+            Map(m => m.Email).Name("NETWORKID").ConvertUsing(row => row.GetField("NETWORKID") + "@roverkids.org");
+            Map(m => m.LunchStatus).Name("LunchStatus");
             Map(m => m.BirthDate).Name("BirthDate");
             Map(m => m.GraduationYear).Name("GraduationYear");
             Map(m => m.Gender).Name("Gender").ConvertUsing(row => row.GetField("Gender") == "M" ? 0 : 1);
-            Map(m => m.Ethnicity).Name("Ethnicity");
+            Map(m => m.Ethnicity).Name("Ethnicity").ConvertUsing(row => ConvertFieldToInt(row.GetField("Ethnicity")));
             Map(m => m.Address1).Name("AddressLine1");
             Map(m => m.City).Name("City");
             Map(m => m.State).Name("State");
             Map(m => m.ZipCode).Name("Zip");
             Map(m => m.Phone).Name("PhoneNumber");
+            
             
             Map(m => m.ClassRank).Name("Rank").ConvertUsing(row =>
             {
@@ -40,9 +42,9 @@ namespace Scholarships.Tasks.Importer
             });
             
             Map(m => m.GPA).Name("GPA").ConvertUsing(row => ConvertFieldToDouble(row.GetField("GPA")) );
-            Map(m => m.SATScoreMath).Name("SATScoreMath").ConvertUsing(row => ConvertFieldToInt(row.GetField("SATScoreMath")));
-            Map(m => m.SATScoreReading).Name("SATScoreEBRW").ConvertUsing(row => ConvertFieldToInt(row.GetField("SATScoreEBRW")));
-
+            Map(m => m.SATScoreMath).Name("SATScoreMath").ConvertUsing(row => SplitGetLargest(row.GetField("SATScoreMath")));
+            Map(m => m.SATScoreReading).Name("SATScoreEBRW").ConvertUsing(row => SplitGetLargest(row.GetField("SATScoreEBRW")));
+            
         }
 
         private static int SplitGetLargest(string num)

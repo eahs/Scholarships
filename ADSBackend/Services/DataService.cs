@@ -56,6 +56,8 @@ namespace Scholarships.Services
                 if (iprofile != null)
                 {
                     // Claim this profile
+                    // The net effect of this code is that we serialize the imported profile and deserialize it to a standard profile.
+                    // This process ensures that if we are to import new fields from a student data dump we need only to add the field to ImportedProfile and Profile
                     var iprofilejson = JsonConvert.SerializeObject(iprofile);
                     profile = JsonConvert.DeserializeObject<Profile>(iprofilejson);
                     profile.UserId = user.Id;

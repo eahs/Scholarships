@@ -74,8 +74,10 @@ namespace Scholarships.Tasks.Importer
 
         public void Execute()
         {
-            string studentsPath = Configuration.Get("StudentDataFilePath");
+            string studentsPath = Configuration.ConfigPath.StudentDataPath;
+
             Log.Information("Beginning processing of student data dump");
+            Directory.CreateDirectory(studentsPath);
 
             if (studentsPath == null)
             {
@@ -83,7 +85,7 @@ namespace Scholarships.Tasks.Importer
                 return;
             }
 
-            string studentsSourcePath = Path.Combine(studentsPath, "Student Data.txt");
+            string studentsSourcePath = Path.Combine(studentsPath, "Export.txt");
 
             if (!File.Exists(studentsSourcePath))
             {
