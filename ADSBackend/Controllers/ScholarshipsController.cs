@@ -30,8 +30,15 @@ namespace Scholarships.Controllers
         // GET: Scholarships
         public async Task<IActionResult> Index()
         {
+            // Grab only needed fields
             var scholarships = await _context.Scholarship
-                .Include(s => s.QuestionSet)
+                .Select(s => new Scholarship
+                {
+                    ScholarshipId = s.ScholarshipId,
+                    Name = s.Name,
+                    ReleaseDate = s.ReleaseDate,
+                    DueDate = s.DueDate
+                })
                 .ToListAsync();
 
             var profile = await _dataService.GetProfileAsync();
