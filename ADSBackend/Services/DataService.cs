@@ -18,6 +18,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Scholarships.Models.Forms;
 using Newtonsoft.Json;
+using RestSharp.Extensions;
+using Scholarships.Util;
 using Serilog;
 
 namespace Scholarships.Services
@@ -48,6 +50,7 @@ namespace Scholarships.Services
                                             .Include(p => p.FieldOfStudy)
                                             .FirstOrDefaultAsync(p => p.UserId == user.Id);
 
+            // If a junior logs in they will prematurely create a profile
             if (profile == null)
             {
                 // Let's see if there is one based off of email address
@@ -339,6 +342,86 @@ namespace Scholarships.Services
             }
 
             return application;
+        }
+
+        public async Task<List<Scholarship>> GetScholarshipUpdates(int count = 10)
+        {
+            var scholarships = await _context.Scholarship
+                .Select(s => new Scholarship
+                {
+                    ScholarshipId = s.ScholarshipId,
+                    Name = s.Name,
+                    ReleaseDate = s.ReleaseDate,
+                    DueDate = s.DueDate,
+                    Description = s.Description.StripHtml().HtmlDecode().CropWholeWords(150, null)
+                })
+                .Where(s => s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
+                .OrderByDescending(s => s.ReleaseDate)
+                .Take(count)
+                .ToListAsync();
+
+            return scholarships ?? new List<Scholarship>();
+        }
+
+        public async Task<List<Scholarship>> GetScholarshipDeadlines(int count = 10)
+        {
+            var scholarships = await _context.Scholarship
+                .Select(s => new Scholarship
+                {
+                    ScholarshipId = s.ScholarshipId,
+                    Name = s.Name,
+                    ReleaseDate = s.ReleaseDate,
+                    DueDate = s.DueDate
+                })
+                .Where(s => s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
+                .OrderByDescending(s => s.DueDate)
+                .Take(count)
+                .ToListAsync();
+
+            return scholarships ?? new List<Scholarship>();
+        }
+
+        public async Task<List<Scholarship>> GetMyFavorites(int profileId, int count = 10)
+        {
+            var favorites = await _context.ScholarshipFavorite.Where(f => f.ProfileId == profileId)
+                                                                      .Select(f => f.ScholarshipId)
+                                                                      .ToListAsync();
+                                                              
+            var scholarships = await _context.Scholarship
+                .Select(s => new Scholarship
+                {
+                    ScholarshipId = s.ScholarshipId,
+                    Name = s.Name,
+                    ReleaseDate = s.ReleaseDate,
+                    DueDate = s.DueDate,
+                    IsFavorite = true
+                })
+                .Where(s => favorites.Contains(s.ScholarshipId))
+                .OrderByDescending(s => s.DueDate)
+                .Take(count)
+                .ToListAsync();
+
+            return scholarships ?? new List<Scholarship>();
+        }
+
+        public async Task<List<Application>> GetMyApplications(int profileId)
+        {
+            var apps = await _context.Application
+                .Include(app => app.Scholarship)
+                .Where(app => app.ProfileId == profileId)
+                .Select(s => new Application
+                {
+                    Scholarship = new Scholarship
+                    {
+                        Name = s.Scholarship.Name
+                    },
+                    SubmittedDate = s.SubmittedDate,
+                    Submitted = s.Submitted
+                })
+                .OrderByDescending(s => s.SubmittedDate)
+                .ToListAsync();
+
+            return apps ?? new List<Application>();
         }
 
         private static string ProfileFieldToURI (string fieldname)

@@ -48,7 +48,8 @@ namespace Scholarships.Tasks.Importer
                                   student.SATScoreReading != p.SATScoreReading ||
                                   student.GPA != p.GPA ||
                                   student.ClassRank != p.ClassRank ||
-                                  student.StudentId != p.StudentId;
+                                  student.StudentId != p.StudentId ||
+                                  student.LunchStatus != student.LunchStatus;
 
                     if (update)
                     {
@@ -57,6 +58,7 @@ namespace Scholarships.Tasks.Importer
                         student.ClassRank = p.ClassRank;
                         student.GPA = p.GPA;
                         student.StudentId = p.StudentId;
+                        student.LunchStatus = p.LunchStatus;
 
                         _context.Update(student);
                     }

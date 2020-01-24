@@ -9,11 +9,44 @@
         <h2>@Model.User.FullName's Dashboard</h2>
     </div>
     <div class="ibox-content">
-        <p>Some status info here.</p>
-        <a href="#" class="btn btn-success">
-            <span class="fa fa-envelope"></span> Send a Message
-        </a>
+        <p>Welcome to the Easton Area School District Scholarship site.   This newly-developed resource is designed to help you quickly apply for each of the <b>local scholarships</b> available to Easton Area School District students.  If you have any difficulties please send us an email at scholarships@eastonsd.org.</p>
     </div>
+</div>
+
+<div class="row">
+    @if (Model.ScholarshipUpdates.Count > 0)
+    { 
+        <div class="col-lg-4">
+            <div class="activity-stream">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Scholarship Updates</h5>
+                    </div>
+                    <div class="ibox-content">
+                        @foreach (var scholarship in Model.ScholarshipUpdates)
+                        {
+                            <div class="stream">
+                                <div class="stream-badge">
+                                    <i class="fa fa-circle"></i>
+                                </div>
+                                <div class="stream-panel">
+                                    <div class="stream-info">
+                                        <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@scholarship.ScholarshipId">
+                                            <span>@scholarship.Name</span><br />
+                                            <span class="date">Posted @scholarship.ReleaseDate</span><br />
+                                            <span style="color: #777">
+                                                @scholarship.Description
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @if (User.IsInRole("Admin"))

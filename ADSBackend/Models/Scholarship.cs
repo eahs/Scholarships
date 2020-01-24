@@ -12,6 +12,11 @@ namespace Scholarships.Models
         [Key]
         public int ScholarshipId { get; set; }
 
+        [DisplayName("Published")] 
+        public bool Published { get; set; } = false;
+
+        public DateTime PublishedDate { get; set; } = DateTime.Now;
+
         [DisplayName("Sponsor Company")]
         public string SponsorCompany { get; set; }
         [Required]
@@ -81,5 +86,10 @@ namespace Scholarships.Models
         [NotMapped] 
         public bool HasApplied { get; set; } = false; // Used for mapping whether a user has applied for this scholarship
 
+        [NotMapped] 
+        public int ApplicantCount { get; set; } = 0; // Used for counting number of users who have applied
+
+        [NotMapped] 
+        public int ApplicantPending { get; set; } = 0;  // Used for counting number of users who have started application process
     }
 }

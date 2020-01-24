@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Scholarships.Data;
 
 namespace Scholarships.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200124151836_ScholarshipApplicationScoring")]
+    partial class ScholarshipApplicationScoring
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,8 +177,6 @@ namespace Scholarships.Migrations
                     b.HasIndex("AnswerGroupId");
 
                     b.HasIndex("ProfileId");
-
-                    b.HasIndex("ScholarshipId");
 
                     b.ToTable("Application");
                 });
@@ -1162,12 +1162,6 @@ namespace Scholarships.Migrations
                     b.HasOne("Scholarships.Models.Profile", "Profile")
                         .WithMany()
                         .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Scholarships.Models.Scholarship", "Scholarship")
-                        .WithMany()
-                        .HasForeignKey("ScholarshipId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

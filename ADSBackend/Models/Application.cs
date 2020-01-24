@@ -14,6 +14,7 @@ namespace Scholarships.Models
         public int ProfileId { get; set; }
         public Profile Profile { get; set; }
         public int ScholarshipId { get; set; }
+        public Scholarship Scholarship { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime SubmittedDate { get; set; } = DateTime.Now;
         public int SubmissionStage { get; set; } = 1;  // 1 = In-Progress, 2 = Submitted
@@ -25,5 +26,10 @@ namespace Scholarships.Models
         public AnswerGroup AnswerGroup { get; set; }
         public int AnswerGroupId { get; set; }
         public string ProfileSnapshot { get; set; }  // JSON key/value store of user's profile at the time of submission
+
+        public int ApplicantScore { get; set; } = 0;  // Score for applicant determined during evaluation process
+        public bool ApplicantAwarded { get; set; } = false;  // This applicant was awarded the scholarship
+        public DateTime ApplicantAwardDate { get; set; }  // Date applicant was awarded scholarship
+        public bool ApplicantFavorite { get; set; }   // This applicant is a top applicant
     }
 }
