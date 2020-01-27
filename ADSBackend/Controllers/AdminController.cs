@@ -46,7 +46,7 @@ namespace Scholarships.Controllers
             {
                 User = await _userManager.GetUserAsync(User),
                 Articles = articles,
-                ScholarshipUpdates = await _dataService.GetScholarshipUpdates(10),
+                ScholarshipUpdates = await _dataService.GetScholarshipUpdates(5),
                 ScholarshipsUpcomingDeadlines = await _dataService.GetScholarshipDeadlines(10),
                 MyApplications = await _dataService.GetMyApplications(profile.ProfileId),
                 MyFavorites = await _dataService.GetMyFavorites(profile.ProfileId),

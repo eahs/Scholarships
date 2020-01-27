@@ -374,7 +374,7 @@ namespace Scholarships.Services
                     DueDate = s.DueDate
                 })
                 .Where(s => s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
-                .OrderByDescending(s => s.DueDate)
+                .OrderBy(s => s.DueDate)
                 .Take(count)
                 .ToListAsync();
 

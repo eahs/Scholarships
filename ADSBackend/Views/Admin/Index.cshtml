@@ -14,17 +14,47 @@
 </div>
 
 <div class="row">
+    <div class="col-lg-6">
+        <div class="ibox card card-body h-100">
+
+            <div class="ibox-content">
+                <ul class="todo-list m-t ui-sortable">
+                    <li>
+                        <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                        <span class="m-l-xs">Buy a milk</span>
+                    </li>
+                    <li>
+                        <div class="icheckbox_square-green checked" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                        <span class="m-l-xs">Go to shop and find some products.</span>
+                    </li>
+                    <li>
+                        <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                        <span class="m-l-xs">Send documents to Mike</span>
+                    </li>
+                    <li>
+                        <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                        <span class="m-l-xs">Go to the doctor dr Smith</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
     @if (Model.ScholarshipUpdates.Count > 0)
-    { 
-        <div class="col-lg-4">
-            <div class="activity-stream">
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h5>Scholarship Updates</h5>
-                    </div>
-                    <div class="ibox-content">
+    {
+        <div class="col-lg-4 py-2">
+            <div class="ibox card card-body h-100">
+                <div class="ibox-title">
+                    <h5>Scholarship Updates</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="activity-stream">
+
                         @foreach (var scholarship in Model.ScholarshipUpdates)
                         {
+
                             <div class="stream">
                                 <div class="stream-badge">
                                     <i class="fa fa-circle"></i>
@@ -33,7 +63,7 @@
                                     <div class="stream-info">
                                         <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@scholarship.ScholarshipId">
                                             <span>@scholarship.Name</span><br />
-                                            <span class="date">Posted @scholarship.ReleaseDate</span><br />
+                                            <span class="date">Posted @scholarship.ReleaseDate.ToShortDateString()</span><br />
                                             <span style="color: #777">
                                                 @scholarship.Description
                                             </span>
@@ -43,16 +73,76 @@
                             </div>
                         }
                     </div>
+
                 </div>
             </div>
         </div>
     }
+    <div class="col-lg-4 py-2">
+        <div class="ibox card card-body h-100">
+            <div class="ibox-title">
+                <h5>Favorite Scholarships</h5>
+            </div>
+            <div class="ibox-content">
+                @if (Model.MyFavorites.Count == 0)
+                {
+                    <p>You have no favorite scholarships yet. Please browse through the available list of scholarships and click the heart icon to add to this list.</p>
+                }
+                else
+                {
+                    <ul class="fa-ul">
+
+                        @foreach (var scholarship in Model.MyFavorites)
+                        {
+                            <li>
+                                <i class="fa-li fa fa-heart"></i>
+                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@scholarship.ScholarshipId">@scholarship.Name</a>
+                            </li>
+                        }
+
+                    </ul>
+
+                }
+                <br />
+                <a asp-controller="Scholarships" asp-action="Index" class="btn btn-primary"><i class="fa fa-graduation-cap"></i> View All Scholarships</a>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 py-2">
+        <div class="ibox card card-body h-100">
+            <div class="ibox-title">
+                <h5>Upcoming Scholarship Deadlines</h5>
+            </div>
+            <div class="ibox-content">
+                @if (Model.ScholarshipsUpcomingDeadlines.Count == 0)
+                {
+                    <p>There are no new scholarships posted yet.  Check back here soon!</p>
+                }
+                else
+                {
+
+                        @foreach (var scholarship in Model.ScholarshipsUpcomingDeadlines)
+                        {
+                            <div class="stream-small">
+                                    <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@scholarship.ScholarshipId">@scholarship.Name</a>
+                                    <small class="text-muted">Due @scholarship.DueDate.ToShortDateString()</small>
+                            </div>
+                        }
+
+
+                }
+            </div>
+        </div>
+    </div>
+
 </div>
 
 @if (User.IsInRole("Admin"))
 {
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-4 py-2">
             <div class="ibox">
                 <div class="ibox-title">
                     <h5>Environment</h5>
@@ -65,7 +155,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 py-2">
             <div class="ibox">
                 <div class="ibox-title">
                     <h5>My Account</h5>
@@ -78,7 +168,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
+        <div class="col-lg-4 py-2">
             <div class="ibox">
                 <div class="ibox-title">
                     <h5>Configuration</h5>
