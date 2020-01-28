@@ -27,11 +27,13 @@ namespace Scholarships.Controllers
             _dataService = dataService;
         }
 
+        [Authorize]
         // GET: Scholarships
         public async Task<IActionResult> Index()
         {
             // Grab only needed fields
             var scholarships = await _context.Scholarship
+                .Where(s => s.Published && s.ReleaseDate <= DateTime.Now)
                 .Select(s => new Scholarship
                 {
                     ScholarshipId = s.ScholarshipId,
@@ -92,6 +94,7 @@ namespace Scholarships.Controllers
         }
 
         // GET: Scholarships/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -101,6 +104,11 @@ namespace Scholarships.Controllers
 
             var scholarship = await _dataService.GetScholarship((int)id);
             if (scholarship == null)
+            {
+                return NotFound();
+            }
+
+            if (!scholarship.Published && User.IsInRole("Student"))
             {
                 return NotFound();
             }
@@ -170,6 +178,11 @@ namespace Scholarships.Controllers
 
             var scholarship = await _dataService.GetScholarship((int)id);
             if (scholarship == null)
+            {
+                return NotFound();
+            }
+
+            if (!scholarship.Published && User.IsInRole("Student"))
             {
                 return NotFound();
             }
@@ -260,7 +273,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId")] Scholarship scholarship)
+        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId,Published")] Scholarship scholarship)
         {
             if (ModelState.IsValid)
             {
@@ -281,19 +294,36 @@ namespace Scholarships.Controllers
                 _context.Add(scholarship);
                 await _context.SaveChangesAsync();
 
-                // Add new fields of study
-                var newFieldsOfStudy = scholarship.FieldsOfStudyIds.Select(x => new ScholarshipFieldOfStudy
+                if (scholarship.FieldsOfStudyIds != null)
                 {
-                    ScholarshipId = scholarship.ScholarshipId,
-                    FieldOfStudyId = x
-                });
+                    // Add new fields of study
+                    var newFieldsOfStudy = scholarship.FieldsOfStudyIds.Select(x => new ScholarshipFieldOfStudy
+                    {
+                        ScholarshipId = scholarship.ScholarshipId,
+                        FieldOfStudyId = x
+                    });
 
-                if (newFieldsOfStudy != null)
-                    _context.ScholarshipFieldOfStudy.AddRange(newFieldsOfStudy);
+                    if (newFieldsOfStudy != null)
+                        _context.ScholarshipFieldOfStudy.AddRange(newFieldsOfStudy);
+                }
+
+
+                if (scholarship.ProfilePropertyIds != null)
+                {
+                    // Add new fields of study
+                    var newProfileProperties = scholarship.ProfilePropertyIds.Select(x => new ScholarshipProfileProperty
+                    {
+                        ScholarshipId = scholarship.ScholarshipId,
+                        ProfilePropertyId = x
+                    });
+                    if (newProfileProperties != null)
+                        _context.ScholarshipProfileProperty.AddRange(newProfileProperties);
+
+                }
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Manage", "Scholarships");
             }
             return View(scholarship);
         }
@@ -303,7 +333,7 @@ namespace Scholarships.Controllers
         /// </summary>
         /// <param name="selectedFieldsOfStudyIds"></param>
         /// <returns></returns>
-        public async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds)
+        private async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds)
         {
             var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
             ViewBag.FieldsOfStudy = new MultiSelectList(fieldsOfStudy, "FieldOfStudyId", "Name", selectedFieldsOfStudyIds);
@@ -322,9 +352,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy).ThenInclude(fos => fos.FieldOfStudy)
-                                                        .Include(p => p.ProfileProperties).ThenInclude(prop => prop.ProfileProperty)
-                                                        .FirstOrDefaultAsync(s => s.ScholarshipId == id);
+            var scholarship = await _dataService.GetScholarship((int) id);
             if (scholarship == null)
             {
                 return NotFound();
@@ -343,7 +371,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate")] Scholarship scholarship)
+        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,Published,ReleaseDate,DueDate")] Scholarship scholarship)
         {
             if (id != scholarship.ScholarshipId)
             {
@@ -378,6 +406,7 @@ namespace Scholarships.Controllers
                     _scholarship.DistrictMaintained = scholarship.DistrictMaintained;
                     _scholarship.NumberOfYears = scholarship.NumberOfYears;
                     _scholarship.IncomeVerificationRequired = scholarship.IncomeVerificationRequired;
+                    _scholarship.Published = scholarship.Published;
 
                     _context.Update(_scholarship);
 
@@ -452,9 +481,8 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _context.Scholarship
-                .Include(s => s.QuestionSet)
-                .FirstOrDefaultAsync(m => m.ScholarshipId == id);
+            var scholarship = await _dataService.GetScholarship((int) id);
+
             if (scholarship == null)
             {
                 return NotFound();

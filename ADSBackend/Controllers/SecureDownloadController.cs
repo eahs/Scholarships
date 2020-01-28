@@ -7,9 +7,11 @@ using Serilog;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Scholarships.Controllers
 {
+    [Authorize]
     public class SecureDownloadController : Controller
     {
         private readonly ApplicationDbContext _context;

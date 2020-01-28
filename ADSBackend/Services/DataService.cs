@@ -353,9 +353,10 @@ namespace Scholarships.Services
                     Name = s.Name,
                     ReleaseDate = s.ReleaseDate,
                     DueDate = s.DueDate,
+                    Published = s.Published,
                     Description = s.Description.StripHtml().HtmlDecode().CropWholeWords(150, null)
                 })
-                .Where(s => s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
+                .Where(s => s.Published && s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
                 .OrderByDescending(s => s.ReleaseDate)
                 .Take(count)
                 .ToListAsync();
@@ -371,9 +372,10 @@ namespace Scholarships.Services
                     ScholarshipId = s.ScholarshipId,
                     Name = s.Name,
                     ReleaseDate = s.ReleaseDate,
+                    Published = s.Published,
                     DueDate = s.DueDate
                 })
-                .Where(s => s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
+                .Where(s => s.Published == true && s.DueDate >= DateTime.Now.AddDays(-7) && s.ReleaseDate <= DateTime.Now)
                 .OrderBy(s => s.DueDate)
                 .Take(count)
                 .ToListAsync();
@@ -394,9 +396,10 @@ namespace Scholarships.Services
                     Name = s.Name,
                     ReleaseDate = s.ReleaseDate,
                     DueDate = s.DueDate,
+                    Published = s.Published,
                     IsFavorite = true
                 })
-                .Where(s => favorites.Contains(s.ScholarshipId))
+                .Where(s => s.Published && favorites.Contains(s.ScholarshipId))
                 .OrderByDescending(s => s.DueDate)
                 .Take(count)
                 .ToListAsync();

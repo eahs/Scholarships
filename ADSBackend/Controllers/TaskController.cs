@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FileTypeChecker;
 using FileTypeChecker.Abstracts;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Scholarships.Data;
@@ -15,6 +16,7 @@ using Serilog;
 
 namespace Scholarships.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class TaskController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -40,6 +42,9 @@ namespace Scholarships.Controllers
             if (string.IsNullOrEmpty(transcriptPath))
                 return RedirectToAction("Index", "Configuration", new { error = 1 });
 
+            if (file == null)
+                return RedirectToAction("Transcripts", "Task");
+
             // Create the directory if it doesn't exist
             System.IO.Directory.CreateDirectory(transcriptPath);
 
@@ -50,10 +55,12 @@ namespace Scholarships.Controllers
                     // Examine the file byte structure to validate the type
                     IFileType fileType = FileTypeValidator.GetFileType(ftStream);
 
+                    Log.Information("Validating file type for transcripts");
                     string filePath = System.IO.Path.Combine(transcriptPath, "transcripts.pdf");
 
                     if (fileType.Extension == "pdf")
                     {
+                        Log.Information("File type validated as pdf - Saving to disk at {0}", filePath);
                         try
                         {
                             using (var stream = new FileStream(filePath, FileMode.Create))

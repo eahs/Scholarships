@@ -91,7 +91,7 @@ namespace Scholarships.Tasks.Importer
 
             if (!File.Exists(studentsSourcePath))
             {
-                Log.Error("Executing Student Data Importer - Unable to find 'Student Data.txt'");
+                Log.Error("Executing Student Data Importer - Unable to find 'Export.txt'");
                 return;
             }
 

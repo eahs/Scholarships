@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Dashboard";
+
+    var profileCompletedChecked = Model.CompletedProfile ? " checked" : "";
+    var profileCompletedApplication = Model.CompletedScholarshipApplication ? " checked" : "";
 }
 
 <div class="ibox">
@@ -13,15 +16,15 @@
         
         <ul class="todo-list m-t ui-sortable" style="width: 450px">
             <li>
-                <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                <span class="m-l-xs">Complete your student profile</span>
+                <div class="icheckbox_square-green @profileCompletedChecked" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                <span class="m-l-xs"><a asp-controller="Profile" asp-action="Edit">Complete your student profile</a></span>
             </li>
             <li>
-                <div class="icheckbox_square-green checked" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                <span class="m-l-xs">Search for scholarships that might suit you</span>
+                <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                <span class="m-l-xs"><a asp-controller="Scholarships" asp-action="Index">Search for scholarships that might suit you</a></span>
             </li>
             <li>
-                <div class="icheckbox_square-green" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
                 <span class="m-l-xs">Complete an application for that scholarship</span>
             </li>
         </ul>

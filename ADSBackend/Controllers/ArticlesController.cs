@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
@@ -40,6 +41,7 @@ namespace Scholarships.Controllers
             return View(article);
         }
 
+        [Authorize (Roles = "Admin,Manager")]
         // GET: Articles/Create
         public IActionResult Create()
         {
@@ -49,6 +51,7 @@ namespace Scholarships.Controllers
         // POST: Articles/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ArticleId,Title,Author,Lead,Body,PublishDate,Published")] Article article)
@@ -63,6 +66,7 @@ namespace Scholarships.Controllers
         }
 
         // GET: Articles/Edit/5
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -81,6 +85,7 @@ namespace Scholarships.Controllers
         // POST: Articles/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ArticleId,Title,Author,Lead,Body,PublishDate,Published")] Article article)
@@ -113,6 +118,7 @@ namespace Scholarships.Controllers
             return View(article);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
         // GET: Articles/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -132,6 +138,7 @@ namespace Scholarships.Controllers
         }
 
         // POST: Articles/Delete/5
+        [Authorize(Roles = "Admin,Manager")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
