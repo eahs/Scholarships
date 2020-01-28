@@ -39,6 +39,8 @@ namespace Scholarships.Controllers
         {
             string transcriptPath = Configuration.ConfigPath.TranscriptsPath;
 
+            Log.Information("Begin UploadTranscripts Action : Uploading transcripts to {0}", transcriptPath);
+
             if (string.IsNullOrEmpty(transcriptPath))
                 return RedirectToAction("Index", "Configuration", new { error = 1 });
 
