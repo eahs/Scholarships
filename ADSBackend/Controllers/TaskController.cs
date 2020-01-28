@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Scholarships.Data;
 using Scholarships.Services;
 using Scholarships.Tasks;
+using Scholarships.Util;
 using Serilog;
 
 namespace Scholarships.Controllers
@@ -35,7 +36,7 @@ namespace Scholarships.Controllers
             return View();
         }
 
-        public async Task<ActionResult> UploadTranscripts(IFormFile file)
+        public ActionResult UploadTranscripts(IFormFile file)
         {
             string transcriptPath = Configuration.ConfigPath.TranscriptsPath;
 
@@ -50,6 +51,7 @@ namespace Scholarships.Controllers
             // Create the directory if it doesn't exist
             System.IO.Directory.CreateDirectory(transcriptPath);
 
+            
             if (file.ContentType == "application/pdf" && file.Length > 0)
             {
                 using (var ftStream = file.OpenReadStream())
@@ -67,7 +69,7 @@ namespace Scholarships.Controllers
                         {
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
-                                await file.CopyToAsync(stream);
+                                AsyncHelpers.RunSync(() => file.CopyToAsync(stream));
                             }
 
                             // Fire off task to process the pdf
@@ -85,7 +87,7 @@ namespace Scholarships.Controllers
                     }
                 }
             }
-
+            
             return View();
         }
 
