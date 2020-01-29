@@ -7,30 +7,43 @@
     var profileCompletedApplication = Model.CompletedScholarshipApplication ? " checked" : "";
 }
 
-<div class="ibox">
-    <div class="ibox-title">
-        <h2>@Model.User.FullName's Dashboard</h2>
-    </div>
-    <div class="ibox-content">
-        <p>Welcome to the Easton Area School District Scholarship site.   This newly-developed resource is designed to help you quickly apply for each of the <b>local scholarships</b> available to Easton Area School District students.  If you have any difficulties please send us an email at scholarships@eastonsd.org.</p>
-        
-        <ul class="todo-list m-t ui-sortable" style="width: 450px">
-            <li>
-                <div class="icheckbox_square-green @profileCompletedChecked" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                <span class="m-l-xs"><a asp-controller="Profile" asp-action="Edit">Complete your student profile</a></span>
-            </li>
-            <li>
-                <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                <span class="m-l-xs"><a asp-controller="Scholarships" asp-action="Index">Search for scholarships that might suit you</a></span>
-            </li>
-            <li>
-                <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
-                <span class="m-l-xs">Complete an application for that scholarship</span>
-            </li>
-        </ul>
+    <div class="row white-bg ibox" style="margin: 2px">
+
+            <div class="col-lg-8">
+                <div class="ibox-title">
+                    <h2>@Model.User.FullName's Dashboard</h2>
+                </div>
+                <div class="ibox-content">
+                    <p>Welcome to the Easton Area School District Scholarship site. This newly-developed resource is designed to help you quickly apply for each of the <b>local scholarships</b> available to Easton Area School District students. If you have any difficulties please send us an email at scholarships@eastonsd.org.</p>
+
+                </div>
+
+            </div>
+            <div class="col-lg-4">
+                <div class="ibox-title">
+                    <h2>What to do next?</h2>
+                </div>
+                <div class="ibox-content">
+                    <ul class="todo-list m-t ui-sortable" style="margin-top: 0px">
+                        <li>
+                            <div class="icheckbox_square-green @profileCompletedChecked" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            <span class="m-l-xs"><a asp-controller="Profile" asp-action="Edit">Complete your student profile</a></span>
+                        </li>
+                        <li>
+                            <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" checked="" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            <span class="m-l-xs"><a asp-controller="Scholarships" asp-action="Index">Search for scholarships that might suit you</a></span>
+                        </li>
+                        <li>
+                            <div class="icheckbox_square-green @profileCompletedApplication" style="position: relative;"><input type="checkbox" value="" name="" class="i-checks" style="position: absolute; opacity: 0;"><ins class="iCheck-helper" style="position: absolute; top: 0%; left: 0%; display: block; width: 100%; height: 100%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins></div>
+                            <span class="m-l-xs">Complete an application for that scholarship</span>
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div>
 
     </div>
-</div>
 
 
 <div class="row">

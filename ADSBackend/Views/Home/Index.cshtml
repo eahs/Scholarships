@@ -89,7 +89,7 @@
             <div class="m-t-lg">
                 <i class="fa fa-bar-chart features-icon"></i>
                 <h2>Parents aren't likely to have enough</h2>
-                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                <p>Economic fluctuations impact everybody, including your parents.   With the cost of tuition for some colleges rivaling that of a home mortgage and the added possibility that you may have siblings that also would like to attend college, it is very likely that your parents won't have the funds available to pay for your tuition.</p>
             </div>
         </div>
         <div class="col-md-6 text-center  wow zoomIn">
@@ -99,7 +99,7 @@
             <div>
                 <i class="fa fa-envelope features-icon"></i>
                 <h2>Scholarships are an investment in our future through you</h2>
-                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus.</p>
+                <p>Our society benefits from skilled, well-informed workers.  Your success is our success.</p>
             </div>
             <div class="m-t-lg">
                 <i class="fa fa-google features-icon"></i>
@@ -233,13 +233,13 @@
 
 </section>
 -->
-<section class="timeline gray-section">
+<section id="howthisworks" class="timeline gray-section">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="navy-line"></div>
-                <h1>How this all works</h1>
-                <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. </p>
+                <h1>How This All Works</h1>
+                <p>Here is the sky level view of how you can obtain local scholarships through Easton Area School District. </p>
             </div>
         </div>
         <div class="row features-block">
@@ -252,38 +252,52 @@
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>Meeting</h2>
+                            <h2>Login and Set up Profile</h2>
                             <p>
-                                Conference on the sales results for the previous year. Monica please examine sales trends in marketing and products. Below please find the current status of the sale.
+                                All scholarships rely on a common set of profile information that you will partly need to supply.   We've done our best to make this
+                                easier for you by pre-filling your form with as much information as we have available.  That being said, it will be up to you to validate
+                                how correct the information is.
                             </p>
-                            <a href="#" class="btn btn-xs btn-primary"> More info</a>
-                            <span class="vertical-date"> Today <br /> <small>Dec 24</small> </span>
+                            <a asp-controller="Profile" asp-action="Edit" class="btn btn-xs btn-primary"> Edit Profile</a>
+                            <span class="vertical-date"> Today <br /> <small>@DateTime.Now.ToString("MMMM dd")</small> </span>
                         </div>
                     </div>
 
                     <div class="vertical-timeline-block">
                         <div class="vertical-timeline-icon navy-bg">
-                            <i class="fa fa-file-text"></i>
+                            <i class="fa fa-search"></i>
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>Decision</h2>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since.</p>
-                            <a href="#" class="btn btn-xs btn-primary"> More info</a>
-                            <span class="vertical-date"> Tomorrow <br /> <small>Dec 26</small> </span>
+                            <h2>Search for Scholarships</h2>
+                            <p>We will be frequently adding new scholarships to the system.  It will be your responsibility to search for scholarships that match your profile to apply for them.  When you find one you are interested in, click the heart button to favorite it so you can apply to it later.  Favorites will show up on your student dashboard when you first log in.</p>
+                            <a asp-controller="Scholarships" asp-action="Index" class="btn btn-xs btn-primary"> View Scholarships</a>
+                            <span class="vertical-date"> Tomorrow <br /> <small>@DateTime.Now.AddDays(1).ToString("MMMM dd")</small> </span>
                         </div>
                     </div>
 
                     <div class="vertical-timeline-block">
                         <div class="vertical-timeline-icon navy-bg">
-                            <i class="fa fa-cogs"></i>
+                            <i class="fa fa-pencil"></i>
                         </div>
 
                         <div class="vertical-timeline-content">
-                            <h2>Implementation</h2>
-                            <p>Go to shop and find some products. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's. </p>
-                            <a href="#" class="btn btn-xs btn-primary"> More info</a>
-                            <span class="vertical-date"> Monday <br /> <small>Jan 02</small> </span>
+                            <h2>Apply for Scholarships</h2>
+                            <p>Pay attention to those deadlines!  Each scholarship that you want to apply for has a different deadline and may have unique criteria that you will need to meet.  This may include writing out an essay or writing answers to a few questions as part of the application.   Take your time and write to impress!</p>
+                            <a asp-controller="Scholarships" asp-action="Index" class="btn btn-xs btn-primary"> Apply for Scholarships</a>
+                            <span class="vertical-date"> In the Near Future <br /> <small>@DateTime.Now.AddDays(2).ToString("MMMM dd") until scholarship deadlines</small> </span>
+                        </div>
+                    </div>
+
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon navy-bg">
+                            <i class="fa fa-clock-o"></i>
+                        </div>
+
+                        <div class="vertical-timeline-content">
+                            <h2>Applicant Review Process</h2>
+                            <p>Once you have submitted your application and the scholarship deadline passes, a review process of all applications will take place that is unique to each scholarship.  From there the scholarship provider will choose the candidates that they find most-deserving.</p>
+                            <span class="vertical-date"> After Scholarship Deadlines Pass <br /> </span>
                         </div>
                     </div>
 
