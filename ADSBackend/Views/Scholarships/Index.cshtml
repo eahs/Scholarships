@@ -20,65 +20,71 @@
 
         @if (Model.Count == 0)
         {
-            <tr>
-                <td colspan="3">
-                    There are no scholarships currently available for you to view. Please check back periodically as we add them!
-                </td>
-            </tr>
+        <tr>
+            <td colspan="3">
+                There are no scholarships currently available for you to view. Please check back periodically as we add them!
+            </td>
+        </tr>
         }
         else
         {
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th style="width: 40%">
-                            Scholarship Name
-                        </th>
-                        <th>
-                            Public Release Date
-                        </th>
-                        <th>
-                            Scholarship Deadline
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td style="vertical-align: middle">
-                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@item.ScholarshipId">@Html.DisplayFor(modelItem => item.Name)</a>
-                                @if (!item.ApplyOnline)
-                                {
-                                    <small class="label label-warning" style="margin: 0 5px">Off-Site</small>
-                                }
-                                @if (item.IsFavorite)
-                                {
-                                    <i class="fa fa-heart" style="color: #e2264d" style="margin: 0 5px"></i>
-                                }
-                            </td>
-                            <td style="vertical-align: middle">
-                                @Html.DisplayFor(modelItem => item.ReleaseDate)
-                            </td>
-                            <td style="vertical-align: middle">
-                                @Html.DisplayFor(modelItem => item.DueDate)
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width: 40%">
+                        Scholarship Name
+                    </th>
+                    <th>
+                        Public Release Date
+                    </th>
+                    <th>
+                        Scholarship Deadline
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <td style="vertical-align: middle">
+                        <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@item.ScholarshipId">@Html.DisplayFor(modelItem => item.Name)</a>
+                        @if (!item.ApplyOnline)
+                            {
+                        <small class="label label-warning" style="margin: 0 5px">Off-Site</small>
+                            }
+                        @if (item.IsFavorite)
+                            {
+                        <i class="fa fa-heart" style="color: #e2264d" style="margin: 0 5px"></i>
+                            }
+                    </td>
+                    <td style="vertical-align: middle">
+                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    </td>
+                    <td style="vertical-align: middle">
+                        @Html.DisplayFor(modelItem => item.DueDate)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
         }
-        
-    <div class="alert alert-warning" style="margin-top: 10px">
-        <h3>IMPORTANT NOTICE</h3>
-        Many scholarships require the submission of a SIGNED
-        copy of the Federal Tax Form 1040 for both the applicant and the applicant’s parents. <b>Social
-        Security numbers should be removed</b>. Applicants may submit the federal tax form for @DateTime.Now.AddYears(-1).Year (the
-        year that probably was used to complete their FAFSA application) or @DateTime.Now.Year, unless specifically
-        instructed to use @DateTime.Now.Year. Also, families that file their federal taxes electronically must print out and
-        SIGN the copies of their tax forms. No scholarship application requiring federal tax forms will
-        be processed without the correctly completed forms. 
+
     </div>
-    </div>
+
+
+</div>
+
+
+<div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
+    <h3>IMPORTANT NOTICE</h3>
+    Many scholarships require the submission of a SIGNED
+    copy of the Federal Tax Form 1040 for both the applicant and the applicant’s parents. <b>
+        Social
+        Security numbers should be removed
+    </b>. Applicants may submit the federal tax form for @DateTime.Now.AddYears(-2).Year (the
+    year that probably was used to complete their FAFSA application) or @DateTime.Now.AddYears(-1).Year, unless specifically
+    instructed to use @DateTime.Now.AddYears(-1).Year. Also, families that file their federal taxes electronically must print out and
+    SIGN the copies of their tax forms. No scholarship application requiring federal tax forms will
+    be processed without the correctly completed forms.
 </div>
