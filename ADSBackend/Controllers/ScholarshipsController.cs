@@ -39,7 +39,8 @@ namespace Scholarships.Controllers
                     ScholarshipId = s.ScholarshipId,
                     Name = s.Name,
                     ReleaseDate = s.ReleaseDate,
-                    DueDate = s.DueDate
+                    DueDate = s.DueDate,
+                    ApplyOnline = s.ApplyOnline
                 })
                 .ToListAsync();
 

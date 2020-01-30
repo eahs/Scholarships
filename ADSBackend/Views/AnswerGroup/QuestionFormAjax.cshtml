@@ -12,6 +12,12 @@
         This scholarship has no additional questions.  Click "Next" to preview your scholarship application.
     </div>
 }
+else if (Model.Description.Trim().Length > 0)
+{
+    <div class="alert alert-warning" role="alert">
+        @Model.Description
+    </div>
+}
 
 <form asp-action="Save" asp-route-id="@Model.AnswerGroupId" id="appform">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>

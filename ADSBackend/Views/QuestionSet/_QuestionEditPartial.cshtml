@@ -39,7 +39,16 @@
                 <input type="text" name="[@Model.Index].Description" value="@Model.Question.Description" class="form-control" placeholder="Description" />
             </div>
         </div>
-        <div class="form-row" id="questionoptions_@Model.Question.QuestionId">
+        @{
+            var injectStyle = "";
+
+            // If the question type doesn't have options, hide them
+            if ((int) @Model.Question.Type > 3)
+            {
+                injectStyle = "display: none";
+            }
+        }
+        <div class="form-row" id="questionoptions_@Model.Question.QuestionId" style="@injectStyle">
             <div class="form-group col-md-9 questioneditor-options">
                 <ul class="sortable" id="questionoptionslist_@Model.Question.QuestionId" data-questionid="@Model.Question.QuestionId">
                     @for (int i = 0; i <  @Model.Question.Options.Count; i++)
@@ -58,7 +67,7 @@
                 </ul>
             </div>
         </div>
-        <div class="form-row" id="questionoptions_add_@Model.Question.QuestionId">
+        <div class="form-row" id="questionoptions_add_@Model.Question.QuestionId" style="@injectStyle">
             <div class="questioneditor-addbtn">
                 <i class="fa fa-square-o"></i> <span class="questioneditor-addbtn-add" style="cursor: pointer;" data-questionid="@Model.Question.QuestionId" data-questionindex="@Model.Index">Add option</span>
             </div>
