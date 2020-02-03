@@ -263,7 +263,7 @@ namespace Scholarships.Controllers
         {
             ViewData["QuestionSetId"] = new SelectList(_context.QuestionSet, "QuestionSetId", "Name");
 
-            await SetupForm(new List<int>(), new List<int>());
+            await SetupForm(new List<int>(), new List<int>(), new List<int>());
 
             return View();
         }
@@ -274,7 +274,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId,Published")] Scholarship scholarship)
+        public async Task<IActionResult> Create([Bind("FieldsOfStudyIds,ProfilePropertyIds,CategoryIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,ReleaseDate,DueDate,QuestionSetId,Published")] Scholarship scholarship)
         {
             if (ModelState.IsValid)
             {
@@ -322,6 +322,19 @@ namespace Scholarships.Controllers
 
                 }
 
+                if (scholarship.CategoryIds != null)
+                {
+                    // Add new categories
+                    var newCategories = scholarship.CategoryIds.Select(x => new ScholarshipCategory
+                    {
+                        ScholarshipId = scholarship.ScholarshipId,
+                        CategoryId = x
+                    });
+                    if (newCategories != null)
+                        _context.ScholarshipCategory.AddRange(newCategories);
+
+                }
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Manage", "Scholarships");
@@ -334,7 +347,7 @@ namespace Scholarships.Controllers
         /// </summary>
         /// <param name="selectedFieldsOfStudyIds"></param>
         /// <returns></returns>
-        private async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds)
+        private async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds, List<int> selectedCategoryIds)
         {
             var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
             ViewBag.FieldsOfStudy = new MultiSelectList(fieldsOfStudy, "FieldOfStudyId", "Name", selectedFieldsOfStudyIds);
@@ -342,6 +355,11 @@ namespace Scholarships.Controllers
             var profileProperties = await _context.ProfileProperty.OrderBy(prop => prop.ProfilePropertyId).ToListAsync();
             ViewBag.ProfileProperties = new MultiSelectList(profileProperties, "ProfilePropertyId", "PropertyName",
                 selectedProfilePropertyIds);
+
+            var categories = await _context.Category.OrderBy(prop => prop.Name).ToListAsync();
+            ViewBag.Categories = new MultiSelectList(categories, "CategoryId", "Name",
+                selectedCategoryIds);
+
         }
 
         // GET: Scholarships/Edit/5
@@ -361,7 +379,9 @@ namespace Scholarships.Controllers
 
             scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
-            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds);
+            scholarship.CategoryIds = scholarship.Categories.Select(prop => prop.CategoryId).ToList();
+
+            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds, scholarship.CategoryIds);
 
             return View(scholarship);
         }
@@ -372,7 +392,7 @@ namespace Scholarships.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,Published,ReleaseDate,DueDate")] Scholarship scholarship)
+        public async Task<IActionResult> Edit(int id, [Bind("FieldsOfStudyIds,ProfilePropertyIds,CategoryIds,ScholarshipId,DistrictMaintained,IncomeVerificationRequired,NumberOfYears,SponsorCompany,SponsorName,SponsorAddress1,SponsorAddress2,SponsorPhone,SponsorEmail,Name,Description,Eligibility,Standards,Amount,ApplicationInstructions,ApplyOnline,TranscriptsRequired,Published,ReleaseDate,DueDate")] Scholarship scholarship)
         {
             if (id != scholarship.ScholarshipId)
             {
@@ -382,6 +402,7 @@ namespace Scholarships.Controllers
             Scholarship _scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
                                                                  .ThenInclude(fos => fos.FieldOfStudy)
                                                                  .Include(p => p.ProfileProperties).ThenInclude(prop => prop.ProfileProperty)
+                                                                 .Include(p => p.Categories)
                                                                  .FirstOrDefaultAsync(s => s.ScholarshipId == id);
 
             if (ModelState.IsValid && _scholarship != null)
@@ -420,6 +441,9 @@ namespace Scholarships.Controllers
                     var oldProfileProperties = await _context.ScholarshipProfileProperty.Where(x => x.ScholarshipId == id).ToListAsync();
                     _context.ScholarshipProfileProperty.RemoveRange(oldProfileProperties);
 
+                    var oldCategories = await _context.ScholarshipCategory.Where(x => x.ScholarshipId == id).ToListAsync();
+                    _context.ScholarshipCategory.RemoveRange(oldCategories);
+
                     await _context.SaveChangesAsync();
 
                     if (scholarship.FieldsOfStudyIds != null)
@@ -450,6 +474,20 @@ namespace Scholarships.Controllers
                         await _context.SaveChangesAsync();
                     }
 
+                    if (scholarship.CategoryIds != null)
+                    {
+                        // Add new fields of study
+                        var newCategories = scholarship.CategoryIds.Select(x => new ScholarshipCategory
+                        {
+                            ScholarshipId = scholarship.ScholarshipId,
+                            CategoryId = x
+                        });
+                        if (newCategories != null)
+                            _context.ScholarshipCategory.AddRange(newCategories);
+                        await _context.SaveChangesAsync();
+
+                    }
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -467,8 +505,9 @@ namespace Scholarships.Controllers
 
             _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             _scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
+            scholarship.CategoryIds = scholarship.Categories.Select(prop => prop.CategoryId).ToList();
 
-            await SetupForm(_scholarship.FieldsOfStudyIds, _scholarship.ProfilePropertyIds);
+            await SetupForm(_scholarship.FieldsOfStudyIds, _scholarship.ProfilePropertyIds, _scholarship.CategoryIds);
 
             return View(_scholarship);
         }
@@ -491,8 +530,9 @@ namespace Scholarships.Controllers
 
             scholarship.FieldsOfStudyIds = scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
+            scholarship.CategoryIds = scholarship.Categories.Select(prop => prop.CategoryId).ToList();
 
-            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds);
+            await SetupForm(scholarship.FieldsOfStudyIds, scholarship.ProfilePropertyIds, scholarship.CategoryIds);
 
             return View(scholarship);
         }

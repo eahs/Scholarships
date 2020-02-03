@@ -33,6 +33,11 @@
                         </label>
                     </div>
                     <div class="form-group">
+                        <label class="control-label" style="width: 100%">Categories</label>
+                        <select asp-for="CategoryIds" asp-items="ViewBag.Categories" multiple="multiple" class="fos form-control"></select>
+                    </div>
+
+                    <div class="form-group">
                         <label class="control-label" style="width: 100%">Related Fields of Study</label>
                         <select asp-for="FieldsOfStudyIds" asp-items="ViewBag.FieldsOfStudy" multiple="multiple" class="fos form-control"></select>
                     </div>

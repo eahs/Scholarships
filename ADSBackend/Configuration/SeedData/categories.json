@@ -1,0 +1,12 @@
+[
+{ "Name" :  "The Arts", "Description":  "", "Enabled":  true},
+{ "Name" :  "Athletics", "Description":  "", "Enabled":  true},
+{ "Name" :  "Business/Technology", "Description":  "", "Enabled":  true},
+{ "Name" :  "Criminal Justic/Emergency Services/Military", "Description":  "", "Enabled":  true},
+{ "Name" :  "Education", "Description":  "", "Enabled":  true},
+{ "Name" :  "Engineering/Science", "Description":  "", "Enabled":  true},
+{ "Name" :  "English/Writing", "Description":  "", "Enabled":  true},
+{ "Name" :  "Medical/Health", "Description":  "", "Enabled":  true},
+{ "Name" :  "World Language", "Description":  "", "Enabled":  true},
+{ "Name" :  "Personal Heritage", "Description":  "", "Enabled":  true}
+]

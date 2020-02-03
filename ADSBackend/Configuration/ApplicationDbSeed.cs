@@ -55,6 +55,7 @@ namespace Scholarships.Configuration
         {
             CreateFieldOfStudy();
             CreateProfileProperties();
+            CreateCategories();
         }
 
         private void CreateFieldOfStudy ()
@@ -84,6 +85,31 @@ namespace Scholarships.Configuration
                     if (exists == null)
                     {
                         _context.ProfileProperty.Add(prop);
+                        _context.SaveChanges();
+                    }
+                }
+
+            }
+
+        }
+
+        private void CreateCategories()
+        {
+            var categories = _context.Category.OrderBy(cat => cat.CategoryId).ToList();
+            if (categories == null || categories.Count == 0)
+            {
+                SeedDatabase<Category>("categories.json", _context.Category, true);
+            }
+            else
+            {
+                var records = JsonConvert.DeserializeObject<List<Category>>(GetJson("categories.json"));
+                foreach (var prop in records)
+                {
+                    var exists = categories.FirstOrDefault(p => p.Name == prop.Name);
+
+                    if (exists == null)
+                    {
+                        _context.Category.Add(prop);
                         _context.SaveChanges();
                     }
                 }

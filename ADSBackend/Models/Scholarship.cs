@@ -80,6 +80,9 @@ namespace Scholarships.Models
         [NotMapped]
         public List<int> ProfilePropertyIds { get; set; }
 
+        [NotMapped]
+        public List<int> CategoryIds { get; set; }
+
         [NotMapped] 
         public bool IsFavorite { get; set; } = false; // Used for mapping whether a user considers this scholarship a favorite
 

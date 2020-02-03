@@ -264,6 +264,7 @@ namespace Scholarships.Services
                 .Include(s => s.QuestionSet)
                 .Include(s => s.ProfileProperties).ThenInclude(s => s.ProfileProperty)
                 .Include(s => s.FieldsOfStudy)
+                .Include(s => s.Categories)
                 .FirstOrDefaultAsync(m => m.ScholarshipId == scholarshipId);
 
             return scholarship;
