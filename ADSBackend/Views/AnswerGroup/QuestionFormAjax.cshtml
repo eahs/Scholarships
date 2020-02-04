@@ -6,13 +6,13 @@
     Layout = null;
 }
 
-@if (Model.Questions.Count == 0)
+@if (Model.Questions?.Count == 0)
 {
     <div class="alert alert-success" role="alert">
         This scholarship has no additional questions.  Click "Next" to preview your scholarship application.
     </div>
 }
-else if (Model.Description.Trim().Length > 0)
+else if (Model.Description?.Trim().Length > 0)
 {
     <div class="alert alert-warning" role="alert">
         @Model.Description

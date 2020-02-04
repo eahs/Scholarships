@@ -75,7 +75,7 @@ namespace Scholarships.Controllers
                             uuid = fa.FileAttachmentUuid,
                             size = fa.Length,
                             type = fa.ContentType,
-                            url = Url.ActionLink("Download", "SecureDownload", new { id = fa.FileAttachmentId, filename = fa.FileName })
+                            url = Url.ActionLink("Download", "SecureDownload", new { id = fa.FileAttachmentId, filename = fa.FileName }, protocol : "https")
                     }).ToList();
                         files.Add("" + answer.AnswerSetId + "." + answer.QuestionId, attachments);
                     }

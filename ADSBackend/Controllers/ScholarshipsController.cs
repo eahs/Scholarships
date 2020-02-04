@@ -27,29 +27,108 @@ namespace Scholarships.Controllers
             _dataService = dataService;
         }
 
-        [Authorize]
-        // GET: Scholarships
-        public async Task<IActionResult> Index()
+        private async Task<ScholarshipListViewModel> FetchScholarships(ScholarshipListViewModel vm = null)
         {
             // Grab only needed fields
             var scholarships = await _context.Scholarship
                 .Where(s => s.Published && s.ReleaseDate <= DateTime.Now)
+                .Include(s => s.Categories)
+                .Include(s => s.FieldsOfStudy)
                 .Select(s => new Scholarship
                 {
                     ScholarshipId = s.ScholarshipId,
                     Name = s.Name,
                     ReleaseDate = s.ReleaseDate,
                     DueDate = s.DueDate,
-                    ApplyOnline = s.ApplyOnline
+                    ApplyOnline = s.ApplyOnline,
+                    Categories = s.Categories,
+                    FieldsOfStudy = s.FieldsOfStudy
                 })
                 .ToListAsync();
+
+
+            if (vm != null)
+            {
+                if (vm.FilterName?.Trim().Length > 0)
+                    scholarships = scholarships.Where(s => s.Name.ToLower().Contains(vm.FilterName.ToLower())).ToList();
+
+                if (vm.LocalOnly)
+                {
+                    scholarships = scholarships.Where(s => s.ApplyOnline).ToList();
+                }
+
+                if (vm.CategoryIds != null)
+                {
+
+                    scholarships = scholarships.Where(s =>
+                                                        s.Categories.Select(x => x.CategoryId).ToList()
+                                                                    .Intersect(vm.CategoryIds)
+                                                                    .Any()
+                                                        ).ToList();
+                }
+
+                if (vm.FieldsOfStudyIds != null)
+                {
+                    scholarships = scholarships.Where(s =>
+                        s.FieldsOfStudy.Select(x => x.FieldOfStudyId).ToList()
+                            .Intersect(vm.FieldsOfStudyIds)
+                            .Any()
+                    ).ToList();
+
+                }
+            }
 
             var profile = await _dataService.GetProfileAsync();
 
             await _dataService.IncludeFavorites(profile.ProfileId, scholarships);
             await _dataService.IncludeApplications(profile.ProfileId, scholarships);
 
+            var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
+            var categories = await _context.Category.OrderBy(prop => prop.Name).ToListAsync();
+
+            if (vm == null)
+            {
+                vm = new ScholarshipListViewModel
+                {
+                    Scholarships = scholarships
+                };
+            }
+            else
+            {
+                vm.Scholarships = scholarships;
+            }
+
+            vm.FilterCategory = new MultiSelectList(categories, "CategoryId", "Name",
+                vm.CategoryIds ?? new List<int>());
+
+            vm.FilterFieldsOfStudy = new MultiSelectList(fieldsOfStudy, "FieldOfStudyId", "Name",
+                vm.FieldsOfStudyIds ?? new List<int>());
+
+
+            return vm;
+        }
+
+        [Authorize]
+        // GET: Scholarships
+        public async Task<IActionResult> Index()
+        {
+            var scholarships = await FetchScholarships();
+
+            
+
             return View(scholarships);
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ActionName("Index")]
+        public async Task<IActionResult> PostIndex(ScholarshipListViewModel vm)
+        {
+            var scholarships = await FetchScholarships(vm);
+            scholarships.IsFiltered = true;
+
+            return View(scholarships);
+
         }
 
         [HttpPost]

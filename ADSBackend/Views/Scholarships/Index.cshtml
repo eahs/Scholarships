@@ -1,5 +1,5 @@
 ﻿@using Microsoft.CodeAnalysis
-@model List<Scholarships.Models.Scholarship>
+@model Scholarships.Models.ScholarshipViewModels.ScholarshipListViewModel
 
 @{
     ViewData["Title"] = "Scholarships";
@@ -18,15 +18,61 @@
 <div class="ibox">
     <div class="ibox-content">
 
-        @if (Model.Count == 0)
+        @if (!Model.IsFiltered && Model.Scholarships.Count == 0)
         {
         <div class="alert alert-info">
-                There are no scholarships currently available for you to view. Please check back periodically as we add them!
+            There are no scholarships currently available for you to view. Please check back periodically as we add them!
         </div>
         }
         else
         {
+        <div style="margin-bottom: 10px">
 
+            <div class="text-right">
+                <div class="btn btn-info" id="filterButton" style="margin-bottom: 5px;"><i class="fa fa-filter"></i> Filter Results</div>
+            </div>
+            <div id="filterOptions" class="card" style="display: none;">
+                <div class="card-body" style="background-color: #eee">
+                    <form asp-action="Index">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="LocalOnly" /> Only Show Local Scholarships
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="FilterName" class="control-label"></label>
+                            <input asp-for="FilterName" class="form-control" />
+                            <span asp-validation-for="FilterName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" style="width: 100%">Categories</label>
+                            <select asp-for="CategoryIds" asp-items="Model.FilterCategory" multiple="multiple" class="fos form-control"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label" style="width: 100%">Related Fields of Study</label>
+                            <select asp-for="FieldsOfStudyIds" asp-items="Model.FilterFieldsOfStudy" multiple="multiple" class="fos form-control"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Apply Filter" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-primary">Clear Filter</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+                if (Model.IsFiltered && Model.Scholarships.Count == 0)
+                {
+        <div class="alert alert-info">
+            There are no scholarships currently available for you based on the filter criteria.  Please broaden the scope of what you are looking for and try again.
+        </div>
+
+                }
+                else
+                {
         <table class="table">
             <thead>
                 <tr>
@@ -42,19 +88,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
+                @foreach (var item in Model.Scholarships)
+                        {
                 <tr>
                     <td style="vertical-align: middle">
                         <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@item.ScholarshipId">@Html.DisplayFor(modelItem => item.Name)</a>
                         @if (!item.ApplyOnline)
-                            {
+                                    {
                         <small class="label label-warning" style="margin: 0 5px">Off-Site</small>
-                            }
+                                    }
                         @if (item.IsFavorite)
-                            {
+                                    {
                         <i class="fa fa-heart" style="color: #e2264d" style="margin: 0 5px"></i>
-                            }
+                                    }
                     </td>
                     <td style="vertical-align: middle">
                         @Html.DisplayFor(modelItem => item.ReleaseDate)
@@ -63,9 +109,11 @@
                         @Html.DisplayFor(modelItem => item.DueDate)
                     </td>
                 </tr>
-                }
+                        }
             </tbody>
         </table>
+
+            }
         }
 
     </div>
@@ -83,3 +131,60 @@
     SIGN the copies of their tax forms. No scholarship application requiring federal tax forms will
     be processed without the correctly completed forms.
 </div>
+
+
+@section Styles  {
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        .select2-container {
+            width: 100% !important;
+        }
+         
+    </style>
+}
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+    <script type="text/javascript">
+
+        var filterHidden = true;
+
+        $("#filterButton").click(function () {
+            if (filterHidden)
+                $("#filterOptions").slideDown();
+            else
+                $("#filterOptions").slideUp();
+
+            filterHidden = !filterHidden;
+
+        });
+
+        $(document).ready(function() {
+
+            $(".fos").select2({
+                    tags: true,
+                    createTag: function(params) {
+                        // Don't offset to create a tag if there is no at symbol
+                        if (params.term.indexOf('@@') === -1) {
+                            // Return null to disable tag creation
+                            return null;
+                        }
+
+                        return {
+                            id: params.term,
+                            text: params.term
+                        }
+                    }
+                }
+            );
+
+        });
+
+    </script>
+
+
+}
