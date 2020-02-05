@@ -110,11 +110,12 @@ namespace Scholarships.Controllers
 
         [Authorize]
         // GET: Scholarships
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(ScholarshipListViewModel vm)
         {
-            var scholarships = await FetchScholarships();
+            var scholarships = await FetchScholarships(vm);
 
-            
+            if (vm != null)
+                scholarships.IsFiltered = true;
 
             return View(scholarships);
         }
