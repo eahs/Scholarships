@@ -48,5 +48,11 @@ namespace Scholarships.Controllers
 
             return View(article);
         }
+
+        public IActionResult Resources()
+        {
+            return View();
+        }
+
     }
 }
