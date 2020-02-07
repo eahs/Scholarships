@@ -119,6 +119,9 @@ namespace Scholarships.Controllers
                     continue;  // For now we don't have to worry about multiple answersets
                 }
 
+                if (aset.Answers == null)
+                    continue;
+
                 // Iterate through the answers and save them 
                 for  (int i = 0; i < aset.Answers.Count; i++)
                 {
