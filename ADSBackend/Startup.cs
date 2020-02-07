@@ -20,6 +20,7 @@ using System.Net.Mail;
 using System.Data;
 using System.Linq;
 using Hangfire.MySql.Core;
+using Microsoft.AspNetCore.HttpOverrides;
 using Scholarships.Tasks.Importer;
 using Serilog;
 using Smidge.Cache;
@@ -145,7 +146,11 @@ namespace Scholarships
                         options.DefaultBundleOptions.ProductionOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
                     });
 
-
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
