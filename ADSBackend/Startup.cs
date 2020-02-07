@@ -148,8 +148,10 @@ namespace Scholarships
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                //options.RequireHeaderSymmetry = false;
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+                //options.KnownNetworks.Clear();
+                //options.KnownProxies.Clear();
             });
         }
 
@@ -163,6 +165,14 @@ namespace Scholarships
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+            }
+
+            if (env.IsProduction())
+            {
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedProto
+                });
             }
 
             app.UseRouting();
