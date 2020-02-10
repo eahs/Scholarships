@@ -239,6 +239,8 @@ namespace Scholarships.Services
                 {
                     foreach (var answer in aset.Answers)
                     {
+                        if (answer.Config == null) continue;
+
                         var config = JsonConvert.DeserializeObject<Answer>(answer.Config);
 
                         if (config.QuestionOptions != null)

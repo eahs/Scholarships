@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Newtonsoft.Json;
 using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Services;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Scholarships.Controllers
 {
@@ -317,6 +318,15 @@ namespace Scholarships.Controllers
 
             if (!app.Submitted)
             {
+                profile.Favorites = new List<ScholarshipFavorite>();
+                if (profile.Guardians != null)
+                {
+                    foreach (Guardian g in profile.Guardians)
+                    {
+                        g.Profile = null;
+                    }
+                }
+
                 app.Profile = profile;
 
                 app.SubmittedDate = DateTime.Now;
@@ -325,7 +335,10 @@ namespace Scholarships.Controllers
                 app.AcceptRelease = _app.AcceptRelease;
                 app.Signature = _app.Signature;
                 app.SignatureDate = _app.SignatureDate;
-                app.ProfileSnapshot = JsonSerializer.Serialize(profile);
+                app.ProfileSnapshot = JsonConvert.SerializeObject(profile, Formatting.Indented, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
 
                 _context.Update(app);
                 await _context.SaveChangesAsync();
