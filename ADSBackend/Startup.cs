@@ -18,6 +18,7 @@ using System.IO;
 using Smidge;
 using System.Net.Mail;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using Hangfire.MySql.Core;
 using Microsoft.AspNetCore.DataProtection;
@@ -41,6 +42,8 @@ namespace Scholarships
         {
             Configuration = configuration;
             Env = env;
+
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
             if (Env.IsDevelopment())
                 ConnString = Configuration.GetConnectionString("ScholarshipsDevelopmentContext");
