@@ -20,12 +20,14 @@ using System.Net.Mail;
 using System.Data;
 using System.Linq;
 using Hangfire.MySql.Core;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Scholarships.Tasks.Importer;
 using Serilog;
 using Smidge.Cache;
 using Smidge.Options;
 using Microsoft.AspNetCore.Http;
+using Serilog.Core;
 
 namespace Scholarships
 {
@@ -89,6 +91,23 @@ namespace Scholarships
                 options.OnDeleteCookie = cookieContext =>
                     CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
             });
+
+            var paths = Configuration.GetSection("Paths");
+            if (paths.GetChildren().Any(x => x.Key == "DataProtectionKeys"))
+            {
+                string dppath = paths["DataProtectionKeys"];
+
+                if (dppath != null)
+                {
+                    services.AddDataProtection()
+                        .PersistKeysToFileSystem(new DirectoryInfo(dppath));
+                }
+
+            }
+            else
+            {
+                Log.Error("Paths:DataProtectionKeys was not set in AppSettings.json - Missing data protection key path!");
+            }
 
             services.AddAuthentication()
                 .AddGoogle(options =>
