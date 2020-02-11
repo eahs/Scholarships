@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -172,7 +173,33 @@ namespace Scholarships.Controllers
         [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> Manage()
         {
-            var scholarships = await _context.Scholarship.Include(s => s.QuestionSet).ToListAsync();
+            var appsCompleted = await _context.Application.Where(app => app.Submitted)
+                                                 .GroupBy(p => p.ScholarshipId)
+                                                 .Select(x => new 
+                                                    {
+                                                        ScholarshipId = x.Key,
+                                                        Count = x.Count()
+                                                    }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
+
+            var appsPending = await _context.Application.Where(app => !app.Submitted)
+                .GroupBy(p => p.ScholarshipId)
+                .Select(x => new
+                {
+                    ScholarshipId = x.Key,
+                    Count = x.Count()
+                }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
+
+            var scholarships = await _context.Scholarship.Select(s => new Scholarship
+            {
+                ScholarshipId = s.ScholarshipId,
+                PublishedDate = s.PublishedDate,
+                Name = s.Name,
+                DueDate = s.DueDate,
+                ReleaseDate = s.ReleaseDate,
+                ApplicantCount = appsCompleted.ContainsKey(s.ScholarshipId) ? appsCompleted[s.ScholarshipId] : 0,
+                ApplicantPending = appsPending.ContainsKey(s.ScholarshipId) ? appsPending[s.ScholarshipId] : 0
+            }).ToListAsync();
+
             return View(scholarships);
         }
 
