@@ -13,6 +13,7 @@ using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Services;
+using Serilog;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Scholarships.Controllers
@@ -314,18 +315,13 @@ namespace Scholarships.Controllers
                 guardian.Profile = null;
             }
 
+            Log.Information("[ScholarshipsController.SaveApplication] Saving Application for {0} {1} - Profile Id # {2}", profile.FirstName ?? "??", profile.LastName ?? "??", profile.ProfileId);
+
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
 
             if (!app.Submitted)
             {
                 profile.Favorites = new List<ScholarshipFavorite>();
-                if (profile.Guardians != null)
-                {
-                    foreach (Guardian g in profile.Guardians)
-                    {
-                        g.Profile = null;
-                    }
-                }
 
                 app.Profile = profile;
 
@@ -342,6 +338,9 @@ namespace Scholarships.Controllers
 
                 _context.Update(app);
                 await _context.SaveChangesAsync();
+
+                Log.Information("[ScholarshipsController.SaveApplication] Finished saved for {0} {1} - Profile Id # {2}", profile.FirstName ?? "??", profile.LastName ?? "??", profile.ProfileId);
+
             }
 
             return new FormsBaseViewModel
