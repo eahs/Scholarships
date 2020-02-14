@@ -1,4 +1,4 @@
-using Scholarships.Data;
+﻿using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Identity;
 using Scholarships.Services;
@@ -37,51 +37,68 @@ namespace Scholarships.Services
             _httpcontext = httpContextAccessor.HttpContext;
         }
 
-        public async Task<Profile> GetProfileAsync()
+        /// <summary>
+        /// Gets a specific profile by id or the profile of the current logged in user
+        /// </summary>
+        /// <param name="profileId">Profile Id of user to look up</param>
+        /// <returns></returns>
+        public async Task<Profile> GetProfileAsync(int profileId = -1)
         {
-            var user = await _userManager.GetUserAsync(_httpcontext.User);
+            Profile profile = null;
 
-            if (user == null)
-                return null;
-
-            Profile profile;
-
-            profile = await _context.Profile.Include(p => p.Guardians)
-                                            .Include(p => p.FieldOfStudy)
-                                            .FirstOrDefaultAsync(p => p.UserId == user.Id);
-
-            // If a junior logs in they will prematurely create a profile
-            if (profile == null)
+            if (profileId != -1)
             {
-                // Let's see if there is one based off of email address
-                var iprofile = await _context.ImportedProfile.FirstOrDefaultAsync(p => p.Email == user.Email); 
+                profile = await _context.Profile.Include(p => p.Guardians)
+                    .Include(p => p.FieldOfStudy)
+                    .FirstOrDefaultAsync(p => p.ProfileId == profileId);
 
-                if (iprofile != null)
-                {
-                    // Claim this profile
-                    // The net effect of this code is that we serialize the imported profile and deserialize it to a standard profile.
-                    // This process ensures that if we are to import new fields from a student data dump we need only to add the field to ImportedProfile and Profile
-                    var iprofilejson = JsonConvert.SerializeObject(iprofile);
-                    profile = JsonConvert.DeserializeObject<Profile>(iprofilejson);
-                    profile.UserId = user.Id;
-                    profile.Email = "";  // We cannot use a roverkids.org email in this field
+            }
+            else
+            {
+                var user = await _userManager.GetUserAsync(_httpcontext.User);
 
-                    _context.Add(profile);
-                    await _context.SaveChangesAsync();
-                }
-                else
+                if (user == null)
+                    return null;
+
+                profile = await _context.Profile.Include(p => p.Guardians)
+                    .Include(p => p.FieldOfStudy)
+                    .FirstOrDefaultAsync(p => p.UserId == user.Id);
+
+                // If a junior logs in they will prematurely create a profile
+                if (profile == null)
                 {
-                    profile = new Profile
+                    // Let's see if there is one based off of email address
+                    var iprofile = await _context.ImportedProfile.FirstOrDefaultAsync(p => p.Email == user.Email);
+
+                    if (iprofile != null)
                     {
-                        UserId = user.Id,
-                        Email = user.Email
-                    };
-                    _context.Profile.Add(profile);
-                    await _context.SaveChangesAsync();
+                        // Claim this profile
+                        // The net effect of this code is that we serialize the imported profile and deserialize it to a standard profile.
+                        // This process ensures that if we are to import new fields from a student data dump we need only to add the field to ImportedProfile and Profile
+                        var iprofilejson = JsonConvert.SerializeObject(iprofile);
+                        profile = JsonConvert.DeserializeObject<Profile>(iprofilejson);
+                        profile.UserId = user.Id;
+                        profile.Email = "";  // We cannot use a roverkids.org email in this field
+
+                        _context.Add(profile);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        profile = new Profile
+                        {
+                            UserId = user.Id,
+                            Email = user.Email
+                        };
+                        _context.Profile.Add(profile);
+                        await _context.SaveChangesAsync();
+
+                    }
 
                 }
 
             }
+
 
             return profile;
         }
@@ -186,7 +203,13 @@ namespace Scholarships.Services
             return qset;
         }
 
-        public async Task<QuestionSet> GetQuestionSetWithAnswers (int AnswerGroupId)
+        /// <summary>
+        /// Retrieves a question set with all the answers
+        /// </summary>
+        /// <param name="AnswerGroupId"></param>
+        /// <param name="BypassProfileVerification"></param>
+        /// <returns></returns>
+        public async Task<QuestionSet> GetQuestionSetWithAnswers (int AnswerGroupId, bool bypassProfileVerification = false)
         {
             var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
                                                     .ThenInclude(q => q.AnswerSet)
@@ -201,7 +224,10 @@ namespace Scholarships.Services
             var asets = agroup.AnswerSets.Select(ag => ag.AnswerSet).ToList();
             var firstSet = asets.First();
 
-            Profile profile = await GetProfileAsync();
+            // If we bypass profile verification then we can just load the answer set as it is
+            int profileId = bypassProfileVerification ? firstSet.ProfileId : -1;
+
+            Profile profile = await GetProfileAsync(profileId);
 
             if (firstSet == null || firstSet.ProfileId != profile.ProfileId)
                 return null;
