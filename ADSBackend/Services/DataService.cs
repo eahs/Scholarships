@@ -1,4 +1,4 @@
-﻿using Scholarships.Data;
+using Scholarships.Data;
 using Scholarships.Models;
 using Scholarships.Models.Identity;
 using Scholarships.Services;
@@ -419,7 +419,11 @@ namespace Scholarships.Services
                 {
                     Scholarship = new Scholarship
                     {
-                        Name = s.Scholarship.Name
+                        Name = s.Scholarship.Name,
+                        ScholarshipId = s.Scholarship.ScholarshipId,
+                        ReleaseDate = s.Scholarship.ReleaseDate,
+                        DueDate = s.Scholarship.DueDate,
+                        Published = s.Scholarship.Published
                     },
                     SubmittedDate = s.SubmittedDate,
                     Submitted = s.Submitted

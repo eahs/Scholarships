@@ -57,6 +57,11 @@ namespace Scholarships.Controllers
                 CompletedScholarshipApplication = await _context.Application.FirstOrDefaultAsync(app => app.Submitted && app.ProfileId == profile.ProfileId) != null
             };
 
+            viewModel.InProgress = viewModel.MyApplications.Where(app => app.Submitted == false)
+                .Select(s => s.Scholarship).ToList();
+
+            viewModel.MyApplications = viewModel.MyApplications.Where(app => app.Submitted).ToList();
+
             return View(viewModel);
         }
     }

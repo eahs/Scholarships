@@ -45,6 +45,71 @@
 
     </div>
 
+    <div class="row">
+
+        <div class="col-lg-4 py-2">
+            <div class="ibox card card-body h-100">
+                <div class="ibox-title">
+                    <h5>Applications in Progress</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.InProgress.Count == 0)
+                    {
+                        <p>You currently have no applications in progress.</p>
+                    }
+                    else
+                    {
+
+                        @foreach (var scholarship in Model.InProgress)
+                        {
+                            <div class="stream-small">
+                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@scholarship.ScholarshipId">@scholarship.Name</a>
+                                <small class="text-muted">Due @scholarship.DueDate.ToShortDateString()</small>
+                            </div>
+                        }
+
+
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8 py-2">
+            <div class="ibox card card-body h-100">
+                <div class="ibox-title">
+                    <h5>Completed Applications</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.MyApplications.Count == 0)
+                    {
+                        <p>You currently have no applications that have been completed.</p>
+                    }
+                    else
+                    {
+
+                        @foreach (var application in Model.MyApplications)
+                        {
+                            <div class="stream-small">
+                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@application.ScholarshipId">@application.Scholarship.Name</a>
+                                @if (application.Submitted)
+                                {
+                                    <small class="text-muted">Completed and submitted on @application.SubmittedDate.ToShortDateString()</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">Not Complete, Due @application.Scholarship.DueDate.ToShortDateString()</small>
+                                }
+                            </div>
+                        }
+
+
+                    }
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 
 <div class="row">
     @if (Model.ScholarshipUpdates.Count > 0)
