@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Scholarships.Services
 {
@@ -37,10 +38,19 @@ namespace Scholarships.Services
          * https://stackoverflow.com/questions/54639097/rendering-partial-view-to-string-in-asp-net-core-2-2
          * string html = await _renderService.RenderToStringAsync("<NameOfPartial>", new Model());
         */
-        public async Task<string> RenderToStringAsync(string viewName, object model)
+        public async Task<string> RenderToStringAsync(string viewName, object model, string controller = null)
         {
             var httpContext = new DefaultHttpContext { RequestServices = _serviceProvider };
-            var actionContext = new ActionContext(_httpContext, _httpContext.GetRouteData(), new ActionDescriptor());
+
+            HttpContext ctx = _httpContext ?? httpContext;
+
+            RouteData rd = ctx.GetRouteData();
+            if (controller != null)
+            {
+                rd.Values["controller"] = controller;
+            }
+
+            var actionContext = new ActionContext(ctx, rd, new ActionDescriptor());
 
             using (var sw = new StringWriter())
             {

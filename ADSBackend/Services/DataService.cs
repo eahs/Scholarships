@@ -446,7 +446,7 @@ namespace Scholarships.Services
                     Scholarship = new Scholarship
                     {
                         Name = s.Scholarship.Name,
-                        ScholarshipId = s.Scholarship.ScholarshipId,
+                        ScholarshipId = s.ScholarshipId,
                         ReleaseDate = s.Scholarship.ReleaseDate,
                         DueDate = s.Scholarship.DueDate,
                         Published = s.Scholarship.Published

@@ -164,6 +164,7 @@ namespace Scholarships
             services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();
             services.AddScoped<IEmailQueue, EmailQueue>();
             services.AddScoped<IStudentDataImporter, StudentDataImporter>();
+            services.AddScoped<ICreateApplicationPackage, CreateApplicationPackage>();
 
             // caching
             services.AddMemoryCache();
@@ -232,6 +233,7 @@ namespace Scholarships
 
             //BackgroundJob.Enqueue<IEmailQueue>(
             //    queue => queue.SendMail("tanczosm@eastonsd.org", "Test Message", "this is a scholarship email test.. did you get this?"));
+            BackgroundJob.Enqueue<ICreateApplicationPackage>(queue => queue.Execute());
 
             // If you want to run the job immediately
             /*

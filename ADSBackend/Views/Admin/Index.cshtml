@@ -90,7 +90,7 @@
                         @foreach (var application in Model.MyApplications)
                         {
                             <div class="stream-small">
-                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@application.ScholarshipId">@application.Scholarship.Name</a>
+                                <a asp-controller="Scholarships" asp-action="Details" asp-route-id="@application.Scholarship.ScholarshipId">@application.Scholarship.Name</a>
                                 @if (application.Submitted)
                                 {
                                     <small class="text-muted">Completed and submitted on @application.SubmittedDate.ToShortDateString()</small>
