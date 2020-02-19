@@ -126,6 +126,10 @@
             {
                 <p>You have already applied for this scholarship.  Stay tuned for announcements on results.</p>
             }
+            else if (DateTime.Now > Model.Scholarship.DueDate.Date.AddDays(1).AddMinutes(-1))
+            {
+                <p>We're sorry but the application deadline for this scholarship has passed.</p>
+            }
             else if (Model.ProfileCompleted)
             {
                 <a asp-controller="Scholarships" asp-action="Apply" asp-route-id="@Model.Scholarship.ScholarshipId" class="btn btn-success btn-lg">Apply For Scholarship</a>

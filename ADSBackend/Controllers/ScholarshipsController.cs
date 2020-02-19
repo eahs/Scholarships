@@ -346,7 +346,8 @@ namespace Scholarships.Controllers
 
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
 
-            if (!app.Submitted)
+            // Check to see if they haven't yet submitted it and it is prior to 11:59PM on the day the scholarship is due
+            if (!app.Submitted && DateTime.Now <= scholarship.DueDate.Date.AddDays(1).AddMinutes(-1))
             {
                 profile.Favorites = new List<ScholarshipFavorite>();
 
