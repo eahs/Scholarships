@@ -1,0 +1,12 @@
+﻿@model Scholarships.Models.Forms.Question
+<!-- https://stackoverflow.com/questions/58815724/how-to-integrate-dropzone-js-with-asp-net-core-mvc -->
+
+<div class="form-group" style="width: 100%">
+    <label class="control-label">@Model.Name</label>
+    @if (@Model.Description.Length > 0)
+    {
+        <p>@Model.Description</p>
+    }
+    <div class="dropzone" data-questionid="@Model.QuestionId" data-answersetid="@Model.Answer.AnswerSetId"></div>
+</div>
+

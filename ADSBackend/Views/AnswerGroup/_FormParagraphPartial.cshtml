@@ -1,0 +1,11 @@
+﻿@model Scholarships.Models.Forms.Question
+
+    <div class="form-group" style="width: 100%">
+        <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response">@Model.Name</label>
+        @if (@Model.Description.Length > 0)
+        {
+        <p>@Model.Description</p>
+        }
+    <textarea class="form-control" name="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" rows="10">@Model.Answer.Response</textarea>
+        <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" data-valmsg-replace="true"></span>
+    </div>

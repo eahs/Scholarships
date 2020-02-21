@@ -36,7 +36,7 @@ namespace Scholarships.Tasks
         {
             try
             {
-                AsyncHelpers.RunSync(() => CreatePackages());
+                AsyncHelpers.RunSync(CreatePackages);
             }
             catch (Exception e)
             {

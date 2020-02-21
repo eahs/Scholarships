@@ -18,7 +18,9 @@
             var option = Model.Options[i];
 
             if (Model.Answer.QuestionOptions != null && Model.Answer.QuestionOptions.Count > 0)
+            {
                 option.Selected = Model.Answer.QuestionOptions.Contains(option.QuestionOptionId);
+            }
 
             //option.Selected = Model.Answer [Model.AnswerSetIndex].Answers[@Model.Index].
 

@@ -1,0 +1,32 @@
+﻿@model Scholarships.Models.Forms.QuestionSet
+
+@using Scholarships.Models.Forms
+
+@{
+    Layout = null;
+}
+
+@if (Model.Questions?.Count != 0)
+{
+    @foreach (var answerset in Model.AnswerSets)
+        {
+    
+            @for (int i = 0; i < Model.Questions.Count; i++)
+            {
+                var question = Model.Questions[i];
+
+                // Do we have an answer to this question?
+                question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                question.Index = i;
+                question.AnswerSetIndex = @answerset.Index;
+
+                <div class="row">
+                    @await Html.PartialAsync("_App" + question.Type.ToString() + "Partial", question)
+
+                </div>
+            }
+
+        }
+
+
+}

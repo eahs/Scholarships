@@ -40,7 +40,7 @@ else if (Model.Description?.Trim().Length > 0)
             <input type="hidden" name="[@answerset.Index].Answers[@question.Index].QuestionId" value="@question.QuestionId" />
 
             <div class="row">
-                @await Html.PartialAsync("_" + question.Type.ToString() + "Partial", question)
+                @await Html.PartialAsync("_Form" + question.Type.ToString() + "Partial", question)
             </div>
         }
 
