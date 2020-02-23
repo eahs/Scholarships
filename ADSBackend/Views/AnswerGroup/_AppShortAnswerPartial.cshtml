@@ -1,11 +1,8 @@
 ﻿@model Scholarships.Models.Forms.Question
 
     <div class="form-group">
-        <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response">@Model.Name</label>
-        @if (@Model.Description.Length > 0)
-        {
-            <p>@Model.Description</p>
-        }
-        <input class="form-control" type="text" name="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" value="@Model.Answer.Response">
-        <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" data-valmsg-replace="true"></span>
+        <label class="control-label">@Model.Name</label>
+        <div style="border: solid 1px black; padding: 5px; width: 100%">
+            @Model.Answer.Response
+        </div>
     </div>

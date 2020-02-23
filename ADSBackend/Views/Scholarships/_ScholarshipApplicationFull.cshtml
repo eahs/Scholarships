@@ -1,0 +1,18 @@
+﻿@model Scholarships.Models.ScholarshipViewModels.ApplicationPageViewModel
+
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <link rel="stylesheet" href="scholarship-application-css" />
+</head>
+<body style="background-color: white">
+
+    @Html.Raw(Model.BasicProfile)
+
+    @Html.Raw(Model.FormAnswers)
+
+</body>
+</html>

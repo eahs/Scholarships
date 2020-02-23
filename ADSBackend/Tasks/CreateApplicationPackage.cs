@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using IronPdf;
 using System.Text.RegularExpressions;
@@ -79,7 +80,7 @@ namespace Scholarships.Tasks
                 Completed = false,
                 Created = DateTime.Now,
                 Type = "applications",
-                ForeignKey = 1
+                ForeignKey = 2
             };
             _context.Job.Add(njob);
             _context.SaveChanges();
@@ -103,7 +104,34 @@ namespace Scholarships.Tasks
                                                                      .ToList();
 
                 joboutputPath = Path.Combine(joboutputPath, "job" + job.JobId + ".pdf");
-                // PdfDocument doc = new PdfDocument(outputPath);
+
+                //PdfDocument doc = new PdfDocument(joboutputPath);
+                var Renderer = new IronPdf.HtmlToPdf();
+                Renderer.PrintOptions.CustomCssUrl =
+                    "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css";
+                Renderer.PrintOptions.SetCustomPaperSizeInInches(8.5, 11);
+                Renderer.PrintOptions.PrintHtmlBackgrounds = true;
+                Renderer.PrintOptions.PaperOrientation = PdfPrintOptions.PdfPaperOrientation.Portrait;
+                Renderer.PrintOptions.Title = "Scholarship Package";
+                Renderer.PrintOptions.EnableJavaScript = true;
+                Renderer.PrintOptions.RenderDelay = 50; //ms
+                Renderer.PrintOptions.CssMediaType = PdfPrintOptions.PdfCssMediaType.Screen;
+                Renderer.PrintOptions.DPI = 300;
+                Renderer.PrintOptions.FitToPaperWidth = true;
+                Renderer.PrintOptions.JpegQuality = 80;
+                Renderer.PrintOptions.GrayScale = false;
+                Renderer.PrintOptions.FitToPaperWidth = true;
+                Renderer.PrintOptions.InputEncoding = Encoding.UTF8;
+                Renderer.PrintOptions.Zoom = 100;
+                Renderer.PrintOptions.CreatePdfFormsFromHtml = false;
+                Renderer.PrintOptions.MarginTop = 40;  //millimeters
+                Renderer.PrintOptions.MarginLeft = 20;  //millimeters
+                Renderer.PrintOptions.MarginRight = 20;  //millimeters
+                Renderer.PrintOptions.MarginBottom = 40;  //millimeters
+                Renderer.PrintOptions.FirstPageNumber = 1; //use 2 if a coverpage  will be appended
+
+                PdfDocument doc = Renderer.RenderHtmlAsPdf("");
+                doc.RemovePage(0);
 
                 foreach (var app in applications)
                 {
@@ -116,14 +144,26 @@ namespace Scholarships.Tasks
                         Scholarship = scholarship
                     };
 
+                    ApplicationPageViewModel applicationPage = new ApplicationPageViewModel();
+
                     // First render the core general profile
-                    string renderedProfile = await _viewRenderService.RenderToStringAsync("_scholarshipapplicationpartial", vm, "scholarships");
+                    applicationPage.BasicProfile = await _viewRenderService.RenderToStringAsync("_scholarshipapplicationpartial", vm, "scholarships");
 
                     // Next render any additional questions that were provided
                     if (qset.Questions?.Count > 0)
                     {
                         // TODO: Render answers to questions
+                        applicationPage.FormAnswers = await _viewRenderService.RenderToStringAsync("questionsetappviewpartial", vm.QuestionSet, "answergroup");
+
                     }
+
+                    string finalApplication =
+                        await _viewRenderService.RenderToStringAsync("_scholarshipapplicationfull", applicationPage,
+                            "scholarships");
+
+                    PdfDocument page = Renderer.RenderHtmlAsPdf(finalApplication, "https://scholarships.eastonsd.org/");
+
+                    doc.AppendPdf(page);
 
                     // Last attach transcripts if requested
                     if (scholarship.TranscriptsRequired)
@@ -145,6 +185,7 @@ namespace Scholarships.Tasks
                     }
                 }
 
+                doc.SaveAs(joboutputPath);
             }
 
 

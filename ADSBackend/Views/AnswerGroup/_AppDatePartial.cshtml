@@ -1,0 +1,8 @@
+﻿@model Scholarships.Models.Forms.Question
+
+    <div class="form-group">
+        <label class="control-label">@Model.Name</label>
+        <div class="input-group date">
+            <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input name="[@Model.AnswerSetIndex].Answers[@Model.Index].DateTime" data-mask="99/99/9999" value="@Model.Answer.DateTime.ToString("MM/dd/yyyy")" class="form-control" />
+        </div>
+    </div>

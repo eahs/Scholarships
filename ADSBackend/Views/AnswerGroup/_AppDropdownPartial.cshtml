@@ -2,14 +2,12 @@
 
 @{ 
     var selectList = new SelectList(Model.Options, "QuestionOptionId", "Name", Model.Answer.QuestionOptionId);
+    var answer = Model.Options.FirstOrDefault(x => x.QuestionOptionId == Model.Answer.QuestionOptionId);
 }
 
     <div class="form-group">
-        <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response">@Model.Name</label>
-        @if (@Model.Description.Length > 0)
-        {
-            <p>@Model.Description</p>
-        }
-        <select name="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptionId" asp-items="selectList" class="form-control"></select>
-        <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].Response" data-valmsg-replace="true"></span>
+        <label class="control-label">@Model.Name</label>
+        <span>
+        Response: @answer?.Name
+        </span>
     </div>

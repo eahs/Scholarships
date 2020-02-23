@@ -233,7 +233,7 @@ namespace Scholarships
 
             //BackgroundJob.Enqueue<IEmailQueue>(
             //    queue => queue.SendMail("tanczosm@eastonsd.org", "Test Message", "this is a scholarship email test.. did you get this?"));
-            //BackgroundJob.Enqueue<ICreateApplicationPackage>(queue => queue.Execute());
+            BackgroundJob.Enqueue<ICreateApplicationPackage>(queue => queue.Execute());
 
             // If you want to run the job immediately
             /*

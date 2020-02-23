@@ -1,11 +1,7 @@
 ﻿@model Scholarships.Models.Forms.Question
 
 <div class="form-group">
-    <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions">@Model.Name</label>
-    @if (@Model.Description.Length > 0)
-    {
-        <p>@Model.Description</p>
-    }
+    <label class="control-label">@Model.Name</label>
     @for (int i = 0; i < Model.Options.Count; i++)
     {
         var option = Model.Options[i];
@@ -13,7 +9,11 @@
         {
             option.Selected = true;
         }
-        <input type="radio" name="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptionId" value="@option.QuestionOptionId" checked="@option.Selected" /><i></i>@option.Name<br />
+        @if (option.Selected)
+        {
+            <div>
+                Response: @option.Name<br />
+            </div>
+        }
     }
-    <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions" data-valmsg-replace="true"></span>
 </div>

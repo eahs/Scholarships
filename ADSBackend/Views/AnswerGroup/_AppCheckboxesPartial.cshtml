@@ -4,7 +4,7 @@
         
 }
     <div class="form-group">
-        <label class="control-label" for="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions">@Model.Name</label>
+        <label class="control-label">@Model.Name</label>
         @for (int i = 0; i < Model.Options.Count; i++)
         {
             var option = Model.Options[i];
@@ -20,10 +20,8 @@
                     <label>
                         <input type="checkbox" name="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions" value="@option.QuestionOptionId" checked="@option.Selected"/>
                         @option.Name<br/>
-                        <input type="hidden" name="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions" value="false"/>
                     </label>
                 </div>
             }
         }
-        <span class="text-danger field-validation-valid" data-valmsg-for="[@Model.AnswerSetIndex].Answers[@Model.Index].QuestionOptions" data-valmsg-replace="true"></span>
     </div>

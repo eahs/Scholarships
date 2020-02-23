@@ -8,25 +8,35 @@
 
 @if (Model.Questions?.Count != 0)
 {
-    @foreach (var answerset in Model.AnswerSets)
-        {
-    
-            @for (int i = 0; i < Model.Questions.Count; i++)
-            {
-                var question = Model.Questions[i];
+    <div class="col-lg-12">
 
-                // Do we have an answer to this question?
-                question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
-                question.Index = i;
-                question.AnswerSetIndex = @answerset.Index;
+        <fieldset class="ibox">
+        <legend class="ibox-legend">Additional Questions</legend>
+            <div class="ibox-content">
 
-                <div class="row">
-                    @await Html.PartialAsync("_App" + question.Type.ToString() + "Partial", question)
+                @foreach (var answerset in Model.AnswerSets)
+                {
 
-                </div>
-            }
+                    @for (int i = 0; i < Model.Questions.Count; i++)
+                    {
+                        var question = Model.Questions[i];
 
-        }
+                        // Do we have an answer to this question?
+                        question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
+                        question.Index = i;
+                        question.AnswerSetIndex = @answerset.Index;
 
+                        <div class="row">
+                            <div class="col-12">
+                                @await Html.PartialAsync("_App" + question.Type.ToString() + "Partial", question)
+                            </div>
+                        </div>
+                    }
+
+                }
+
+            </div>
+        </fieldset>
+    </div>
 
 }
