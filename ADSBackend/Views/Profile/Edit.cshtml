@@ -524,7 +524,15 @@
                 var newForm = forms[forms.length - 1];
                 $.validator.unobtrusive.parse(newForm);
 
-                if (typeof successcallback === "function") {
+                var $form = $('#EditGuardiansAjax');
+                $form.validate();
+
+                if (!$form.valid()) {
+                    swal("Family Income Not Saved",
+                        "Please correct each of the errors in red before trying to save. ",
+                        "error");
+                }
+                else if (typeof successcallback === "function") {
                     successcallback();
                 }
             })
