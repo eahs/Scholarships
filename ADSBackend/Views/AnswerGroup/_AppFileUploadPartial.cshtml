@@ -1,4 +1,16 @@
 ﻿@model Scholarships.Models.Forms.Question
 
-
-
+<div class="form-group">
+    <label class="control-label">File attachment listings: @Model.Name</label>
+    <div>
+        @if (Model.Answer.FileAttachmentGroup.FileAttachments?.Count > 0)
+        {
+            <ul>
+                @foreach (var attach in Model.Answer.FileAttachmentGroup.FileAttachments)
+                {
+                    <li>@attach.FileName</li>
+                }
+            </ul>
+        }
+    </div>
+</div>

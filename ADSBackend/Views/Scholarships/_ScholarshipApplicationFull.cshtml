@@ -7,12 +7,25 @@
 <html>
 <head>
     <link rel="stylesheet" href="scholarship-application-css" />
+    <style type="text/css" media="all">
+        div.page {
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+
+        .form-group {
+            border-bottom: dashed 1px #777;
+            padding-top: 5px;
+            padding-bottom: 10px;
+        }
+    </style>
 </head>
 <body style="background-color: white">
-
-    @Html.Raw(Model.BasicProfile)
-
-    @Html.Raw(Model.FormAnswers)
-
+    <div class="page">
+        @Html.Raw(Model.BasicProfile)
+    </div>
+    <div class="page">
+        @Html.Raw(Model.FormAnswers)
+    </div>
 </body>
 </html>

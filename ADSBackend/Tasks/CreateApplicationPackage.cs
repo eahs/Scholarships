@@ -153,8 +153,9 @@ namespace Scholarships.Tasks
                     if (qset.Questions?.Count > 0)
                     {
                         // TODO: Render answers to questions
-                        applicationPage.FormAnswers = await _viewRenderService.RenderToStringAsync("questionsetappviewpartial", vm.QuestionSet, "answergroup");
-
+                        applicationPage.FormAnswers =
+                            await _viewRenderService.RenderToStringAsync("questionsetappviewpartial", vm.QuestionSet,
+                                "answergroup");
                     }
 
                     string finalApplication =
@@ -164,6 +165,51 @@ namespace Scholarships.Tasks
                     PdfDocument page = Renderer.RenderHtmlAsPdf(finalApplication, "https://scholarships.eastonsd.org/");
 
                     doc.AppendPdf(page);
+
+                    // Next render any file attachments
+                    foreach (var answerset in vm.QuestionSet.AnswerSets)
+                    {
+                        foreach (var answer in answerset.Answers)
+                        {
+                            if (answer.FileAttachmentGroup == null) continue;
+
+                            if (answer.FileAttachmentGroup.FileAttachments != null)
+                            {
+                                foreach (var file in answer.FileAttachmentGroup.FileAttachments)
+                                {
+                                    var filePath = System.IO.Path.Combine(Configuration.ConfigPath.AttachmentPath,
+                                        file.FileSubPath,
+                                        file.SecureFileName);
+
+                                    if (file.ContentType == "application/pdf")
+                                    {
+                                        if (File.Exists(filePath))
+                                        {
+                                            PdfDocument pdfAttach = new PdfDocument(filePath);
+
+                                            doc.AppendPdf(pdfAttach);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (File.Exists(filePath))
+                                        {
+                                            var subpath = Path.Combine(Configuration.ConfigPath.AttachmentPath,
+                                                file.FileSubPath);
+                                            var fullpath = Path.GetFullPath(subpath);
+
+                                            var html = "<html style='width:100%;height:100%'><body style='width:100%;height:100%'><img style='max-width: 100%; max-height: 100vh; height: auto;' src='" + file.SecureFileName + "'></body></html>";
+                                            var pdfImage = Renderer.RenderHtmlAsPdf(html, fullpath);
+
+                                            doc.AppendPdf(pdfImage);
+                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
 
                     // Last attach transcripts if requested
                     if (scholarship.TranscriptsRequired)
@@ -181,6 +227,9 @@ namespace Scholarships.Tasks
                         if (File.Exists(transcriptSavePath))
                         {
                             // TODO: Merge in PDF at transcriptSavePath
+                            PdfDocument pdfAttach = new PdfDocument(transcriptSavePath);
+
+                            doc.AppendPdf(pdfAttach);
                         }
                     }
                 }
