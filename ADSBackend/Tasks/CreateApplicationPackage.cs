@@ -74,23 +74,10 @@ namespace Scholarships.Tasks
                 return;
             }
 
-            // TODO: REMOVE ME - TEMPORARY
-            var njob = new Job
-            {
-                Completed = false,
-                Created = DateTime.Now,
-                Type = "applications",
-                ForeignKey = 2
-            };
-            _context.Job.Add(njob);
-            _context.SaveChanges();
-            // TODO: END REMOVE ME
-
             var job = _context.Job.FirstOrDefault(j => !j.Completed && j.Type == "applications");
 
             if (job != null)
             {
-                // Immediately mark the job as completed, hung or faulty jobs will be both completed and "Running"
                 job.Completed = true;
                 job.Started = DateTime.Now;
                 job.StatusMessage = "Running";
@@ -235,6 +222,12 @@ namespace Scholarships.Tasks
                 }
 
                 doc.SaveAs(joboutputPath);
+
+                job.Ended = DateTime.Now;
+                job.StatusMessage = "Completed";
+                _context.Update(job);
+                _context.SaveChanges();
+
             }
 
 

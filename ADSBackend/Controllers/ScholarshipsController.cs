@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Hangfire;
+using Hangfire.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,6 +16,7 @@ using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Services;
+using Scholarships.Tasks;
 using Serilog;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -266,6 +269,79 @@ namespace Scholarships.Controllers
         }
 
         [Authorize(Roles = "Admin,Manager")]
+        [Produces("application/json")]
+        public async Task<object> ApplicationPackageGenerate(int? id, bool trigger = false) // id = ScholarshipId
+        {
+            var statusMessage = "Running";
+            var lastjoburl = "";
+
+            if (id == null)
+                return new { error = true, message = "Scholarship Id not specified" };
+
+            var job = await _context.Job.OrderByDescending(x => x.JobId).FirstOrDefaultAsync(j =>
+                j.Type == "applications" && j.ForeignKey == (int) id);
+
+            if (job != null && job.Completed)
+            {
+                if (job.StatusMessage == "Failed")
+                    job = null;
+                else if (job.StatusMessage == "Running")
+                {
+                    TimeSpan ts = DateTime.Now - job.Started;
+                    if (ts.Minutes >= 10)
+                    {
+                        job.StatusMessage = "Failed";
+                        job.Ended = DateTime.Now;
+
+                        _context.Update(job);
+                        _context.SaveChanges();
+                        job = null;
+                    }
+                }
+                else if (job.StatusMessage == "Completed")
+                {
+                    TimeSpan ts = DateTime.Now - job.Started;
+                    if (ts.Minutes >= 5)
+                    {
+                        if (trigger)
+                            job = null;
+                    }
+
+                }
+            }
+
+            if (job == null)
+            {
+                job = new Job
+                {
+                    Completed = false,
+                    Created = DateTime.Now,
+                    Type = "applications",
+                    ForeignKey = (int)id,
+                    StatusMessage = trigger ? "Pending" : ""
+                };
+
+                if (trigger)
+                {
+                    _context.Job.Add(job);
+                    _context.SaveChanges();
+                }
+
+                BackgroundJob.Enqueue<ICreateApplicationPackage>(queue => queue.Execute());
+            }
+
+            statusMessage = job.StatusMessage;
+
+            return new
+            {
+                error = false,
+                message = statusMessage,
+                job
+            };
+
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> ApplicationView(int? id) // id = ApplicationId
         {
             if (id == null)
@@ -279,6 +355,8 @@ namespace Scholarships.Controllers
             return View(vm);
 
         }
+
+
 
         [Authorize(Roles = "Admin,Manager,Student")]
         public async Task<IActionResult> Apply (int? id)  // id of scholarship
