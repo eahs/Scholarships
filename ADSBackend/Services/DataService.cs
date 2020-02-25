@@ -162,6 +162,23 @@ namespace Scholarships.Services
                 }
             }
 
+            var guardprop = scholarship.ProfileProperties.FirstOrDefault(gprop => gprop.ProfileProperty.PropertyKey == "Guardians");
+
+            if (guardprop != null)
+            {
+                if (profile.Guardians.Count == 0)
+                {
+                    status.Add(new ScholarshipFieldStatus
+                    {
+                        FieldName = guardprop.ProfileProperty.PropertyName,
+                        ErrorMessage = "You must have at least one family member listed in the Family Income section of your profile",
+                        Validated = false,
+                        FormURI = ProfileFieldToURI("Guardians")
+                    });
+
+                }
+            }
+
             return status;
         }
 
