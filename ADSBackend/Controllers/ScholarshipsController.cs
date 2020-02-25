@@ -337,11 +337,6 @@ namespace Scholarships.Controllers
 
             var profile = await _dataService.GetProfileAsync();
 
-            foreach (var guardian in profile.Guardians)
-            {
-                guardian.Profile = null;
-            }
-
             Log.Information("[ScholarshipsController.SaveApplication] Saving Application for {0} {1} - Profile Id # {2}", profile.FirstName ?? "??", profile.LastName ?? "??", profile.ProfileId);
 
             Application app = await _dataService.GetApplication(scholarship.ScholarshipId, profile.ProfileId, scholarship.QuestionSetId);
