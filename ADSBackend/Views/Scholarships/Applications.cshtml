@@ -71,7 +71,7 @@
 
         $.ajax({
             type: "GET",
-            url: "/Scholarships/ApplicationPackageGenerate/@Model.Scholarship.ScholarshipId?trigger=true",
+            url: "/Scholarships/ApplicationPackageGenerate/@Model.Scholarship.ScholarshipId",
             dataType: "json"
         }).done(function(response, textStatus, jqXHR) {
             $("#packageStatus").html(response.message);

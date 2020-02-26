@@ -50,7 +50,12 @@ namespace Scholarships
             else if (Env.IsStaging())
                 ConnString = Configuration.GetConnectionString("ScholarshipsStagingContext");
             else if (Env.IsProduction())
+            {
                 ConnString = Configuration.GetConnectionString("ScholarshipsProductionContext");
+
+                IronPdf.Installation.TempFolderPath = @"/tmp/scholarships";
+            }
+
 
         }
 
