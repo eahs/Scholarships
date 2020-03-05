@@ -108,263 +108,272 @@
         <h2>SCHOLARSHIP: @Model.Scholarship.Name</h2>
         <p>Applicant Submission Date: @Model.Application.SubmittedDate.ToLongDateString()</p>
 
-        <div class="ibox">
-            <div class="ibox-content">
-                @if ((StudentId + Name).Length > 0)
-                {
-                    <div class="row">
-                        @if (Name.Length > 0)
-                        {
-                            <div class="col-1">Name:</div>
-                            <div class="col-4"><u>@Name</u></div>
-                        }
-                        @if (StudentId.Length > 0)
-                        {
-                            <div class="col-1">Student ID:</div>
-                            <div class="col-4"><u>@StudentId</u></div>
-                        }
-                    </div>
-                }
-                @if (HomeAddress.Length > 0)
-                {
-                    <div class="row">
-                        <div class="col-1">Home Address:</div><div class="col-9"><u>@Html.Raw(HomeAddress)</u></div>
-                    </div>
-                }
-                @if ((BirthDate + PhoneNumber + Gender).Length > 0)
-                {
-                    <div class="row">
-                        @if (BirthDate.Length > 0)
-                        {
-                            <div class="col-1">Birth Date:</div>
-                            <div class="col-2"><u>@BirthDate</u></div>
-                        }
-                        @if (Gender.Length > 0)
-                        {
-                            <div class="col-1">Gender:</div>
-                            <div class="col-1"><u>@Gender</u></div>
+    @if (Model.Scholarship.IncomeVerificationRequired && Model.Application.Profile.LunchStatus == "F")
+    {
+        <p><b>APPLICANT VERIFIED TO BE LOW-INCOME</b></p>
+    }
+    
 
-                        }
-                        @if (PhoneNumber.Length > 0)
-                        {
-                            <div class="col-1">Phone Number:</div>
-                            <div class="col-4"><u>@PhoneNumber</u></div>
-                        }
-                    </div>
-                }
-                @if (Email.Length > 0)
-                {
-                    <div class="row">
-                        <div class="col-1">Email:</div><div class="col-9"><u>@Email</u></div>
-                    </div>
-                }
+    <div class="ibox">
+                <div class="ibox-content" style='page-break-inside: avoid'>
+                    @if ((StudentId + Name).Length > 0)
+                    {
+                        <div class="row">
+                            @if (Name.Length > 0)
+                            {
+                                <div class="col-1">Name:</div>
+                                <div class="col-4"><u>@Name</u></div>
+                            }
+                            @if (StudentId.Length > 0)
+                            {
+                                <div class="col-1">Student ID:</div>
+                                <div class="col-4"><u>@StudentId</u></div>
+                            }
+                        </div>
+                    }
+                    @if (HomeAddress.Length > 0)
+                    {
+                        <div class="row">
+                            <div class="col-1">Home Address:</div><div class="col-9"><u>@Html.Raw(HomeAddress)</u></div>
+                        </div>
+                    }
+                    @if ((BirthDate + PhoneNumber + Gender).Length > 0)
+                    {
+                        <div class="row">
+                            @if (BirthDate.Length > 0)
+                            {
+                                <div class="col-1">Birth Date:</div>
+                                <div class="col-2"><u>@BirthDate</u></div>
+                            }
+                            @if (Gender.Length > 0)
+                            {
+                                <div class="col-1">Gender:</div>
+                                <div class="col-1"><u>@Gender</u></div>
+
+                            }
+                            @if (PhoneNumber.Length > 0)
+                            {
+                                <div class="col-1">Phone Number:</div>
+                                <div class="col-4"><u>@PhoneNumber</u></div>
+                            }
+                        </div>
+                    }
+                    @if (Email.Length > 0)
+                    {
+                        <div class="row">
+                            <div class="col-1">Email:</div><div class="col-9"><u>@Email</u></div>
+                        </div>
+                    }
+                </div>
             </div>
-        </div>
 
-        @if (AcademicGroup)
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">Academic Performance</legend>
-                <div class="ibox-content">
-                    @if ((ClassRank + GPA).Length > 0)
-                    {
-                        <div class="row">
-                            @if (ClassRank.Length > 0)
-                            {
-                                <div class="col-2">Class Rank:</div>
-                                <div class="col-1"><u>@ClassRank</u></div>
-                            }
-
-                            @if (GPA.Length > 0)
-                            {
-                                <div class="col-1">GPA:</div>
-                                <div class="col-1"><u>@GPA</u></div>
-                            }
-                        </div>
-                    }
-                    @if ((SATScoreReading + SATScoreMath + ACTScore).Length > 0)
-                    {
-                        <div class="row">
-                            @if (SATScoreReading.Length > 0)
-                            {
-                                <div class="col-2">SAT Reading:</div>
-                                <div class="col-1"><u>@SATScoreReading</u></div>
-                            }
-
-                            @if (SATScoreMath.Length > 0)
-                            {
-                                <div class="col-1">SAT Math:</div>
-                                <div class="col-1"><u>@SATScoreMath</u></div>
-                            }
-
-                            @if (ACTScore.Length > 0)
-                            {
-                                <div class="col-1">ACT:</div>
-                                <div class="col-1"><u>@ACTScore</u></div>
-                            }
-                        </div>
-                    }
-                </div>
-            </fieldset>
-        }
-
-        @if (CollegePlans)
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">College Plans</legend>
-                <div class="ibox-content">
-                    @if ((CollegeAttending + CollegeIntendedMajor).Length > 0)
-                    {
-                        <div class="row">
-                            @if (CollegeAttending.Length > 0)
-                            {
-                                <div class="col-2">College you will attend:</div>
-                                <div class="col-2"><u>@CollegeAttending</u></div>
-                            }
-                            @if (CollegeIntendedMajor.Length > 0)
-                            {
-                                <div class="col-2">Intended Major:</div>
-                                <div class="col-2"><u>@CollegeIntendedMajor</u></div>
-                            }
-
-                        </div>
-                    }
-                    @if (FieldOfStudy.Length > 0)
-                    {
-                        <div class="row">
-                            <div class="col-2">General Field of Study:</div>
-                            <div class="col-8"><u>@FieldOfStudy</u></div>
-                        </div>
-                    }
-                    @if ((CollegeAccepted + LivingSituation).Length > 0)
-                    {
-                        <br />
-                        <div class="row">
-                            @if (CollegeAccepted.Length > 0)
-                            {
-                                <div class="col-2">Have you been accepted:</div>
-                                <div class="col-2"><u>@CollegeAccepted</u></div>
-                            }
-                            @if (LivingSituation.Length > 0)
-                            {
-                                <div class="col-2">Will you (<i>live on campus/commute)</i>:</div>
-                                <div class="col-2"><u>@LivingSituation</u></div>
-                            }
-                        </div>
-                    }
-                    @if (TuitionYearly.Length > 0)
-                    {
-                        <br />
-                        <div class="row">
-                            <div class="col-2">Tuition (cost per year):</div>
-                            <div class="col-2"><u>@TuitionYearly</u></div>
-                        </div>
-                    }
-                    @if (RoomBoard.Length > 0)
-                    {
-                        <div class="row">
-                            <div class="col-2">Room & Board:</div>
-                            <div class="col-2"><u>@RoomBoard</u></div>
-                        </div>
-                    }
-
-                    @if (TuitionTotal.Length > 0)
-                    {
-                        <div class="row">
-                            <div class="col-2">Total Tuition:</div>
-                            <div class="col-2"><u>@TuitionTotal</u></div>
-                        </div>
-                    }
-
-                    @if (OtherColleges.Length > 0)
-                    {
-                        <div class="row">
-                            <div class="col-2">Other Colleges Under Consideration:</div>
-                            <div class="col-8">@OtherColleges.Trim().Replace(Environment.NewLine, "; ")</div>
-                        </div>
-                    }
-                </div>
-            </fieldset>
-         }
-
-        @if (OtherAid.Length > 0)
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">Other Aid</legend>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-8">@Html.Raw(OtherAid)</div>
-                    </div>
-
-                </div>
-            </fieldset>
-        }
-
-        @if (SpecialCircumstances.Length > 0)
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">Special Circumstances</legend>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-8">@Html.Raw(SpecialCircumstances)</div>
-                    </div>
-                </div>
-            </fieldset>
-        }
-
-        @if ((ActivitiesSchool + ActivitiesCommunity).Length > 0)
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">Extracurricular Activities</legend>
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-2">School Activities</div><div class="col-8">@Html.Raw(ActivitiesSchool.Trim().Replace(Environment.NewLine, "; "))</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-2">Community Activities</div><div class="col-8">@Html.Raw(ActivitiesCommunity.Trim().Replace(Environment.NewLine, "; "))</div>
-                    </div>
-
-                </div>
-            </fieldset>
-        }
-        
-        @if (props.Contains("Guardians"))
-        {
-            <fieldset class="ibox">
-                <legend class="ibox-legend">Family Income</legend>
-                <div class="ibox-content">
-                    @for (int i = 0; i < Model.Application.Profile.Guardians.Count; i++)
-                    {
-                        var guardian = Model.Application.Profile.Guardians[i];
-
-                        <div class="row">
-                            <div class="col-2">Full Name</div>
-                            <div class="col-3"><u>@guardian.FullName</u></div>
-                            <div class="col-2">Relationship</div>
-                            <div class="col-3"><u>@FormHelper.Relationships.FirstOrDefault(res => res.Id == guardian.Relationship)?.Name</u></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">Occupation</div>
-                            <div class="col-3"><u>@guardian.Occupation</u></div>
-                            <div class="col-2">Employment Status</div>
-                            <div class="col-3"><u>@FormHelper.EmploymentStatus.FirstOrDefault(es => es.Id == guardian.EmploymentStatus)?.Name</u></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-2">Employer</div>
-                            <div class="col-3"><u>@guardian.Employer</u></div>
-                            <div class="col-2">Annual Income</div>
-                            <div class="col-3"><u>@guardian.AnnualIncome.ToString("C")</u></div>
-                        </div>
-
-                        @if (i + 1 < Model.Application.Profile.Guardians.Count)
+            @if (AcademicGroup)
+            {
+                <fieldset class="ibox" style='page-break-inside: avoid'>
+                    <legend class="ibox-legend">Academic Performance</legend>
+                    <div class="ibox-content">
+                        @if ((ClassRank + GPA).Length > 0)
                         {
-                            <hr class="hr-line-dashed"/>
+                            <div class="row">
+                                @if (ClassRank.Length > 0)
+                                {
+                                    <div class="col-2">Class Rank:</div>
+                                    <div class="col-1"><u>@ClassRank</u></div>
+                                }
+
+                                @if (GPA.Length > 0)
+                                {
+                                    <div class="col-1">GPA:</div>
+                                    <div class="col-1"><u>@GPA</u></div>
+                                }
+                            </div>
                         }
+                        @if ((SATScoreReading + SATScoreMath + ACTScore).Length > 0)
+                        {
+                            <div class="row">
+                                @if (SATScoreReading.Length > 0)
+                                {
+                                    <div class="col-2">SAT Reading:</div>
+                                    <div class="col-1"><u>@SATScoreReading</u></div>
+                                }
+
+                                @if (SATScoreMath.Length > 0)
+                                {
+                                    <div class="col-1">SAT Math:</div>
+                                    <div class="col-1"><u>@SATScoreMath</u></div>
+                                }
+
+                                @if (ACTScore.Length > 0)
+                                {
+                                    <div class="col-1">ACT:</div>
+                                    <div class="col-1"><u>@ACTScore</u></div>
+                                }
+                            </div>
                         }
-                </div>
-            </fieldset>
-        }
-    </div>
+                    </div>
+                </fieldset>
+            }
+
+            @if (CollegePlans)
+            {
+                <fieldset class="ibox" style='page-break-inside: avoid'>
+                    <legend class="ibox-legend">College Plans</legend>
+                    <div class="ibox-content">
+                        @if ((CollegeAttending + CollegeIntendedMajor).Length > 0)
+                        {
+                            <div class="row">
+                                @if (CollegeAttending.Length > 0)
+                                {
+                                    <div class="col-2">College you will attend:</div>
+                                    <div class="col-2"><u>@CollegeAttending</u></div>
+                                }
+                                @if (CollegeIntendedMajor.Length > 0)
+                                {
+                                    <div class="col-2">Intended Major:</div>
+                                    <div class="col-2"><u>@CollegeIntendedMajor</u></div>
+                                }
+
+                            </div>
+                        }
+                        @if (FieldOfStudy.Length > 0)
+                        {
+                            <div class="row">
+                                <div class="col-2">General Field of Study:</div>
+                                <div class="col-8"><u>@FieldOfStudy</u></div>
+                            </div>
+                        }
+                        @if ((CollegeAccepted + LivingSituation).Length > 0)
+                        {
+                            <br />
+                            <div class="row">
+                                @if (CollegeAccepted.Length > 0)
+                                {
+                                    <div class="col-2">Have you been accepted:</div>
+                                    <div class="col-2"><u>@CollegeAccepted</u></div>
+                                }
+                                @if (LivingSituation.Length > 0)
+                                {
+                                    <div class="col-2">Will you (<i>live on campus/commute)</i>:</div>
+                                    <div class="col-2"><u>@LivingSituation</u></div>
+                                }
+                            </div>
+                        }
+                        @if (TuitionYearly.Length > 0)
+                        {
+                            <br />
+                            <div class="row">
+                                <div class="col-2">Tuition (cost per year):</div>
+                                <div class="col-2"><u>@TuitionYearly</u></div>
+                            </div>
+                        }
+                        @if (RoomBoard.Length > 0)
+                        {
+                            <div class="row">
+                                <div class="col-2">Room & Board:</div>
+                                <div class="col-2"><u>@RoomBoard</u></div>
+                            </div>
+                        }
+
+                        @if (TuitionTotal.Length > 0)
+                        {
+                            <div class="row">
+                                <div class="col-2">Total Tuition:</div>
+                                <div class="col-2"><u>@TuitionTotal</u></div>
+                            </div>
+                        }
+
+                        @if (OtherColleges.Length > 0)
+                        {
+                            <div class="row">
+                                <div class="col-2">Other Colleges Under Consideration:</div>
+                                <div class="col-8">@OtherColleges.Trim().Replace(Environment.NewLine, "; ")</div>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+             }
+
+            @if (OtherAid.Length > 0)
+            {
+                <fieldset class="ibox">
+                    <legend class="ibox-legend">Other Aid</legend>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-8">@Html.Raw(OtherAid)</div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            }
+
+            @if (SpecialCircumstances.Length > 0)
+            {
+                <fieldset class="ibox" style='page-break-inside: avoid'>
+                    <legend class="ibox-legend">Special Circumstances</legend>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-8">@Html.Raw(SpecialCircumstances)</div>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+
+            @if ((ActivitiesSchool + ActivitiesCommunity + SchoolOffices).Length > 0)
+            {
+                <fieldset class="ibox" style='page-break-inside: avoid'>
+                    <legend class="ibox-legend">Extracurricular Activities</legend>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-2">School Activities</div><div class="col-8">@Html.Raw(ActivitiesSchool.Trim().Replace(Environment.NewLine, "; "))</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">Community Activities</div><div class="col-8">@Html.Raw(ActivitiesCommunity.Trim().Replace(Environment.NewLine, "; "))</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-2">School Offices and Awards</div><div class="col-8">@Html.Raw(SchoolOffices.Trim().Replace(Environment.NewLine, "; "))</div>
+                        </div>
+
+                    </div>
+                </fieldset>
+            }
+            
+            @if (props.Contains("Guardians"))
+            {
+                <fieldset class="ibox" style='page-break-inside: avoid'>
+                    <legend class="ibox-legend">Family Income</legend>
+                    <div class="ibox-content">
+                        @for (int i = 0; i < Model.Application.Profile.Guardians.Count; i++)
+                        {
+                            var guardian = Model.Application.Profile.Guardians[i];
+
+                            <div class="row">
+                                <div class="col-2">Full Name</div>
+                                <div class="col-3"><u>@guardian.FullName</u></div>
+                                <div class="col-2">Relationship</div>
+                                <div class="col-3"><u>@FormHelper.Relationships.FirstOrDefault(res => res.Id == guardian.Relationship)?.Name</u></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">Occupation</div>
+                                <div class="col-3"><u>@guardian.Occupation</u></div>
+                                <div class="col-2">Employment Status</div>
+                                <div class="col-3"><u>@FormHelper.EmploymentStatus.FirstOrDefault(es => es.Id == guardian.EmploymentStatus)?.Name</u></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">Employer</div>
+                                <div class="col-3"><u>@guardian.Employer</u></div>
+                                <div class="col-2">Annual Income</div>
+                                <div class="col-3"><u>@guardian.AnnualIncome.ToString("C")</u></div>
+                            </div>
+
+                            @if (i + 1 < Model.Application.Profile.Guardians.Count)
+                            {
+                                <hr class="hr-line-dashed"/>
+                            }
+                            }
+                    </div>
+                </fieldset>
+            }
+        </div>
 
 <!--
 Guardians

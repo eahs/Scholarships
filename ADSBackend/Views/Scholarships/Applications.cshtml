@@ -5,7 +5,7 @@
         <a asp-controller="Admin" asp-action="Index">Home</a>
     </li>
     <li class="breadcrumb-item">
-        <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+        <a asp-controller="Scholarships" asp-action="Manage">Scholarships</a>
     </li>
     <li class="breadcrumb-item active">
         <strong>@Model.Scholarship.Name Applications</strong>
@@ -14,7 +14,7 @@
 
 <h2>Applications</h2>
 <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
-    <button class="btn btn-primary" onclick="createPackage()"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
+    <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
 </div>
 <div class="ibox">
     <div class="ibox-content">
@@ -58,16 +58,25 @@
 @section Scripts {
     <script type="text/javascript">
 
-        function createPackage() {
+        function createPackage(createNew) {
 
             $.ajax({
                 type: "GET",
-                url: "/Scholarships/ApplicationPackageGenerate/@Model.Scholarship.ScholarshipId?trigger=true",
+                url: "/Scholarships/ApplicationPackageGenerate/@Model.Scholarship.ScholarshipId" +
+                    (createNew ? "?trigger=true" : ""),
                 dataType: "json"
             }).done(function(response, textStatus, jqXHR) {
-                $("#packageStatus").html(response.message);
-            })
-        };
+
+                if (response.message !== "Completed") {
+                    setTimeout(function() { createPackage(false); }, 2000);
+                }
+                var msg = response.message;
+                if (response.message === "Completed")
+                    msg += "<br><a href='/Scholarships/ApplicationPackageDownload/" + response.job.jobId + "'>Download</a>";
+                $("#packageStatus").html(msg);
+
+            });
+        }
 
         $.ajax({
             type: "GET",

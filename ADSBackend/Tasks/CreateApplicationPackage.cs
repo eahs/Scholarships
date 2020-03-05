@@ -80,6 +80,10 @@ namespace Scholarships.Tasks
 
             if (job != null)
             {
+                // Load in the profile picture mask
+                PdfDocument pdfTranscriptPhotoOverlay = new PdfDocument("transcript_photo_mask.pdf");
+                PdfDocument pdfTranscriptNameOverlay = new PdfDocument("transcript_name_mask.pdf");
+
                 job.Completed = true;
                 job.Started = DateTime.Now;
                 job.StatusMessage = "Running";
@@ -254,8 +258,19 @@ namespace Scholarships.Tasks
 
                             if (File.Exists(transcriptSavePath))
                             {
+                                var props = scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyKey).ToList();
+
                                 // TODO: Merge in PDF at transcriptSavePath
                                 PdfDocument pdfAttach = new PdfDocument(transcriptSavePath);
+
+                                // Add an overlay on top of the transcript to hide the photo
+                                pdfAttach.AddForegroundOverlayPdfToPage(0, pdfTranscriptPhotoOverlay);
+
+                                if (!props.Contains("LastName"))
+                                {
+                                    // Add an overlay on top of the transcript to hide the student name
+                                    pdfAttach.AddForegroundOverlayPdfToPage(0, pdfTranscriptNameOverlay);
+                                }
 
                                 doc.AppendPdf(pdfAttach);
                             }

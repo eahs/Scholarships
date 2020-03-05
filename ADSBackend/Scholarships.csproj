@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-Scholarships-1B78AC81-4275-4FD0-A978-4F04A644F2AC</UserSecretsId>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-    <Version>1.0.0.234</Version>
+    <Version>1.0.0.246</Version>
     <Configurations>Debug;Release</Configurations>	
   </PropertyGroup>
 
@@ -67,6 +67,15 @@
 
   <ItemGroup>
     <Folder Include="App_Data\Jobs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="transcript_name_mask.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="transcript_photo_mask.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
