@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using IronPdf;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Scholarships.Models;
 using Scholarships.Models.Forms;
 using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Services;
 using Scholarships.Util;
+using Serilog.Core;
 
 namespace Scholarships.Tasks
 {
@@ -134,15 +136,38 @@ namespace Scholarships.Tasks
                     ApplicationPageViewModel applicationPage = new ApplicationPageViewModel();
 
                     // First render the core general profile
-                    applicationPage.BasicProfile = await _viewRenderService.RenderToStringAsync("_scholarshipapplicationpartial", vm, "scholarships");
+                    try
+                    {
+                        applicationPage.BasicProfile =
+                            await _viewRenderService.RenderToStringAsync("_scholarshipapplicationpartial", vm,
+                                "scholarships");
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Unable to render scholarship application partial when creating Application Package");
+                    }
 
                     // Next render any additional questions that were provided
                     if (qset.Questions?.Count > 0)
                     {
-                        // TODO: Render answers to questions
-                        applicationPage.FormAnswers =
-                            await _viewRenderService.RenderToStringAsync("questionsetappviewpartial", vm.QuestionSet,
-                                "answergroup");
+                        // Render answers to questions
+                        try
+                        {
+                            applicationPage.FormAnswers =
+                                await _viewRenderService.RenderToStringAsync("questionsetappviewpartial", vm.QuestionSet,
+                                    "answergroup");
+
+                        }
+                        catch (Exception e)
+                        {
+                            var serqset = JsonConvert.SerializeObject(vm.QuestionSet, Formatting.Indented, new JsonSerializerSettings
+                            {
+                                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                            });
+
+                            Log.Error(e, "Unable to render answers to questions for application #{0} of scholarship Id {1}", app.ApplicationId, scholarship.ScholarshipId);
+                            Log.Information("Serialized Question Set: {0}", serqset);
+                        }
                     }
 
                     string finalApplication =
@@ -162,36 +187,49 @@ namespace Scholarships.Tasks
 
                             if (answer.FileAttachmentGroup.FileAttachments != null)
                             {
-                                foreach (var file in answer.FileAttachmentGroup.FileAttachments)
+                                string lastFileTried = ""; // In case of error
+
+                                try
                                 {
-                                    var filePath = System.IO.Path.Combine(Configuration.ConfigPath.AttachmentPath,
-                                        file.FileSubPath,
-                                        file.SecureFileName);
-
-                                    if (file.ContentType == "application/pdf")
+                                    foreach (var file in answer.FileAttachmentGroup.FileAttachments)
                                     {
-                                        if (File.Exists(filePath))
-                                        {
-                                            PdfDocument pdfAttach = new PdfDocument(filePath);
+                                        var filePath = System.IO.Path.Combine(Configuration.ConfigPath.AttachmentPath,
+                                            file.FileSubPath,
+                                            file.SecureFileName);
 
-                                            doc.AppendPdf(pdfAttach);
+                                        lastFileTried = filePath;
+
+                                        if (file.ContentType == "application/pdf")
+                                        {
+                                            if (File.Exists(filePath))
+                                            {
+                                                PdfDocument pdfAttach = new PdfDocument(filePath);
+
+                                                doc.AppendPdf(pdfAttach);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (File.Exists(filePath))
+                                            {
+                                                var subpath = Path.Combine(Configuration.ConfigPath.AttachmentPath,
+                                                    file.FileSubPath);
+                                                var fullpath = Path.GetFullPath(subpath);
+
+                                                var html =
+                                                    "<html style='width:100%;height:100%'><body style='width:100%;height:100%'><img style='max-width: 100%; max-height: 100vh; height: auto;' src='" +
+                                                    file.SecureFileName + "'></body></html>";
+                                                var pdfImage = Renderer.RenderHtmlAsPdf(html, fullpath);
+
+                                                doc.AppendPdf(pdfImage);
+
+                                            }
                                         }
                                     }
-                                    else
-                                    {
-                                        if (File.Exists(filePath))
-                                        {
-                                            var subpath = Path.Combine(Configuration.ConfigPath.AttachmentPath,
-                                                file.FileSubPath);
-                                            var fullpath = Path.GetFullPath(subpath);
-
-                                            var html = "<html style='width:100%;height:100%'><body style='width:100%;height:100%'><img style='max-width: 100%; max-height: 100vh; height: auto;' src='" + file.SecureFileName + "'></body></html>";
-                                            var pdfImage = Renderer.RenderHtmlAsPdf(html, fullpath);
-
-                                            doc.AppendPdf(pdfImage);
-                                            
-                                        }
-                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Log.Error(e, "Unable to fully render attachments to pdf file - Last tried is '{0}'", lastFileTried);
                                 }
                             }
                         }
@@ -199,25 +237,33 @@ namespace Scholarships.Tasks
 
 
                     // Last attach transcripts if requested
-                    if (scholarship.TranscriptsRequired)
+                    try
                     {
-                        // TODO: Attach transcripts
-
-                        int schoolYear = scholarship.PublishedDate.Year;
-                        int currentMonth = scholarship.PublishedDate.Month;
-                        if (currentMonth > 7)
-                            schoolYear++;
-
-                        string transcriptProcessPath = Path.Combine(transcriptPath, schoolYear + "");
-                        string transcriptSavePath = Path.Combine(transcriptProcessPath, app.Profile.StudentId + ".pdf");
-
-                        if (File.Exists(transcriptSavePath))
+                        if (scholarship.TranscriptsRequired)
                         {
-                            // TODO: Merge in PDF at transcriptSavePath
-                            PdfDocument pdfAttach = new PdfDocument(transcriptSavePath);
+                            // TODO: Attach transcripts
 
-                            doc.AppendPdf(pdfAttach);
+                            int schoolYear = scholarship.PublishedDate.Year;
+                            int currentMonth = scholarship.PublishedDate.Month;
+                            if (currentMonth > 7)
+                                schoolYear++;
+
+                            string transcriptProcessPath = Path.Combine(transcriptPath, schoolYear + "");
+                            string transcriptSavePath =
+                                Path.Combine(transcriptProcessPath, app.Profile.StudentId + ".pdf");
+
+                            if (File.Exists(transcriptSavePath))
+                            {
+                                // TODO: Merge in PDF at transcriptSavePath
+                                PdfDocument pdfAttach = new PdfDocument(transcriptSavePath);
+
+                                doc.AppendPdf(pdfAttach);
+                            }
                         }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e, "Unable to attach transcript to application package");
                     }
                 }
 
@@ -229,55 +275,6 @@ namespace Scholarships.Tasks
                 _context.SaveChanges();
 
             }
-
-
-            /*
-            string transcriptSourcePath = Path.Combine(transcriptPath, "transcripts.pdf");
-
-            if (!File.Exists(transcriptSourcePath))
-            {
-                Log.Error("Executing GenerateTranscripts - Unable to find transcripts.pdf");
-                return;
-            }
-            */
-
-            // Calculate the current graduating year for seniors
-            /*
-            int schoolYear = DateTime.Now.Year;
-            int currentMonth = DateTime.Now.Month;
-            if (currentMonth > 7)
-                schoolYear++;
-
-            string transcriptProcessPath = Path.Combine(transcriptPath, schoolYear + "");
-            Directory.CreateDirectory(transcriptProcessPath);
-
-            PdfDocument PDF = null;
-
-            try
-            {
-                PDF = PdfDocument.FromFile(transcriptSourcePath);
-            }
-            catch (Exception e)
-            {
-                Log.Error(e, "Unable to open transcripts pdf");
-                return;
-            }
-            */
-
-            /*
-                PdfDocument transcript = PDF.CopyPages(studentIndex[id]);
-
-                string transcriptSavePath = Path.Combine(transcriptProcessPath, id + ".pdf");
-
-                try
-                {
-                    transcript.SaveAs(transcriptSavePath);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e, "Unable to save pdf file: {0}", transcriptSavePath);
-                }
-            */
 
             Log.Information("Ending creation of application package");
         }

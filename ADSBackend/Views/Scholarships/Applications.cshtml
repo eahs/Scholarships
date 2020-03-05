@@ -73,8 +73,11 @@
             type: "GET",
             url: "/Scholarships/ApplicationPackageGenerate/@Model.Scholarship.ScholarshipId",
             dataType: "json"
-        }).done(function(response, textStatus, jqXHR) {
-            $("#packageStatus").html(response.message);
+        }).done(function (response, textStatus, jqXHR) {
+            var msg = response.message;
+            if (response.message === "Completed")
+                msg += "<br><a href='/Scholarships/ApplicationPackageDownload/" + response.job.jobId + "'>Download</a>";
+            $("#packageStatus").html(msg);
         })
 
     </script>

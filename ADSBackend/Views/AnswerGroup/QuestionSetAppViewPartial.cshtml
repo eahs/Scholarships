@@ -21,6 +21,15 @@
                     {
                         var question = Model.Questions[i];
 
+                        if (question == null)
+                        {
+                            continue;
+                        }
+                        if (question.Name == null)
+                        {
+                            question.Name = "";
+                        }
+
                         // Do we have an answer to this question?
                         question.Answer = answerset.Answers.FirstOrDefault(a => a.QuestionId == question.QuestionId);
                         question.Index = i;

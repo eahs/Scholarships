@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -26,11 +27,13 @@ namespace Scholarships.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
+        private readonly Services.Configuration Configuration;
 
-        public ScholarshipsController(ApplicationDbContext context, DataService dataService)
+        public ScholarshipsController(ApplicationDbContext context, DataService dataService, Services.Configuration configurationService)
         {
             _context = context;
             _dataService = dataService;
+            Configuration = configurationService;
         }
 
         private async Task<ScholarshipListViewModel> FetchScholarships(ScholarshipListViewModel vm = null)
@@ -273,7 +276,6 @@ namespace Scholarships.Controllers
         public async Task<object> ApplicationPackageGenerate(int? id, bool trigger = false) // id = ScholarshipId
         {
             var statusMessage = "Running";
-            var lastjoburl = "";
 
             if (id == null)
                 return new { error = true, message = "Scholarship Id not specified" };
@@ -338,6 +340,30 @@ namespace Scholarships.Controllers
                 message = statusMessage,
                 job
             };
+
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> ApplicationPackageDownload(int id)  // id = job id
+        {
+            var job = await _context.Job.FirstOrDefaultAsync(x => x.JobId == id);
+
+            if (job == null || job.StatusMessage != "Completed")
+                return NotFound();
+
+            var filePath = System.IO.Path.Combine(Configuration.ConfigPath.JobOutputPath,
+                "job" + job.JobId + ".pdf");
+
+            try
+            {
+                var stream = new FileStream(filePath, FileMode.Open);
+                return new FileStreamResult(stream, "application/pdf");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Error downloading file: {0}", filePath);
+                return NotFound();
+            }
 
         }
 
