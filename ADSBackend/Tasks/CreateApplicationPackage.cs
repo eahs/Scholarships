@@ -111,7 +111,7 @@ namespace Scholarships.Tasks
                 Renderer.PrintOptions.CssMediaType = PdfPrintOptions.PdfCssMediaType.Screen;
                 Renderer.PrintOptions.DPI = 300;
                 Renderer.PrintOptions.FitToPaperWidth = true;
-                Renderer.PrintOptions.JpegQuality = 80;
+                Renderer.PrintOptions.JpegQuality = 90;
                 Renderer.PrintOptions.GrayScale = false;
                 Renderer.PrintOptions.FitToPaperWidth = true;
                 Renderer.PrintOptions.InputEncoding = Encoding.UTF8;
@@ -121,10 +121,11 @@ namespace Scholarships.Tasks
                 Renderer.PrintOptions.MarginLeft = 20;  //millimeters
                 Renderer.PrintOptions.MarginRight = 20;  //millimeters
                 Renderer.PrintOptions.MarginBottom = 40;  //millimeters
-                Renderer.PrintOptions.FirstPageNumber = 1; //use 2 if a coverpage  will be appended
+                Renderer.PrintOptions.FirstPageNumber = 2; //use 2 if a coverpage  will be appended
 
-                PdfDocument doc = Renderer.RenderHtmlAsPdf("");
-                doc.RemovePage(0);
+                var coverpage = await _viewRenderService.RenderToStringAsync("_scholarshipcoverpagepartial", scholarship, "scholarships");
+
+                PdfDocument doc = Renderer.RenderHtmlAsPdf(coverpage);
 
                 foreach (var app in applications)
                 {
@@ -281,6 +282,12 @@ namespace Scholarships.Tasks
                         Log.Error(e, "Unable to attach transcript to application package");
                     }
                 }
+
+                doc.AddFooters(new SimpleHeaderFooter
+                {
+                    RightText = "Page {page} of {total-pages}",
+                    FontSize = 10
+                }, true);
 
                 doc.SaveAs(joboutputPath);
 
