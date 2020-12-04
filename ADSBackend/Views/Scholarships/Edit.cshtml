@@ -30,6 +30,7 @@
         <div style="float: right" id="saveMessage"></div>
 
         <a asp-controller="QuestionSet" asp-action="Edit" asp-route-id="@Model.QuestionSetId" asp-all-route-data="questionSetParameters" class="btn btn-success btn-lg">Modify Attached Questions</a>
+        <button class="dupe btn btn-warning btn-lg">Make a Copy</button>
     </div>
     <div class="ibox-content">
         <div class="row">
@@ -41,6 +42,16 @@
                         <label class="form-check-label">
                             <input class="form-check-input" asp-for="Published" /> @Html.DisplayNameFor(model => model.Published)
                         </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" id="Description" class="summernote"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label class="control-label" style="width: 100%">Categories</label>
@@ -83,16 +94,6 @@
                         <label asp-for="SponsorEmail" class="control-label"></label>
                         <input asp-for="SponsorEmail" class="form-control" />
                         <span asp-validation-for="SponsorEmail" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <textarea asp-for="Description" id="Description" class="summernote"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Eligibility" class="control-label"></label>
@@ -171,7 +172,7 @@
     <link href="~/lib/bootstrap-datepicker/dist/css/datepicker3.css" rel="stylesheet" />
     <link href="~/lib/jasny-bootstrap/dist/css/jasny-bootstrap.css" rel="stylesheet" />
     <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
-    <link href="~/lib/bootstrap-duallistbox/bootstrap-duallistbox.min.css" rel="stylesheet"/>
+    <link href="~/lib/bootstrap-duallistbox/bootstrap-duallistbox.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 
     <style type="text/css">
@@ -231,21 +232,41 @@
             });
             */
             $(".fos").select2({
-                  tags: true,
-                  createTag: function (params) {
+                tags: true,
+                createTag: function (params) {
                     // Don't offset to create a tag if there is no at symbol
                     if (params.term.indexOf('@@') === -1) {
-                      // Return null to disable tag creation
-                      return null;
+                        // Return null to disable tag creation
+                        return null;
                     }
 
                     return {
-                      id: params.term,
-                      text: params.term
+                        id: params.term,
+                        text: params.term
                     }
-                  }
+                }
             }
             );
+
+            $('.dupe').click(function () {
+                swal({
+                    title: "Are you sure?",
+                    text: "By clicking the OK button you will make a brand new copy of this existing scholarship.",
+                    showCancelButton: true,
+                    icon: "warning",
+                    buttons: true,
+                    closeOnConfirm: false,
+                    dangerMode: true
+                }).then((willCopy) => {
+                    if (willCopy) {
+                        swal("A copy has been made.  You will now be redirected to the editing page for that scholarship.", {
+                            icon: "success",
+                            buttons: false
+                        });
+                        $(location).attr("href", "/Scholarships/Duplicate/@Model.ScholarshipId");
+                    }
+                });;
+            });
 
             $('.dual_select').bootstrapDualListbox({
                 selectorMinimalHeight: 160

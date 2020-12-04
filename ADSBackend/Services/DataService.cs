@@ -477,6 +477,136 @@ namespace Scholarships.Services
             return apps ?? new List<Application>();
         }
 
+        public async Task<Scholarship> DuplicateScholarshipAsync (int scholarshipId)
+        {
+            Scholarship scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
+                                                                 .ThenInclude(fos => fos.FieldOfStudy)
+                                                                 .Include(p => p.ProfileProperties).ThenInclude(prop => prop.ProfileProperty)
+                                                                 .Include(p => p.Categories)
+                                                                 .FirstOrDefaultAsync(s => s.ScholarshipId == scholarshipId);
+
+            if (scholarship == null)
+                return null;
+
+            QuestionSet qset = await GetQuestionSet(scholarship.QuestionSetId);
+
+            // First duplicate the existing question set
+            QuestionSet _qset = new QuestionSet
+            {
+                Name = qset.Name ?? "",
+                Description = qset.Description ?? "",
+                SingularName = qset.SingularName ?? "",
+                PluralName = qset.PluralName ?? "",
+                AllowMultiple = qset.AllowMultiple,
+                Questions = qset.Questions.Select(q => new Question
+                {
+                    Type = q.Type,
+                    Order = q.Order,
+                    Name = q.Name,
+                    Description = q.Description,
+                    Config = q.Config,
+                    Required = q.Required,
+                    ErrorMessage = q.ErrorMessage,
+                    Options = q.Options.Select(opt => new QuestionOption
+                    {
+                        Order = opt.Order,
+                        Name = opt.Name
+                    }).ToList()
+                }).ToList()
+            };
+
+            _context.Add(_qset);
+            await _context.SaveChangesAsync();
+
+
+            int schoolYear = DateTime.Now.Year;
+            int currentMonth = DateTime.Now.Month;
+            if (currentMonth > 7)
+                schoolYear++;
+
+            DateTime newReleaseDate = DateTime.IsLeapYear(scholarship.ReleaseDate.Year) ? new DateTime(schoolYear, scholarship.ReleaseDate.Month, scholarship.ReleaseDate.Day - 1) :
+                                                                                          new DateTime(schoolYear, scholarship.ReleaseDate.Month, scholarship.ReleaseDate.Day);
+
+            DateTime newDueDate = DateTime.IsLeapYear(scholarship.DueDate.Year) ? new DateTime(schoolYear, scholarship.DueDate.Month, scholarship.DueDate.Day - 1) :
+                                                                                  new DateTime(schoolYear, scholarship.DueDate.Month, scholarship.DueDate.Day);
+
+
+            Scholarship _scholarship = new Scholarship
+            {
+                QuestionSetId = _qset.QuestionSetId,
+                SponsorCompany = scholarship.SponsorCompany ?? "",
+                SponsorName = scholarship.SponsorName ?? "",
+                SponsorAddress1 = scholarship.SponsorAddress1 ?? "",
+                SponsorAddress2 = scholarship.SponsorAddress2 ?? "",
+                SponsorPhone = scholarship.SponsorPhone ?? "",
+                SponsorEmail = scholarship.SponsorEmail ?? "",
+                Name = scholarship.Name + " (Copy)" ?? "Duplicated Scholarship",
+                Description = scholarship.Description ?? "",
+                Eligibility = scholarship.Eligibility ?? "",
+                Standards = scholarship.Standards ?? "",
+                Amount = scholarship.Amount ?? "",
+                ApplicationInstructions = scholarship.ApplicationInstructions ?? "",
+                ApplyOnline = scholarship.ApplyOnline,
+                TranscriptsRequired = scholarship.TranscriptsRequired,
+                ReleaseDate = newReleaseDate,
+                DueDate = newDueDate,
+                DistrictMaintained = scholarship.DistrictMaintained,
+                NumberOfYears = scholarship.NumberOfYears,
+                IncomeVerificationRequired = scholarship.IncomeVerificationRequired,
+                Published = false
+            };
+
+
+            _context.Scholarship.Add(_scholarship);
+
+            await _context.SaveChangesAsync();
+
+            // Now that the scholarship is duplicated, let's add back in all the categories, etc. it had
+            if (scholarship.FieldsOfStudy?.Count > 0)
+            {
+                // Add new fields of study
+                var newFieldsOfStudy = scholarship.FieldsOfStudy.Select(x => new ScholarshipFieldOfStudy
+                {
+                    ScholarshipId = _scholarship.ScholarshipId,
+                    FieldOfStudyId = x.FieldOfStudyId
+                });
+                if (newFieldsOfStudy != null)
+                    _context.ScholarshipFieldOfStudy.AddRange(newFieldsOfStudy);
+
+                await _context.SaveChangesAsync();
+            }
+
+            if (scholarship.ProfileProperties?.Count > 0)
+            {
+                // Add new profile properties
+                var newProfileProperties = scholarship.ProfileProperties.Select(x => new ScholarshipProfileProperty
+                {
+                    ScholarshipId = _scholarship.ScholarshipId,
+                    ProfilePropertyId = x.ProfilePropertyId
+                });
+                if (newProfileProperties != null)
+                    _context.ScholarshipProfileProperty.AddRange(newProfileProperties);
+
+                await _context.SaveChangesAsync();
+            }
+
+            if (scholarship.Categories?.Count > 0)
+            {
+                // Add new categories
+                var newCategories = scholarship.Categories.Select(x => new ScholarshipCategory
+                {
+                    ScholarshipId = _scholarship.ScholarshipId,
+                    CategoryId = x.CategoryId
+                });
+                if (newCategories != null)
+                    _context.ScholarshipCategory.AddRange(newCategories);
+                await _context.SaveChangesAsync();
+
+            }
+
+            return _scholarship;
+        }
+
         private static string ProfileFieldToURI (string fieldname)
         {
             return "/Profile/Edit";

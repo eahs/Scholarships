@@ -247,8 +247,8 @@ namespace Scholarships.Tasks
                         {
                             // TODO: Attach transcripts
 
-                            int schoolYear = scholarship.PublishedDate.Year;
-                            int currentMonth = scholarship.PublishedDate.Month;
+                            int schoolYear = scholarship.ReleaseDate.Year;
+                            int currentMonth = scholarship.ReleaseDate.Month;
                             if (currentMonth > 7)
                                 schoolYear++;
 

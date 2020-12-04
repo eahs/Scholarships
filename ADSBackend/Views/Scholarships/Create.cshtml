@@ -33,6 +33,16 @@
                         </label>
                     </div>
                     <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <textarea asp-for="Description" id="Description" class="summernote"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <label class="control-label" style="width: 100%">Categories</label>
                         <select asp-for="CategoryIds" asp-items="ViewBag.Categories" multiple="multiple" class="fos form-control"></select>
                     </div>
@@ -76,16 +86,6 @@
                         <span asp-validation-for="SponsorEmail" class="text-danger"></span>
                     </div>
                     <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <label asp-for="Name" class="control-label"></label>
-                        <input asp-for="Name" class="form-control" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Description" class="control-label"></label>
-                        <textarea asp-for="Description" id="Description" class="summernote"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
                     <div class="form-group">
                         <label asp-for="Eligibility" class="control-label"></label>
                         <textarea asp-for="Eligibility" class="summernote"></textarea>

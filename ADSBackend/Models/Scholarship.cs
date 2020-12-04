@@ -15,6 +15,7 @@ namespace Scholarships.Models
         [DisplayName("Published")] 
         public bool Published { get; set; } = false;
 
+        // Date when scholarship was originally created
         public DateTime PublishedDate { get; set; } = DateTime.Now;
 
         [DisplayName("Sponsor Company")]

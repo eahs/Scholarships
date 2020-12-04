@@ -724,11 +724,19 @@ namespace Scholarships.Controllers
 
             _scholarship.FieldsOfStudyIds = _scholarship.FieldsOfStudy.Select(fos => fos.FieldOfStudyId).ToList();
             _scholarship.ProfilePropertyIds = scholarship.ProfileProperties.Select(prop => prop.ProfilePropertyId).ToList();
-            scholarship.CategoryIds = scholarship.Categories.Select(prop => prop.CategoryId).ToList();
+            _scholarship.CategoryIds = scholarship.Categories.Select(prop => prop.CategoryId).ToList();
 
             await SetupForm(_scholarship.FieldsOfStudyIds, _scholarship.ProfilePropertyIds, _scholarship.CategoryIds);
 
             return View(_scholarship);
+        }
+
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Duplicate(int id)
+        {
+            var _scholarship = await _dataService.DuplicateScholarshipAsync(id);
+
+            return RedirectToAction("Edit", new { id = _scholarship.ScholarshipId });
         }
 
         // GET: Scholarships/Delete/5
