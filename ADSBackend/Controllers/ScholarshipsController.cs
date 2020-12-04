@@ -38,9 +38,14 @@ namespace Scholarships.Controllers
 
         private async Task<ScholarshipListViewModel> FetchScholarships(ScholarshipListViewModel vm = null)
         {
+            // First calculate start of school year so we only fetch scholarships from the current school year
+            int startingYear = DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+            DateTime yearStart = new DateTime(startingYear, 7, 1);
+            DateTime yearEnd = new DateTime(startingYear+1, 7, 1);
+
             // Grab only needed fields
             var scholarships = await _context.Scholarship
-                .Where(s => s.Published && s.ReleaseDate <= DateTime.Now)
+                .Where(s => s.Published && s.ReleaseDate >= yearStart && s.ReleaseDate < yearEnd)
                 .Include(s => s.Categories)
                 .Include(s => s.FieldsOfStudy)
                 .Select(s => new Scholarship
@@ -204,7 +209,7 @@ namespace Scholarships.Controllers
                 ReleaseDate = s.ReleaseDate,
                 ApplicantCount = appsCompleted.ContainsKey(s.ScholarshipId) ? appsCompleted[s.ScholarshipId] : 0,
                 ApplicantPending = appsPending.ContainsKey(s.ScholarshipId) ? appsPending[s.ScholarshipId] : 0
-            }).ToListAsync();
+            }).OrderByDescending(s => s.ReleaseDate).ToListAsync();
 
             return View(scholarships);
         }

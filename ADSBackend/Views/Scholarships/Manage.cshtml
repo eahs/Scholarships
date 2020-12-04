@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Manage Scholarships";
+
+
+    int startingYear = DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+    DateTime yearStart = new DateTime(startingYear, 7, 1);
+    DateTime yearEnd = new DateTime(startingYear + 1, 7, 1);
+
 }
 
 <ol class="breadcrumb">
@@ -13,13 +19,23 @@
     </li>
 </ol>
 
-<h2>Scholarships</h2>
+<div class="row">
+    <div class="col-lg-8"><span style="margin-top: 5px; margin-bottom: 5px; font-size: 1.7em">Scholarships</span></div>
+    <div class="col-lg-3" style="text-align: right;">
+        <div style="margin-top: 10px">Show Current School Year Only?</div>
+    </div>
+    <div class="col-lg-1">
+        <div style="margin: 5px">
+            <input type="checkbox" class="js-switch" checked />
+        </div>
+    </div>
+</div>
 <div class="ibox">
     <div class="ibox-title"><a asp-action="Create" class="btn btn-w-m btn-primary">Create New</a></div>
     <div class="ibox-content">
-        
 
-        <table class="table">
+
+        <table class="table" id="scholarships">
             <thead>
                 <tr>
                     <th style="width: 40%">
@@ -43,34 +59,96 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                <tr>
-                    <td style="vertical-align: middle">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </td>
-                    <td style="vertical-align: middle" class="text-center">
-                        @item.ApplicantPending
-                    </td>
-                    <td style="vertical-align: middle" class="text-center">
-                        @item.ApplicantCount
-                    </td>
-                    <td style="vertical-align: middle">
-                        @Html.DisplayFor(modelItem => item.ReleaseDate)
-                    </td>
-                    <td style="vertical-align: middle">
-                        @Html.DisplayFor(modelItem => item.DueDate)
-                    </td>
+                    <tr>
+                        <td style="vertical-align: middle">
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td style="vertical-align: middle" class="text-center">
+                            @item.ApplicantPending
+                        </td>
+                        <td style="vertical-align: middle" class="text-center">
+                            @item.ApplicantCount
+                        </td>
+                        <td style="vertical-align: middle">
+                            @Html.DisplayFor(modelItem => item.ReleaseDate)
+                        </td>
+                        <td style="vertical-align: middle">
+                            @Html.DisplayFor(modelItem => item.DueDate)
+                        </td>
 
-                    <td style="vertical-align: middle; white-space: nowrap">
-                        <a class="btn btn-white btn-bitbucket" asp-action="Edit" asp-route-id="@item.ScholarshipId"><i class="fa fa-wrench"></i> Edit</a>
-                        <a class="btn btn-white btn-bitbucket" asp-action="Applications" asp-route-id="@item.ScholarshipId"><i class="fa fa-id-card-o"></i> View Applications</a>
-                        <a class="btn btn-white btn-bitbucket" asp-action="Details" asp-route-id="@item.ScholarshipId"><i class="fa fa-info"></i> Details</a>
-                        <a class="btn btn-white btn-bitbucket" asp-action="Delete" asp-route-id="@item.ScholarshipId"><i class="fa fa-trash"></i> Delete</a>
+                        <td style="vertical-align: middle; white-space: nowrap">
+                            <a class="btn btn-white btn-bitbucket" asp-action="Edit" asp-route-id="@item.ScholarshipId"><i class="fa fa-wrench"></i> Edit</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Applications" asp-route-id="@item.ScholarshipId"><i class="fa fa-id-card-o"></i> View Applications</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Details" asp-route-id="@item.ScholarshipId"><i class="fa fa-info"></i> Details</a>
+                            <a class="btn btn-white btn-bitbucket" asp-action="Delete" asp-route-id="@item.ScholarshipId"><i class="fa fa-trash"></i> Delete</a>
 
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
 
     </div>
 </div>
+
+@section Styles {
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-html5-1.6.1/b-print-1.6.1/r-2.2.3/datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/switchery/switchery.css" />
+
+}
+
+@section Scripts {
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-html5-1.6.1/b-print-1.6.1/r-2.2.3/datatables.min.js"></script>
+    <script type="text/javascript" src="~/lib/switchery/switchery.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var yearSwitch = document.querySelector('.js-switch');
+            var switchery = new Switchery(yearSwitch, { color: '#1AB394' });
+            yearSwitch.onchange = function () {
+//                alert(elem.checked);
+                table.draw();
+            };
+
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+
+                    var startingDate = Date.parse("@yearStart");
+                    var endingDate = Date.parse("@yearEnd");
+                    var releaseDate = Date.parse(data[3]);
+
+                    if (yearSwitch.checked) {
+                        if (releaseDate < startingDate || releaseDate >= endingDate)
+                            return false;
+                    }
+
+                    return true;
+                }
+            );
+
+            var table = $('#scholarships').DataTable(
+                {
+                    columnDefs: [
+                        {
+                            targets: [3],
+                            type: "date"
+                        },
+                        {
+                            targets: [4],
+                            type: "date"
+                        }
+                    ],
+                    pageLength: 10,
+                    responsive: true,
+                    order: [[3, "desc"]]
+                }
+            );
+
+        });
+    </script>
+}
