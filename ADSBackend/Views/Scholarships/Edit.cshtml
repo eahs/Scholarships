@@ -38,10 +38,13 @@
                 <form asp-action="Edit" id="ScholarshipEdit">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="ScholarshipId" />
-                    <div class="form-group form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" asp-for="Published" /> @Html.DisplayNameFor(model => model.Published)
+                    <div class="form-group">
+                        <label class="control-label">
+                            @Html.DisplayNameFor(model => model.Published)
                         </label>
+                        <span style="margin-left: 25px">
+                            <input class="js-switch form-control" asp-for="Published" />
+                        </span>
                     </div>
                     <div class="form-group">
                         <label asp-for="Name" class="control-label"></label>
@@ -174,6 +177,7 @@
     <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
     <link href="~/lib/bootstrap-duallistbox/bootstrap-duallistbox.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/switchery/switchery.css" />
 
     <style type="text/css">
     </style>
@@ -187,6 +191,7 @@
     <script src="~/lib/summernote/summernote-bs4.min.js"></script>
     <script src="~/lib/bootstrap-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+    <script type="text/javascript" src="~/lib/switchery/switchery.js"></script>
 
     <script type="text/javascript">
 
@@ -231,6 +236,9 @@
                 saveForm('#ScholarshipEdit');
             });
             */
+            var Switch = document.querySelector('.js-switch');
+            var switchery = new Switchery(Switch, { color: '#1AB394' });
+
             $(".fos").select2({
                 tags: true,
                 createTag: function (params) {
