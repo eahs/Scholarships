@@ -31,5 +31,6 @@ namespace Scholarships.Models
         public bool ApplicantAwarded { get; set; } = false;  // This applicant was awarded the scholarship
         public DateTime ApplicantAwardDate { get; set; }  // Date applicant was awarded scholarship
         public bool ApplicantFavorite { get; set; }   // This applicant is a top applicant
+        public string ApplicantNotes { get; set; }  // Any notes about the applicant
     }
 }

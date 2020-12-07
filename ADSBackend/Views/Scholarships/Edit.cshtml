@@ -38,7 +38,7 @@
                 <form asp-action="Edit" id="ScholarshipEdit">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <input type="hidden" asp-for="ScholarshipId" />
-                    <div class="form-group">
+                    <div class="form-group" id="published_container" style="display: none">
                         <label class="control-label">
                             @Html.DisplayNameFor(model => model.Published)
                         </label>
@@ -238,6 +238,8 @@
             */
             var Switch = document.querySelector('.js-switch');
             var switchery = new Switchery(Switch, { color: '#1AB394' });
+
+            $("#published_container").slideDown(500);
 
             $(".fos").select2({
                 tags: true,

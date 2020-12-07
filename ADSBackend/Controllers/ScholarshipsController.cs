@@ -265,6 +265,7 @@ namespace Scholarships.Controllers
 
             List<Application> applications = await _context.Application.Include(ap => ap.Profile)
                                                                        .Where(s => s.ScholarshipId == id && s.Submitted)
+                                                                       .OrderBy(s => s.ApplicantAwarded).ThenBy(s => s.ApplicantScore).ThenBy(s => s.Profile.LastName).ThenBy(s => s.Profile.FirstName)
                                                                        .ToListAsync();
 
             ApplicationViewModel vm = new ApplicationViewModel
@@ -274,6 +275,53 @@ namespace Scholarships.Controllers
             };
 
             return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]      
+        public async Task<IActionResult> ToggleFavoriteApplication(int? id, bool state)
+        {
+            if (id == null)
+                return Ok(new { Result = "NotFound" });
+
+            var app = await _context.Application.FirstOrDefaultAsync(s => s.ApplicationId == (int)id);
+
+            if (app == null)
+                return Ok(new { Result = "NotFound" });
+
+            if (state != app.ApplicantFavorite)
+            {
+                app.ApplicantFavorite = state;
+                _context.Application.Update(app);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Manager")]
+        [Produces("application/json")]
+        public async Task<object> UpdateApplicationNotes(int? id, Application _app)
+        {
+            if (id == null)
+                return new { Result = "NotFound" };
+
+            var app = await _context.Application.FirstOrDefaultAsync(s => s.ApplicationId == (int)id);
+
+            if (app == null)
+                return new { Result = "NotFound" };
+
+            app.ApplicantScore = Math.Clamp(_app.ApplicantScore, 0, 100);
+            app.ApplicantAwarded = _app.ApplicantAwarded;
+            app.ApplicantNotes = _app.ApplicantNotes ?? "";
+
+            _context.Application.Update(app);
+            await _context.SaveChangesAsync();
+
+            return new { Result = "Completed" };
         }
 
         [Authorize(Roles = "Admin,Manager")]

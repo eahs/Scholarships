@@ -5,17 +5,153 @@
         <a asp-controller="Admin" asp-action="Index">Home</a>
     </li>
     <li class="breadcrumb-item">
-        <a asp-controller="Scholarships" asp-action="Index">Scholarships</a>
+        <a asp-controller="Scholarships" asp-action="Manage">Manage Scholarships</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Applications" asp-route-id="@Model.Scholarship.ScholarshipId">View Applications</a>
     </li>
     <li class="breadcrumb-item active">
         <strong>@Model.Scholarship.Name Applications</strong>
     </li>
 </ol>
 
-<h2>Applications</h2>
+<h2>@Model.Scholarship.Name Application</h2>
+@{
+    var favoriteClass = "heart";
+    if (Model.Application.ApplicantFavorite)
+    {
+        favoriteClass += " heart-blast";
+    }
+}
+<div style="margin: -25px" class="@favoriteClass" data-toggle="tooltip" data-placement="left" title="" data-application-id="@Model.Application.ApplicationId" data-original-title="Add to Favorite Applicants"></div>
+
+<div class="ibox">
+    <div class="alert alert-warning">
+        <form id="EditApplicantNotes">
+            <div class="form-group row">
+                <label for="ApplicantScore" class="col-lg-1 col-form-label">Applicant Score</label>
+                <input class="col-lg-1" type="text" name="ApplicantScore" id="ApplicantScore" value="@Model.Application.ApplicantScore" style="width: 36px" />
+                <div class="col-lg-1"></div>
+                <label for="ApplicantAwarded" class="col-lg-2 col-form-label">Awarded Scholarship?</label>
+                <div class="col-lg-1">
+                    @{
+                        var ApplicantAwarded = Model.Application.ApplicantAwarded;
+                    }
+                    @Html.DropDownListFor(modelItem => ApplicantAwarded, (new[] { new SelectListItem { Text = "Yes", Value = "true" }, new SelectListItem { Text = "No", Value = "false" } }), new { @class = "form-control" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ApplicantNotes" class="control-label">Applicant Notes</label>
+                <textarea id="ApplicantNotes" name="ApplicantNotes" class="summernote">
+
+                </textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary saveNotes">Save Notes</button>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="ibox">
     <div class="ibox-content">
         @await Html.PartialAsync("_ScholarshipApplicationPartial")
     </div>
 </div>
 
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "__AjaxAntiForgeryForm" }))
+{
+    @Html.AntiForgeryToken()
+}
+
+@section Styles  {
+
+    <link href="~/lib/summernote/summernote-bs4.css" rel="stylesheet" />
+
+    <style type="text/css">
+    </style>
+}
+
+@section Scripts {
+
+    <script src="~/lib/summernote/summernote-bs4.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script type="text/javascript">
+
+        function saveNotes() {
+
+            var form = $('#__AjaxAntiForgeryForm');
+            var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+            var form_data = $("#EditApplicantNotes").serialize();
+            form_data += "&__RequestVerificationToken=" + token;
+
+            $.ajax({
+                type: "POST",
+                url: "/Scholarships/UpdateApplicationNotes/@Model.Application.ApplicationId",
+                data: form_data,
+                dataType: "json"
+            }).done(function (response, textStatus, jqXHR) {
+
+                swal("Updated Application",
+                    "The application has been updated to include your score, awarded status, and notes for this candidate.",
+                    "success");
+
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).always(function () {
+
+            });
+        }
+
+        $(document).ready(function () {
+
+            $(document).on("click",
+                '.saveNotes',
+                function (event) {
+                    saveNotes();
+                    event.preventDefault();
+                });
+
+            $('.summernote').summernote({
+                height: 100,
+                dialogsInBody: true,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol']]
+                ]
+
+
+            });
+
+            $(".heart").on("click", function () {
+                $(this).toggleClass("heart-blast");
+
+                var favToggle = $(this).hasClass("heart-blast");
+                var applicationId = $(this).data("application-id");
+
+                var form = $('#__AjaxAntiForgeryForm');
+                var token = $('input[name="__RequestVerificationToken"]', form).val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Scholarships/ToggleFavoriteApplication",
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: applicationId,
+                        state: favToggle
+                    },
+                    dataType: "json"
+                }).done(function (response, textStatus, jqXHR) {
+
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    $(this).toggleClass("heart-blast");
+                }).always(function () {
+
+                });
+            });
+
+
+        });
+
+    </script>
+}

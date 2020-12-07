@@ -37,17 +37,27 @@
             <tbody>
                 @foreach (var app in Model.Applications)
                 {
-                    <tr>
-                        <td style="vertical-align: middle">
-                            <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
-                        </td>
-                        <td style="vertical-align: middle">
-                            @app.SubmittedDate
-                        </td>
-                        <td>
-                            <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
-                        </td>
-                    </tr>
+                <tr>
+                    <td style="vertical-align: middle">
+                        <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
+                        @if (app.ApplicantAwarded)
+                        {
+                            <div class="btn btn-warning btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Awarded Scholarship"><i class="fa fa-trophy"></i></div>
+                        }
+
+                        @if (app.ApplicantFavorite)
+                        {
+                            <div class="btn btn-danger btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Favorite Application"><i class="fa fa-heart"></i></div>
+                        }
+
+                    </td>
+                    <td style="vertical-align: middle">
+                        @app.SubmittedDate
+                    </td>
+                    <td>
+                        <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -56,6 +66,8 @@
 </div>
 
 @section Scripts {
+
+
     <script type="text/javascript">
 
         function createPackage(createNew) {
@@ -88,6 +100,11 @@
                 msg += "<br><a href='/Scholarships/ApplicationPackageDownload/" + response.job.jobId + "'>Download</a>";
             $("#packageStatus").html(msg);
         })
+
+        $(function () {
+
+            $('[data-toggle="tooltip"]').tooltip();
+        });
 
     </script>
 }

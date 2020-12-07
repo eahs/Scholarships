@@ -32,7 +32,7 @@
 </div>
 <div class="ibox">
     <div class="ibox-title"><a asp-action="Create" class="btn btn-w-m btn-primary">Create New</a></div>
-    <div class="ibox-content">
+    <div class="ibox-content" id="scholarships_container" style="display: none">
 
 
         <table class="table" id="scholarships">
@@ -108,10 +108,10 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
             var yearSwitch = document.querySelector('.js-switch');
             var switchery = new Switchery(yearSwitch, { color: '#1AB394' });
             yearSwitch.onchange = function () {
-//                alert(elem.checked);
                 table.draw();
             };
 
@@ -148,6 +148,9 @@
                     order: [[3, "desc"]]
                 }
             );
+
+            table.draw();
+            $("#scholarships_container").slideDown();
 
         });
     </script>
