@@ -265,7 +265,7 @@ namespace Scholarships.Controllers
 
             List<Application> applications = await _context.Application.Include(ap => ap.Profile)
                                                                        .Where(s => s.ScholarshipId == id && s.Submitted)
-                                                                       .OrderBy(s => s.ApplicantAwarded).ThenBy(s => s.ApplicantScore).ThenBy(s => s.Profile.LastName).ThenBy(s => s.Profile.FirstName)
+                                                                       .OrderByDescending(s => s.ApplicantAwarded).ThenByDescending(s => s.ApplicantScore).ThenBy(s => s.Profile.LastName).ThenBy(s => s.Profile.FirstName)
                                                                        .ToListAsync();
 
             ApplicationViewModel vm = new ApplicationViewModel
