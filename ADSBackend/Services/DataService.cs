@@ -524,10 +524,10 @@ namespace Scholarships.Services
             if (currentMonth > 7)
                 schoolYear++;
 
-            DateTime newReleaseDate = DateTime.IsLeapYear(scholarship.ReleaseDate.Year) ? new DateTime(schoolYear, scholarship.ReleaseDate.Month, scholarship.ReleaseDate.Day - 1) :
+            DateTime newReleaseDate = DateTime.IsLeapYear(scholarship.ReleaseDate.Year) ? new DateTime(schoolYear, scholarship.ReleaseDate.Month, scholarship.ReleaseDate.Day == 29 && scholarship.ReleaseDate.Month == 2 ? 28 : scholarship.ReleaseDate.Day) :
                                                                                           new DateTime(schoolYear, scholarship.ReleaseDate.Month, scholarship.ReleaseDate.Day);
 
-            DateTime newDueDate = DateTime.IsLeapYear(scholarship.DueDate.Year) ? new DateTime(schoolYear, scholarship.DueDate.Month, scholarship.DueDate.Day - 1) :
+            DateTime newDueDate = DateTime.IsLeapYear(scholarship.DueDate.Year) ? new DateTime(schoolYear, scholarship.DueDate.Month, scholarship.DueDate.Day == 29 && scholarship.DueDate.Month == 2 ? 28 : scholarship.DueDate.Day) :
                                                                                   new DateTime(schoolYear, scholarship.DueDate.Month, scholarship.DueDate.Day);
 
 
