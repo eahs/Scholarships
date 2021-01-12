@@ -22,6 +22,9 @@ namespace Scholarships.Configuration
             ApplicationUser user = _userManager.FindByNameAsync("admin").Result;
             if (user != null)
             {
+                //var token = _userManager.GeneratePasswordResetTokenAsync(user).Result;
+                //_userManager.ResetPasswordAsync(user, token, "NewPassword").Wait();
+
                 /*
                 if (user.Email == null || user.Email == "")
                     user.Email = "tanczosm@eastonsd.org";
