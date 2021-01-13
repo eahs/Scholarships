@@ -41,7 +41,7 @@ namespace Scholarships.Controllers
             if (id == null)
                 return NotFound();
 
-            var article = await _context.Article.FirstOrDefaultAsync(art => art.ArticleId == id);
+            var article = await _context.Article.Where(art => art.Published).FirstOrDefaultAsync(art => art.ArticleId == id);
 
             if (article == null)
                 return NotFound();

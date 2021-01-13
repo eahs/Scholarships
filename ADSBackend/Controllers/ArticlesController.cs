@@ -20,7 +20,7 @@ namespace Scholarships.Controllers
         // GET: Articles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Article.ToListAsync());
+            return View(await _context.Article.OrderByDescending(art => art.PublishDate).ToListAsync());
         }
 
         // GET: Articles/Details/5

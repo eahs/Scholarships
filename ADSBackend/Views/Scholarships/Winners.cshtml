@@ -1,4 +1,6 @@
-﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipWinnersViewModel
+﻿@using System.Linq
+
+@model Scholarships.Models.ScholarshipViewModels.ScholarshipWinnersViewModel
 
 @{
     ViewData["Title"] = "Scholarship Winners";
@@ -84,9 +86,12 @@
                         @item.Profile.Email
                     </td>
                     <td style="vertical-align: middle">
-                        @item.Profile.Address1<br />
-                        @item.Profile.Address2<br />
-                        @item.Profile.City @item.Profile.State, @item.Profile.ZipCode
+                        @{
+                            String[] parts = new String[] { item.Profile.Address1, item.Profile.Address2, item.Profile.City, item.Profile.State, item.Profile.ZipCode };
+                            //parts = parts.Where(x => !String.IsNullOrEmpty(x)).ToArray();
+                            var address = String.Join(",", parts);
+                        }
+                        @address
                     </td>
                     <td style="vertical-align: middle">
                         @item.Profile.Phone
