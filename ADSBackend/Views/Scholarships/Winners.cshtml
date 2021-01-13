@@ -1,0 +1,193 @@
+﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipWinnersViewModel
+
+@{
+    ViewData["Title"] = "Scholarship Winners";
+
+
+    int startingYear = DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1;
+    DateTime yearStart = new DateTime(startingYear, 7, 1);
+    DateTime yearEnd = new DateTime(startingYear + 1, 7, 1);
+
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a asp-controller="Admin" asp-action="Index">Home</a>
+    </li>
+    <li class="breadcrumb-item">
+        <a asp-controller="Scholarships" asp-action="Manage">Scholarships</a>
+    </li>
+    <li class="breadcrumb-item active">
+        <strong>Scholarship Winners</strong>
+    </li>
+</ol>
+
+<div class="row">
+    <div class="col-lg-8"><span style="margin-top: 5px; margin-bottom: 5px; font-size: 1.7em">Scholarship Winners</span></div>
+    <div class="col-lg-3" style="text-align: right;">
+        <div style="margin-top: 10px">Show Current School Year Only?</div>
+    </div>
+    <div class="col-lg-1">
+        <div style="margin: 5px">
+            <input type="checkbox" class="js-switch" checked />
+        </div>
+    </div>
+</div>
+<div class="ibox">
+
+    <div class="ibox-content" id="scholarships_container" style="display: none">
+
+
+        <table class="table" id="scholarships" style="width: 100%">
+            <thead>
+                <tr>
+                    <th>
+                        Scholarship
+                    </th>
+                    <th>
+                        First Name
+                    </th>
+                    <th>
+                        Last Name
+                    </th>
+                    <th>
+                        Email
+                    </th>
+                    <th>
+                        Mailing Address
+                    </th>
+                    <th>
+                        Phone Number
+                    </th>
+                    <th>
+                        Scholarship Date
+                    </th>
+                    <th class="text-center">
+                        Application Year
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Applications)
+                {
+                <tr>
+                    <td style="vertical-align: middle">
+                        @item.Scholarship.Name
+                    </td>
+                    <td style="vertical-align: middle">
+                        @item.Profile.FirstName
+                    </td>
+                    <td style="vertical-align: middle">
+                        @item.Profile.LastName
+                    </td>
+                    <td style="vertical-align: middle">
+                        @item.Profile.Email
+                    </td>
+                    <td style="vertical-align: middle">
+                        @item.Profile.Address1<br />
+                        @item.Profile.Address2<br />
+                        @item.Profile.City @item.Profile.State, @item.Profile.ZipCode
+                    </td>
+                    <td style="vertical-align: middle">
+                        @item.Profile.Phone
+                    </td>
+                    <td>
+                        @item.Scholarship.DueDate
+                    </td>
+                    <td style="vertical-align: middle" class="text-center">
+                        @Html.DisplayFor(modelItem => item.Scholarship.DueDate.Year)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+@section Styles {
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.20/b-1.6.1/b-html5-1.6.1/b-print-1.6.1/r-2.2.3/datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/switchery/switchery.css" />
+
+}
+
+@section Scripts {
+
+
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.23/b-1.6.5/b-colvis-1.6.5/b-html5-1.6.5/b-print-1.6.5/r-2.2.7/datatables.min.js"></script>
+
+    <script type="text/javascript" src="~/lib/switchery/switchery.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var yearSwitch = document.querySelector('.js-switch');
+            var switchery = new Switchery(yearSwitch, { color: '#1AB394' });
+            yearSwitch.onchange = function () {
+                table.draw();
+            };
+
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+
+                    var startingDate = Date.parse("@yearStart");
+                    var endingDate = Date.parse("@yearEnd");
+                    var releaseDate = Date.parse(data[6]);
+
+                    if (yearSwitch.checked) {
+                        if (releaseDate < startingDate || releaseDate >= endingDate)
+                            return false;
+                    }
+
+                    return true;
+                }
+            );
+
+            var table = $('#scholarships').DataTable(
+                {
+                    columnDefs: [
+                        {
+                            targets: [6],
+                            type: "date",
+                            visible: false
+                        },
+                        {
+                            targets: [4],
+                            visible: false
+                        }
+                    ],
+                    pageLength: 25,
+                    responsive: true,
+                    order: [[6, "desc"]],
+                    dom: '<"html5buttons"B>lTfgitp',
+                    buttons: [
+                        { extend: 'copy' },
+                        { extend: 'csv' },
+                        { extend: 'excel', title: 'ScholarshipWinners' },
+                        { extend: 'pdf', title: 'ScholarshipWinners' },
+
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).addClass('white-bg');
+                                $(win.document.body).css('font-size', '10px');
+
+                                $(win.document.body).find('table')
+                                    .addClass('compact')
+                                    .css('font-size', 'inherit');
+                            }
+                        }
+                    ]
+                }
+            );
+
+            table.draw();
+            $("#scholarships_container").slideDown();
+
+        });
+    </script>
+}

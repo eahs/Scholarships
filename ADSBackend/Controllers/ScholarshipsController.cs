@@ -214,6 +214,15 @@ namespace Scholarships.Controllers
             return View(scholarships);
         }
 
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<IActionResult> Winners()
+        {
+            var vm = await _dataService.GetScholarshipWinnersAsync();
+
+            return View(vm);
+        }
+
+
         // GET: Scholarships/Details/5
         [Authorize]
         public async Task<IActionResult> Details(int? id)

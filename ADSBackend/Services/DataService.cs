@@ -607,6 +607,22 @@ namespace Scholarships.Services
             return _scholarship;
         }
 
+        public async Task<ScholarshipWinnersViewModel> GetScholarshipWinnersAsync ()
+        {
+            var winners = await _context.Application.Include(app => app.Scholarship)
+                                                    .Include(app => app.Profile)
+                                                    .Where(app => app.ApplicantAwarded)
+                                                    .OrderByDescending(app => app.Scholarship.DueDate.Year)
+                                                    .ThenBy(app => app.Scholarship.Name)
+                                                    .ThenBy(app => app.Profile.LastName)
+                                                    .ThenBy(app => app.Profile.FirstName)
+                                                    .ToListAsync();
+
+            return new ScholarshipWinnersViewModel {
+                    Applications = winners
+                };
+        }
+
         private static string ProfileFieldToURI (string fieldname)
         {
             return "/Profile/Edit";

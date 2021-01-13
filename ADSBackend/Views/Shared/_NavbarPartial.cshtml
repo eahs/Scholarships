@@ -17,12 +17,12 @@
 
         // Scholarship Setup
         case "Scholarships":
-            if (new[] { "Manage", "Create", "Edit", "Delete" }.Contains(handlingAction) )
+            if (new[] { "Manage", "Create", "Edit", "Delete", "Winners" }.Contains(handlingAction) )
                 manageClass = "active";
             break;
         case "Categories": manageClass = "active"; break;
         case "FieldsOfStudy": manageClass = "active"; break;
-        case "Articles": manageClass = "active"; break;
+        case "Articles": manageClass = "active"; break;        
 
         // Admininstration
         case "Users": adminClass = "active"; break;
@@ -82,8 +82,11 @@
                     <li id="nav_manage" class="@manageClass">
                         <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
-                            <li is-active-route asp-controller="Scholarships">
+                            <li is-active-route asp-controller="Scholarships" asp-action="Manage">
                                 <a asp-controller="Scholarships" asp-action="Manage">Scholarships</a>
+                            </li>
+                            <li is-active-route asp-controller="Scholarships" asp-action="Winners">
+                                <a asp-controller="Scholarships" asp-action="Winners">Winners</a>
                             </li>
                             <li is-active-route asp-controller="Categories">
                                 <a asp-controller="Categories" asp-action="Index">Categories</a>
