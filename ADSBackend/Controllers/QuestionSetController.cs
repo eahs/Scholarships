@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
-    [Authorize(Roles ="Admin,Manager")]
+    [Authorize(Roles = "Admin,Manager")]
     public class QuestionSetController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -149,7 +149,7 @@ namespace Scholarships.Controllers
             var qset = await _context.QuestionSet.FirstOrDefaultAsync(qs => qs.QuestionSetId == id);
 
             if (qset == null)
-                return new QuestionViewModel {ErrorCode = QuestionSetError.NotFound};
+                return new QuestionViewModel { ErrorCode = QuestionSetError.NotFound };
 
             if (!UserCanModifyQuestionSet(qset))
                 return new QuestionViewModel { ErrorCode = QuestionSetError.NotAuthorized };
@@ -177,7 +177,7 @@ namespace Scholarships.Controllers
             {
                 Index = index,
                 ErrorCode = QuestionSetError.NoError,
-                Question =  q
+                Question = q
             };
 
             qvm.QuestionForm = await _renderService.RenderToStringAsync("_QuestionEditPartial", qvm);
@@ -240,7 +240,7 @@ namespace Scholarships.Controllers
         public async Task<QuestionOptionViewModel> AddQuestionOption(int id, [Bind("QuestionIndex")] QuestionOptionViewModel qvm)  // id is of the question, qindex is sortable list index
         {
             if (qvm.QuestionIndex < 0)
-                return new QuestionOptionViewModel {ErrorCode = QuestionSetError.FormIndexNotProvided};
+                return new QuestionOptionViewModel { ErrorCode = QuestionSetError.FormIndexNotProvided };
 
             var question = await _context.Question.Include(qs => qs.QuestionSet).FirstOrDefaultAsync(qs => qs.QuestionId == id);
 

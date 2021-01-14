@@ -1,11 +1,9 @@
-﻿using Scholarships.Data;
+﻿using IronPdf;
+using Scholarships.Data;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using IronPdf;
 using System.Text.RegularExpressions;
 
 namespace Scholarships.Tasks
@@ -15,11 +13,11 @@ namespace Scholarships.Tasks
         private readonly ApplicationDbContext _context;
         private readonly Services.Configuration Configuration;
 
-        public GenerateTranscripts (ApplicationDbContext context, Services.Configuration configurationService)
+        public GenerateTranscripts(ApplicationDbContext context, Services.Configuration configurationService)
         {
             _context = context;
             Configuration = configurationService;
-        }        
+        }
 
         public void Execute()
         {
@@ -60,7 +58,7 @@ namespace Scholarships.Tasks
                 Log.Error(e, "Unable to open transcripts pdf");
                 return;
             }
-            
+
             Dictionary<string, List<int>> studentIndex = new Dictionary<string, List<int>>();
             for (int i = 0; i < PDF.PageCount; i++)
             {

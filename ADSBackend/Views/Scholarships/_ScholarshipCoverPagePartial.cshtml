@@ -36,7 +36,7 @@
 </p>
 <p class="c4">
 
-    @if (Model.SponsorCompany != null && Model.SponsorCompany.Length > 0)
+    @if (!string.IsNullOrEmpty(Model.SponsorCompany))
         {
     <span>
         Provided by @Model.SponsorCompany, Represented by @Model.SponsorName

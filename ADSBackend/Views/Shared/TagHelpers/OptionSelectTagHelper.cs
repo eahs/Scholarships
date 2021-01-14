@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Razor.TagHelpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using Scholarships.Models.Forms;
+using System;
 
 namespace Scholarships.Views.Shared.TagHelpers
 {
@@ -22,7 +18,7 @@ namespace Scholarships.Views.Shared.TagHelpers
         public string OptionType
         {
             get { return OptionType; }
-            set { _optionType = (QuestionType) Enum.Parse(typeof(QuestionType), value); }
+            set { _optionType = (QuestionType)Enum.Parse(typeof(QuestionType), value); }
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)

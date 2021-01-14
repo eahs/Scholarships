@@ -1,43 +1,38 @@
-using Scholarships.Configuration;
-using Scholarships.Data;
-using Scholarships.Models.Identity;
+using Hangfire;
+using Hangfire.MySql.Core;
+using IronPdf;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Scholarships.Configuration;
+using Scholarships.Data;
+using Scholarships.Models.Identity;
 using Scholarships.Services;
-using Hangfire;
-using Hangfire.Dashboard;
 using Scholarships.Tasks;
-using Scholarships.Util;
-using System;
-using System.IO;
-using Smidge;
-using System.Net.Mail;
-using System.Data;
-using System.Globalization;
-using System.Linq;
-using Hangfire.MySql.Core;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
 using Scholarships.Tasks.Importer;
+using Scholarships.Util;
 using Serilog;
+using Smidge;
 using Smidge.Cache;
 using Smidge.Options;
-using Microsoft.AspNetCore.Http;
-using Serilog.Core;
+using System;
+using System.Data;
+using System.Globalization;
+using System.IO;
+using System.Linq;
 
 namespace Scholarships
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment Env { get; set; }
-        public string ConnString { get; set; }
-
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
@@ -46,29 +41,32 @@ namespace Scholarships
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
             if (Env.IsDevelopment())
+            {
                 ConnString = Configuration.GetConnectionString("ScholarshipsDevelopmentContext");
+            }
             else if (Env.IsStaging())
+            {
                 ConnString = Configuration.GetConnectionString("ScholarshipsStagingContext");
+            }
             else if (Env.IsProduction())
             {
                 ConnString = Configuration.GetConnectionString("ScholarshipsProductionContext");
 
-                IronPdf.Installation.TempFolderPath = @"/tmp/scholarships";
+                Installation.TempFolderPath = @"/tmp/scholarships";
             }
-
-
         }
+
+        public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Env { get; set; }
+        public string ConnString { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            IMvcBuilder builder = services.AddRazorPages();
+            var builder = services.AddRazorPages();
 
 #if DEBUG
-            if (Env.IsDevelopment())
-            {
-                builder.AddRazorRuntimeCompilation();
-            }
+            if (Env.IsDevelopment()) builder.AddRazorRuntimeCompilation();
 #endif
 
 
@@ -80,20 +78,19 @@ namespace Scholarships
                     mySqlOptions =>
                     {
                         mySqlOptions.ServerVersion(new Version(10, 4, 11),
-                            Pomelo.EntityFrameworkCore.MySql.Infrastructure.ServerType.MariaDb); // replace with your Server Version and Type
+                            ServerType.MariaDb); // replace with your Server Version and Type
                     });
-
             });
 
             services.AddIdentity<ApplicationUser, ApplicationRole>()
-                    .AddEntityFrameworkStores<ApplicationDbContext>()
-                    .AddDefaultTokenProviders();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
 
             // https://www.thinktecture.com/identity/samesite/prepare-your-identityserver/
             services.Configure<CookiePolicyOptions>(options =>
             {
-                options.MinimumSameSitePolicy = Microsoft.AspNetCore.Http.SameSiteMode.Unspecified;
+                options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
                 options.OnAppendCookie = cookieContext =>
                     CheckSameSite(cookieContext.Context, cookieContext.CookieOptions);
                 options.OnDeleteCookie = cookieContext =>
@@ -103,24 +100,22 @@ namespace Scholarships
             var paths = Configuration.GetSection("Paths");
             if (paths.GetChildren().Any(x => x.Key == "DataProtectionKeys"))
             {
-                string dppath = paths["DataProtectionKeys"];
+                var dppath = paths["DataProtectionKeys"];
 
                 if (dppath != null)
-                {
                     services.AddDataProtection()
                         .PersistKeysToFileSystem(new DirectoryInfo(dppath));
-                }
-
             }
             else
             {
-                Log.Error("Paths:DataProtectionKeys was not set in AppSettings.json - Missing data protection key path!");
+                Log.Error(
+                    "Paths:DataProtectionKeys was not set in AppSettings.json - Missing data protection key path!");
             }
 
             services.AddAuthentication()
                 .AddGoogle(options =>
                 {
-                    IConfigurationSection googleAuthNSection =
+                    var googleAuthNSection =
                         Configuration.GetSection("Authentication:Google");
 
                     options.ClientId = googleAuthNSection["ClientId"];
@@ -130,9 +125,9 @@ namespace Scholarships
             services.AddTransient<Services.Configuration>();
 
             // Add application services.
-            services.AddTransient<Services.IEmailSender, Services.EmailSender>();
-            services.AddTransient<Services.DataService>();
-            services.AddScoped<Services.ViewRenderService, Services.ViewRenderService>();
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<DataService>();
+            services.AddScoped<ViewRenderService, ViewRenderService>();
 
             // services.AddSingleton<ITaskRegistry, TaskRegistry>();
 
@@ -173,18 +168,18 @@ namespace Scholarships
 
             // caching
             services.AddMemoryCache();
-            services.AddTransient<Services.Cache>();
+            services.AddTransient<Cache>();
 
 
             services.AddMvc();
 
             // Add javascript minification library
             services.AddSmidge(Configuration.GetSection("smidge"))
-                    .Configure<SmidgeOptions>(options =>
-                    {
-                        options.DefaultBundleOptions.DebugOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
-                        options.DefaultBundleOptions.ProductionOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
-                    });
+                .Configure<SmidgeOptions>(options =>
+                {
+                    options.DefaultBundleOptions.DebugOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
+                    options.DefaultBundleOptions.ProductionOptions.SetCacheBusterType<AppDomainLifetimeCacheBuster>();
+                });
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -199,25 +194,19 @@ namespace Scholarships
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
             else
-            {
                 app.UseExceptionHandler("/Home/Error");
-            }
 
             if (env.IsProduction())
-            {
                 app.UseForwardedHeaders(new ForwardedHeadersOptions
                 {
                     ForwardedHeaders = ForwardedHeaders.XForwardedProto
                 });
-            }
 
             app.UseRouting();
             app.UseStaticFiles();
-            app.UseCookiePolicy();  // https://docs.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-3.1
+            app.UseCookiePolicy(); // https://docs.microsoft.com/en-us/aspnet/core/security/samesite?view=aspnetcore-3.1
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -231,7 +220,7 @@ namespace Scholarships
             app.UseHangfireServer();
 
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
-                    generator => generator.Execute(), Cron.Daily);
+                generator => generator.Execute(), Cron.Daily);
 
             BackgroundJob.Enqueue<IStudentDataImporter>(
                 generator => generator.Execute());
@@ -248,20 +237,20 @@ namespace Scholarships
 
             // Set up App_Data directory
             // set
-            string baseDir = env.ContentRootPath;
+            var baseDir = env.ContentRootPath;
             AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(baseDir, "App_Data"));
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    "default",
+                    "{controller=Home}/{action=Index}/{id?}");
 
                 endpoints.MapControllerRoute(
-                    name: "securedownload",
-                    pattern: "{controller=SecureDownload}/{id?}/{filename?}",
-                    defaults: new { controller = "SecureDownload", action = "Download" }
-                    );
+                    "securedownload",
+                    "{controller=SecureDownload}/{id?}/{filename?}",
+                    new { controller = "SecureDownload", action = "Download" }
+                );
             });
 
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
@@ -285,31 +274,31 @@ namespace Scholarships
             app.UseSmidge(bundles =>
             {
                 bundles.CreateCss("scholarship-application-css",
-                                    "~/lib/bootstrap/dist/css/bootstrap.css",
-                                    "~/lib/font-awesome/css/font-awesome.css",
-                                    "~/css/animate.css",
-                                    "~/css/style.css",
-                                    "~/css/site.css",
-                                    "~/lib/heart/heart.css");
+                    "~/lib/bootstrap/dist/css/bootstrap.css",
+                    "~/lib/font-awesome/css/font-awesome.css",
+                    "~/css/animate.css",
+                    "~/css/style.css",
+                    "~/css/site.css",
+                    "~/lib/heart/heart.css");
 
                 // Libraries
-                bundles.CreateJs("scholarship-js-libraries",                                    
-                                    "~/lib/jquery/dist/jquery.js",
-                                    "~/lib/jquery-ui/jquery-ui.js",
-                                    "~/lib/Popper/popper.js",
-                                    "~/lib/bootstrap/dist/js/bootstrap.js"
-                                    );
+                bundles.CreateJs("scholarship-js-libraries",
+                    "~/lib/jquery/dist/jquery.js",
+                    "~/lib/jquery-ui/jquery-ui.js",
+                    "~/lib/Popper/popper.js",
+                    "~/lib/bootstrap/dist/js/bootstrap.js"
+                );
 
                 // Custom scripts
                 bundles.CreateJs("scholarship-js-custom",
-                                    "~/js/site.js");
+                    "~/js/site.js");
 
                 // Inspinia scripts
                 bundles.CreateJs("scholarship-js-inspinia",
-                                    "~/lib/metisMenu/dist/jquery.metisMenu.js",
-                                    "~/lib/slimScroll/jquery.slimscroll.js",
-                                    "~/lib/pace/pace.js",
-                                    "~/js/script.js");
+                    "~/lib/metisMenu/dist/jquery.metisMenu.js",
+                    "~/lib/slimScroll/jquery.slimscroll.js",
+                    "~/lib/pace/pace.js",
+                    "~/js/script.js");
             });
         }
 
@@ -318,21 +307,18 @@ namespace Scholarships
             if (options.SameSite == SameSiteMode.None)
             {
                 var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
-                if (DisallowsSameSiteNone(userAgent))
-                {
-                    options.SameSite = SameSiteMode.Unspecified;
-                }
+                if (DisallowsSameSiteNone(userAgent)) options.SameSite = SameSiteMode.Unspecified;
             }
         }
 
         /// <summary>
-        /// Checks if the UserAgent is known to interpret an unknown value as Strict.
-        /// For those the <see cref="CookieOptions.SameSite" /> property should be
-        /// set to <see cref="Unspecified" />.
+        ///     Checks if the UserAgent is known to interpret an unknown value as Strict.
+        ///     For those the <see cref="CookieOptions.SameSite" /> property should be
+        ///     set to <see cref="Unspecified" />.
         /// </summary>
         /// <remarks>
-        /// This code is taken from Microsoft:
-        /// https://devblogs.microsoft.com/aspnet/upcoming-samesite-cookie-changes-in-asp-net-and-asp-net-core/
+        ///     This code is taken from Microsoft:
+        ///     https://devblogs.microsoft.com/aspnet/upcoming-samesite-cookie-changes-in-asp-net-and-asp-net-core/
         /// </remarks>
         /// <param name="userAgent">The user agent string to check.</param>
         /// <returns>Whether the specified user agent (browser) accepts SameSite=None or not.</returns>
@@ -350,10 +336,8 @@ namespace Scholarships
             // unknown values are NOT treated as strict anymore. Therefore we only
             // need to check version 12.
             if (userAgent.Contains("CPU iPhone OS 12")
-               || userAgent.Contains("iPad; CPU OS 12"))
-            {
+                || userAgent.Contains("iPad; CPU OS 12"))
                 return true;
-            }
 
             // Cover Mac OS X based browsers that use the Mac OS networking stack.
             // This includes:
@@ -367,11 +351,9 @@ namespace Scholarships
             // 10.15 unknown values are NOT treated as strict anymore. Therefore we
             // only need to check version 10.14.
             if (userAgent.Contains("Safari")
-               && userAgent.Contains("Macintosh; Intel Mac OS X 10_14")
-               && userAgent.Contains("Version/"))
-            {
+                && userAgent.Contains("Macintosh; Intel Mac OS X 10_14")
+                && userAgent.Contains("Version/"))
                 return true;
-            }
 
             // Cover Chrome 50-69, because some versions are broken by SameSite=None
             // and none in this range require it.
@@ -381,14 +363,9 @@ namespace Scholarships
             // We can not validate this assumption, but we trust Microsofts
             // evaluation. And overall not sending a SameSite value equals to the same
             // behavior as SameSite=None for these old versions anyways.
-            if (userAgent.Contains("Chrome/5") || userAgent.Contains("Chrome/6"))
-            {
-                return true;
-            }
+            if (userAgent.Contains("Chrome/5") || userAgent.Contains("Chrome/6")) return true;
 
             return false;
         }
-
     }
 }
-

@@ -1,9 +1,4 @@
-﻿using Scholarships.Models.ApiModels;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Scholarships.Controllers
 {
@@ -11,12 +6,12 @@ namespace Scholarships.Controllers
     [Route("api")]
     public class ApiController : Controller
     {
-        private readonly Services.Configuration Configuration;
+        private readonly Services.Configuration _configuration;
         private readonly Services.Cache _cache;
 
         public ApiController(Services.Configuration configuration, Services.Cache cache)
         {
-            Configuration = configuration;
+            _configuration = configuration;
             _cache = cache;
         }
 

@@ -12,7 +12,7 @@ namespace Scholarships.Models
         [Key]
         public int ScholarshipId { get; set; }
 
-        [DisplayName("Published")] 
+        [DisplayName("Published")]
         public bool Published { get; set; } = false;
 
         // Date when scholarship was originally created
@@ -84,16 +84,16 @@ namespace Scholarships.Models
         [NotMapped]
         public List<int> CategoryIds { get; set; }
 
-        [NotMapped] 
+        [NotMapped]
         public bool IsFavorite { get; set; } = false; // Used for mapping whether a user considers this scholarship a favorite
 
-        [NotMapped] 
+        [NotMapped]
         public bool HasApplied { get; set; } = false; // Used for mapping whether a user has applied for this scholarship
 
-        [NotMapped] 
+        [NotMapped]
         public int ApplicantCount { get; set; } = 0; // Used for counting number of users who have applied
 
-        [NotMapped] 
+        [NotMapped]
         public int ApplicantPending { get; set; } = 0;  // Used for counting number of users who have started application process
     }
 }

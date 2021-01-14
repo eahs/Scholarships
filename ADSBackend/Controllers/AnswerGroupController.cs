@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using FileTypeChecker;
+﻿using FileTypeChecker;
 using FileTypeChecker.Abstracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +10,11 @@ using Scholarships.Data;
 using Scholarships.Models.Forms;
 using Scholarships.Services;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
@@ -24,7 +24,7 @@ namespace Scholarships.Controllers
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
         private readonly ViewRenderService _viewRenderService;
-        private readonly Services.Configuration Configuration;
+        private readonly Services.Configuration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
         public AnswerGroupController(ApplicationDbContext context, DataService dataService, ViewRenderService viewRenderService, Services.Configuration configurationService, IWebHostEnvironment hostingEnvironment)
@@ -32,7 +32,7 @@ namespace Scholarships.Controllers
             _context = context;
             _dataService = dataService;
             _viewRenderService = viewRenderService;
-            Configuration = configurationService;
+            _configuration = configurationService;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -75,14 +75,14 @@ namespace Scholarships.Controllers
                             uuid = fa.FileAttachmentUuid,
                             size = fa.Length,
                             type = fa.ContentType,
-                            url = Url.ActionLink("Download", "SecureDownload", new { id = fa.FileAttachmentId, filename = fa.FileName }, protocol : "https")
-                    }).ToList();
+                            url = Url.ActionLink("Download", "SecureDownload", new { id = fa.FileAttachmentId, filename = fa.FileName }, protocol: "https")
+                        }).ToList();
                         files.Add("" + answer.AnswerSetId + "." + answer.QuestionId, attachments);
                     }
                 }
             }
-            
-            
+
+
             result.Add("attachments", files);
 
             return result;
@@ -104,16 +104,16 @@ namespace Scholarships.Controllers
 
             // First let's see if we can load the relevant question set
             var qset = await _dataService.GetQuestionSetWithAnswers((int)id);
-            
+
             if (qset == null)
                 return new FormsBaseViewModel { ErrorCode = QuestionSetError.NotFound };
 
             foreach (var aset in asets)
             {
-                var _safeAnswerSet = qset.AnswerSets.FirstOrDefault(a => a.AnswerSetId == aset.AnswerSetId);
+                var safeAnswerSet = qset.AnswerSets.FirstOrDefault(a => a.AnswerSetId == aset.AnswerSetId);
 
                 // Check to see if the answerSet is already saved
-                if (_safeAnswerSet == null)
+                if (safeAnswerSet == null)
                 {
                     // TODO: Create an answerset to hold this answer?
                     continue;  // For now we don't have to worry about multiple answersets
@@ -123,26 +123,26 @@ namespace Scholarships.Controllers
                     continue;
 
                 // Iterate through the answers and save them 
-                for  (int i = 0; i < aset.Answers.Count; i++)
+                for (int i = 0; i < aset.Answers.Count; i++)
                 {
                     var answer = aset.Answers[i];
-                    var _safeAnswer = _safeAnswerSet.Answers.FirstOrDefault(q => q.QuestionId == answer.QuestionId);
+                    var safeAnswer = safeAnswerSet.Answers.FirstOrDefault(q => q.QuestionId == answer.QuestionId);
 
-                    if (_safeAnswer == null) continue;
+                    if (safeAnswer == null) continue;
 
-                    _safeAnswer.Response = answer.Response ?? "";
-                    _safeAnswer.DateTime = answer.DateTime;
-                    _safeAnswer.Config = JsonConvert.SerializeObject(new { answer.QuestionOptions });
-                    _safeAnswer.QuestionOptionId = answer.QuestionOptionId;
-                    
+                    safeAnswer.Response = answer.Response ?? "";
+                    safeAnswer.DateTime = answer.DateTime;
+                    safeAnswer.Config = JsonConvert.SerializeObject(new { answer.QuestionOptions });
+                    safeAnswer.QuestionOptionId = answer.QuestionOptionId;
+
                     // Each answer must be validated, answerId likely to be invalid
-                    if (_safeAnswer.AnswerId == 0)
+                    if (safeAnswer.AnswerId == 0)
                     {
-                        _context.Answer.Add(_safeAnswer);
+                        _context.Answer.Add(safeAnswer);
                     }
                     else
                     {
-                        _context.Answer.Update(_safeAnswer);
+                        _context.Answer.Update(safeAnswer);
                     }
                 }
 
@@ -160,7 +160,7 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> Remove(int id, string uuid)
         {
-            string attachPath = Configuration.ConfigPath.AttachmentPath;
+            string attachPath = _configuration.ConfigPath.AttachmentPath;
 
             var profile = await _dataService.GetProfileAsync();
 
@@ -203,7 +203,7 @@ namespace Scholarships.Controllers
         [Produces("application/json")]
         public async Task<object> Upload(IEnumerable<IFormFile> files, int questionid, int answersetid)
         {
-            string attachPath = Configuration.ConfigPath.AttachmentPath;
+            string attachPath = _configuration.ConfigPath.AttachmentPath;
             var profile = await _dataService.GetProfileAsync();
 
             var aset = await _context.AnswerSet.Include(a => a.Answers)
@@ -238,7 +238,7 @@ namespace Scholarships.Controllers
             //long totalsize = files.Sum(f => f.Length);
 
             // full path to file in temp location
-            /// var filePath = Path.GetTempFileName();
+            // var filePath = Path.GetTempFileName();
             List<object> response = new List<object>();
 
             foreach (var formFile in files)
@@ -273,11 +273,11 @@ namespace Scholarships.Controllers
 
                     // Create the directory if it doesn't exist
                     Directory.CreateDirectory(filePath);
-                    
+
                     // Now add the secure filename and build the full file path
                     pathParts.Add(fa.SecureFileName);
                     filePath = Path.Combine(pathParts.ToArray());
-                   
+
 
                     using (var ftStream = formFile.OpenReadStream())
                     {
@@ -321,7 +321,7 @@ namespace Scholarships.Controllers
                                 break;
                         }
                     }
-                    
+
 
 
                 }

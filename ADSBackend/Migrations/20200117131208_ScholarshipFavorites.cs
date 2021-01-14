@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Scholarships.Migrations
 {
@@ -8,8 +7,8 @@ namespace Scholarships.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
-                name: "FormCompletedExtraCurriculur", 
-                newName: "FormCompletedExtraCurricular", 
+                name: "FormCompletedExtraCurriculur",
+                newName: "FormCompletedExtraCurricular",
                 table: "Profile");
 
             migrationBuilder.CreateTable(

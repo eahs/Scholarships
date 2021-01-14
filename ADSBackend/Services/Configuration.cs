@@ -1,15 +1,12 @@
-﻿using Scholarships.Data;
-using Scholarships.Models;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Scholarships.Data;
+using Scholarships.Models;
+using Scholarships.Models.ConfigurationViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Scholarships.Models.ConfigurationViewModels;
-using Serilog;
-using Scholarships.Util;
 
 namespace Scholarships.Services
 {
@@ -17,7 +14,7 @@ namespace Scholarships.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IMemoryCache _cache;
-        
+
         public ConfigPath ConfigPath { get; set; } = new ConfigPath();
 
         public Configuration(ApplicationDbContext context, IMemoryCache cache, IWebHostEnvironment env, IConfiguration Configuration)
@@ -33,7 +30,7 @@ namespace Scholarships.Services
         {
             var config = _cache.Get<List<ConfigurationItem>>("Configuration");
 
-            if(config == null)
+            if (config == null)
             {
                 config = InitializeConfigCache();
             }

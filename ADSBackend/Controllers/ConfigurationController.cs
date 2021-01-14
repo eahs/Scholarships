@@ -11,13 +11,13 @@ namespace Scholarships.Controllers
     public class ConfigurationController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly Services.Configuration Configuration;
+        private readonly Services.Configuration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
 
         public ConfigurationController(ApplicationDbContext context, Services.Configuration configuration, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
-            Configuration = configuration;
+            _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
         }
 
@@ -26,8 +26,8 @@ namespace Scholarships.Controllers
             var viewModel = new ConfigurationViewModel
             {
                 ErrorMessage = error == null ? "" : "Site configuration is incomplete",
-                ApplicationEmail = Configuration.Get("ApplicationEmail"),
-                ApplicationEmailPassword = Configuration.Get("ApplicationEmailPassword"),
+                ApplicationEmail = _configuration.Get("ApplicationEmail"),
+                ApplicationEmailPassword = _configuration.Get("ApplicationEmailPassword"),
                 RootWebPath = _hostingEnvironment.WebRootPath
             };
 
@@ -41,12 +41,12 @@ namespace Scholarships.Controllers
         {
             if (ModelState.IsValid)
             {
-                Configuration.Set("ApplicationEmail", viewModel.ApplicationEmail);
+                _configuration.Set("ApplicationEmail", viewModel.ApplicationEmail);
 
                 if (viewModel.ApplicationEmailPassword != null)
-                    Configuration.Set("ApplicationEmailPassword", viewModel.ApplicationEmailPassword);
+                    _configuration.Set("ApplicationEmailPassword", viewModel.ApplicationEmailPassword);
 
-                await Configuration.SaveChangesAsync();
+                await _configuration.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }

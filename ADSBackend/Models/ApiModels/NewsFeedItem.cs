@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Scholarships.Models.ApiModels
 {
@@ -15,10 +14,12 @@ namespace Scholarships.Models.ApiModels
         private string description;
         public string Description
         {
-            get {
+            get
+            {
                 return description;
             }
-            set {
+            set
+            {
                 description = value.Replace("<br>", "\n");
             }
         }

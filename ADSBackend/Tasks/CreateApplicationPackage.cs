@@ -1,4 +1,12 @@
-﻿using Scholarships.Data;
+﻿using IronPdf;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Scholarships.Data;
+using Scholarships.Models;
+using Scholarships.Models.Forms;
+using Scholarships.Models.ScholarshipViewModels;
+using Scholarships.Services;
+using Scholarships.Util;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -6,16 +14,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IronPdf;
-using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Scholarships.Models;
-using Scholarships.Models.Forms;
-using Scholarships.Models.ScholarshipViewModels;
-using Scholarships.Services;
-using Scholarships.Util;
-using Serilog.Core;
 
 namespace Scholarships.Tasks
 {
@@ -26,7 +24,7 @@ namespace Scholarships.Tasks
         private readonly ViewRenderService _viewRenderService;
         private readonly DataService _dataService;
 
-        public CreateApplicationPackage (ApplicationDbContext context, Services.Configuration configurationService, DataService dataService, ViewRenderService viewRenderService)
+        public CreateApplicationPackage(ApplicationDbContext context, Services.Configuration configurationService, DataService dataService, ViewRenderService viewRenderService)
         {
             _context = context;
             _dataService = dataService;

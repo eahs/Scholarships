@@ -1,11 +1,11 @@
-﻿using Scholarships.Models.Identity;
-using Scholarships.Models.ManageViewModels;
-using Scholarships.Services;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Scholarships.Models.Identity;
+using Scholarships.Models.ManageViewModels;
+using Scholarships.Services;
 using System;
 using System.Linq;
 using System.Text;

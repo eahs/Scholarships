@@ -8,7 +8,9 @@
     var props = @Model.Scholarship.ProfileProperties.Select(p => p.ProfileProperty?.PropertyName).ToList();
 
     if (Model.Scholarship.TranscriptsRequired)
+    {
         props.Add("Student Transcripts");
+    }
 
     var fields = String.Join(", ", props.ToArray());
 
@@ -316,7 +318,7 @@
                             function(file) {
                                 $.ajax({
                                     url: "/AnswerGroup/Remove/" + file.upload.attachid + "?uuid=" + file.upload.uuid
-                                })
+                                });
                             });
 
                     },

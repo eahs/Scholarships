@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Scholarships.Data;
 using Scholarships.Models;
+using Scholarships.Util;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Scholarships.Util;
 
 
 namespace Scholarships.Tasks.Importer
@@ -24,7 +24,7 @@ namespace Scholarships.Tasks.Importer
             Configuration = configurationService;
         }
 
-        private async Task UpdateStudentProfilesAsync (IEnumerable<ImportedProfile> NewProfiles)
+        private async Task UpdateStudentProfilesAsync(IEnumerable<ImportedProfile> NewProfiles)
         {
             // Calculate the current graduating year for seniors
             int schoolYear = DateTime.Now.Year;

@@ -1,10 +1,6 @@
 ﻿using Scholarships.Data;
 using Scholarships.Services;
-using Scholarships.Util;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Tasks
 {
@@ -39,6 +35,6 @@ namespace Scholarships.Tasks
         {
             throw new NotImplementedException();
         }
-        
+
     }
 }

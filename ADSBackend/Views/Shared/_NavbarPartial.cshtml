@@ -18,7 +18,9 @@
         // Scholarship Setup
         case "Scholarships":
             if (new[] { "Manage", "Create", "Edit", "Delete", "Winners" }.Contains(handlingAction) )
+            {
                 manageClass = "active";
+            }
             break;
         case "Categories": manageClass = "active"; break;
         case "FieldsOfStudy": manageClass = "active"; break;

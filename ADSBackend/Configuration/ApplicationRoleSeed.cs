@@ -1,5 +1,5 @@
-﻿using Scholarships.Models.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Scholarships.Models.Identity;
 using System.Collections.Generic;
 
 namespace Scholarships.Configuration

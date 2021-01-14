@@ -53,7 +53,7 @@ namespace Scholarships.Controllers
             return View(profile);
         }
 
-        private async Task<string> UpdateProfile (string bindingfields, Profile profile)
+        private async Task<string> UpdateProfile(string bindingfields, Profile profile)
         {
             ScrubModelState(bindingfields);
 
@@ -68,7 +68,7 @@ namespace Scholarships.Controllers
                 {
                     if (!ProfileExists(profile.ProfileId))
                     {
-                        return FormHelper.JsonStatus("NotFound"); 
+                        return FormHelper.JsonStatus("NotFound");
                     }
                     else
                     {
@@ -78,7 +78,7 @@ namespace Scholarships.Controllers
                 return FormHelper.JsonStatus("Success");
             }
 
-            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) }); 
+            return FormHelper.JsonStatus(new { Status = "InvalidRequest", Errors = ModelState.Values.Where(i => i.Errors.Count > 0) });
 
         }
 
@@ -198,13 +198,13 @@ namespace Scholarships.Controllers
         }
 
 
-        private void SetupGuardiansAjaxForm ()
+        private void SetupGuardiansAjaxForm()
         {
             ViewBag.Relationships = new SelectList(FormHelper.Relationships, "Id", "Name");
-            ViewBag.EmploymentStatus = new SelectList(FormHelper.EmploymentStatus, "Id", "Name");            
+            ViewBag.EmploymentStatus = new SelectList(FormHelper.EmploymentStatus, "Id", "Name");
         }
 
-        public async Task<IActionResult> EditGuardiansAjax ()
+        public async Task<IActionResult> EditGuardiansAjax()
         {
             var _profile = await _dataService.GetProfileAsync();
             var guardians = await _context.Guardian.Where(g => g.ProfileId == _profile.ProfileId).ToListAsync();
@@ -230,7 +230,7 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditGuardiansAjax ([Bind("ProfileId,GuardianId,FullName,Relationship,EmploymentStatus,Occupation,Employer,AnnualIncome")] ICollection<Guardian> guardians, bool addGuardian = false, int removeGuardianId = -1)
+        public async Task<IActionResult> EditGuardiansAjax([Bind("ProfileId,GuardianId,FullName,Relationship,EmploymentStatus,Occupation,Employer,AnnualIncome")] ICollection<Guardian> guardians, bool addGuardian = false, int removeGuardianId = -1)
         {
             var _profile = await _dataService.GetProfileAsync();
 

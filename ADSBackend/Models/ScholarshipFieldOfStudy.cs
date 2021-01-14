@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace Scholarships.Models
+﻿namespace Scholarships.Models
 {
     public class ScholarshipFieldOfStudy
     {

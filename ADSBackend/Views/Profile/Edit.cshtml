@@ -384,7 +384,7 @@
                             updateProgressBar();
                             swal("Good job!", "Your basic scholarship profile has been saved.  Keep going!", "success")
                                 .then((value) => {
-                                    $('.nav-tabs a[href="#tab-2"]').tab('show')
+                                    $('.nav-tabs a[href="#tab-2"]').tab('show');
                                 });
                         } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
@@ -412,7 +412,7 @@
                                     "Your academic performance has been saved.  Now we need to know your college plans.",
                                     "success")
                                 .then((value) => {
-                                    $('.nav-tabs a[href="#tab-3"]').tab('show')
+                                    $('.nav-tabs a[href="#tab-3"]').tab('show');
                                 });
                         } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
@@ -440,7 +440,7 @@
                                     "Your college plans have been saved.  Now we need to know about your extracurricular activities.",
                                     "success")
                                 .then((value) => {
-                                    $('.nav-tabs a[href="#tab-4"]').tab('show')
+                                    $('.nav-tabs a[href="#tab-4"]').tab('show');
                                 });
                         } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
@@ -469,7 +469,7 @@
                                     "Your extra curricular activities have been saved.  You are almost there!  We just need to know about your family income.",
                                     "success")
                                 .then((value) => {
-                                    $('.nav-tabs a[href="#tab-5"]').tab('show')
+                                    $('.nav-tabs a[href="#tab-5"]').tab('show');
                                 });
                         } else if (response.Status === "InvalidRequest") {
                             displayValidationErrors(response.Errors);
@@ -494,7 +494,7 @@
                     var newForm = forms[forms.length - 1];
                     $.validator.unobtrusive.parse(newForm);
                 }
-            })
+            });
         }
 
         function SaveGuardians(options, errorcallback, successcallback) {
@@ -596,7 +596,7 @@
 
             $('a[data-toggle="tab"]').on('shown.bs.tab',
                 function(e) {
-                    var target = $(e.target).attr("href") // activated tab
+                    var target = $(e.target).attr("href"); // activated tab
                     if (target === "#tab-5") {
                         LoadFamilyIncomeForm();
                     }

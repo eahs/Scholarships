@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Models.Forms
 {
@@ -21,7 +19,7 @@ namespace Scholarships.Models.Forms
         public string Config { get; set; }  // Any extraneous JSON-encoded data for this answer
         public int? FileAttachmentGroupId { get; set; }  // For file uploads
         public FileAttachmentGroup FileAttachmentGroup { get; set; }
-        
+
         [NotMapped]
         public List<int> QuestionOptions { get; set; }
 

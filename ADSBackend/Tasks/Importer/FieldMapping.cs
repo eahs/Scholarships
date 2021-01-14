@@ -3,7 +3,6 @@ using Scholarships.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Tasks.Importer
 {
@@ -26,8 +25,8 @@ namespace Scholarships.Tasks.Importer
             Map(m => m.State).Name("State");
             Map(m => m.ZipCode).Name("Zip");
             Map(m => m.Phone).Name("PhoneNumber");
-            
-            
+
+
             Map(m => m.ClassRank).Name("Rank").ConvertUsing(row =>
             {
                 string rank = row.GetField("Rank");
@@ -40,11 +39,11 @@ namespace Scholarships.Tasks.Importer
 
                 return classrank;
             });
-            
-            Map(m => m.GPA).Name("GPA").ConvertUsing(row => ConvertFieldToDouble(row.GetField("GPA")) );
+
+            Map(m => m.GPA).Name("GPA").ConvertUsing(row => ConvertFieldToDouble(row.GetField("GPA")));
             Map(m => m.SATScoreMath).Name("SATScoreMath").ConvertUsing(row => SplitGetLargest(row.GetField("SATScoreMath")));
             Map(m => m.SATScoreReading).Name("SATScoreEBRW").ConvertUsing(row => SplitGetLargest(row.GetField("SATScoreEBRW")));
-            
+
         }
 
         private static int SplitGetLargest(string num)
@@ -52,7 +51,7 @@ namespace Scholarships.Tasks.Importer
             if (string.IsNullOrEmpty(num))
                 return 0;
 
-            string[] parts = num.Replace(" ","").Split(';');
+            string[] parts = num.Replace(" ", "").Split(';');
             List<int> scores = new List<int>();
 
             scores.Add(0);

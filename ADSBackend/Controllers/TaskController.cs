@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using FileTypeChecker;
+﻿using FileTypeChecker;
 using FileTypeChecker.Abstracts;
 using Hangfire;
 using Microsoft.AspNetCore.Authorization;
@@ -14,6 +9,8 @@ using Scholarships.Services;
 using Scholarships.Tasks;
 using Scholarships.Util;
 using Serilog;
+using System;
+using System.IO;
 
 namespace Scholarships.Controllers
 {
@@ -51,7 +48,7 @@ namespace Scholarships.Controllers
             // Create the directory if it doesn't exist
             System.IO.Directory.CreateDirectory(transcriptPath);
 
-            
+
             if (file.ContentType == "application/pdf" && file.Length > 0)
             {
                 using (var ftStream = file.OpenReadStream())
@@ -87,11 +84,11 @@ namespace Scholarships.Controllers
                     }
                 }
             }
-            
+
             return View();
         }
 
-        public IActionResult Hangfire ()
+        public IActionResult Hangfire()
         {
             return View();
         }

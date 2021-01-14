@@ -1,35 +1,32 @@
-﻿using Scholarships.Data;
-using Scholarships.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System;
+using Scholarships.Data;
+using Scholarships.Models;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace Scholarships.Configuration
 {
     public class ApplicationDbSeed
     {
         private readonly ApplicationDbContext _context;
- 
-        public ApplicationDbSeed (ApplicationDbContext context)
+
+        public ApplicationDbSeed(ApplicationDbContext context)
         {
             _context = context;
-           
+
         }
 
-        public string GetJson (string seedFile)
+        public string GetJson(string seedFile)
         {
             var file = System.IO.File.ReadAllText(Path.Combine("Configuration", "SeedData", seedFile));
 
             return file;
         }
 
-        public void SeedDatabase<TEntity> (string jsonFile, DbSet<TEntity> dbset, bool preserveOrder = false) where TEntity : class
+        public void SeedDatabase<TEntity>(string jsonFile, DbSet<TEntity> dbset, bool preserveOrder = false) where TEntity : class
         {
             var records = JsonConvert.DeserializeObject<List<TEntity>>(GetJson(jsonFile));
 
@@ -51,15 +48,15 @@ namespace Scholarships.Configuration
             }
         }
 
-        public void SeedDatabase ()
+        public void SeedDatabase()
         {
             CreateFieldOfStudy();
             CreateProfileProperties();
             CreateCategories();
         }
 
-        private void CreateFieldOfStudy ()
-        {            
+        private void CreateFieldOfStudy()
+        {
             var fields = _context.FieldOfStudy.FirstOrDefault();
             if (fields == null)
             {

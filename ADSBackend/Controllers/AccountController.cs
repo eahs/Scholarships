@@ -1,11 +1,11 @@
-﻿using Scholarships.Models.AccountViewModels;
-using Scholarships.Models.Identity;
-using Scholarships.Services;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Scholarships.Models.AccountViewModels;
+using Scholarships.Models.Identity;
+using Scholarships.Services;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -402,7 +402,7 @@ namespace Scholarships.Controllers
                     return RedirectToAction(nameof(DomainNotAuthorized));
                 }
 
-                var user = new ApplicationUser { UserName = email, Email = email, FirstName = firstname, LastName = lastname};
+                var user = new ApplicationUser { UserName = email, Email = email, FirstName = firstname, LastName = lastname };
                 var result2 = await _userManager.CreateAsync(user);
                 if (result2.Succeeded)
                 {
@@ -414,7 +414,7 @@ namespace Scholarships.Controllers
                         await _userManager.RemoveFromRolesAsync(user, roles);
 
                         // assign new role
-                        await _userManager.AddToRoleAsync(user, "Student" );
+                        await _userManager.AddToRoleAsync(user, "Student");
 
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
@@ -475,7 +475,7 @@ namespace Scholarships.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
-        
+
 
         [HttpGet]
         [AllowAnonymous]

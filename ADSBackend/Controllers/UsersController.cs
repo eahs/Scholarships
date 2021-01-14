@@ -1,12 +1,12 @@
-﻿using Scholarships.Data;
-using Scholarships.Models.Identity;
-using Scholarships.Models.AdminViewModels;
-using Scholarships.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Scholarships.Data;
+using Scholarships.Models.AdminViewModels;
+using Scholarships.Models.Identity;
+using Scholarships.Services;
 using System.Linq;
 using System.Threading.Tasks;
 

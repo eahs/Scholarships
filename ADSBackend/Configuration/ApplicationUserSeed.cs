@@ -1,8 +1,8 @@
-﻿using Scholarships.Models.Identity;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using Scholarships.Data;
+using Scholarships.Models.Identity;
 using System;
 using System.Linq;
-using Scholarships.Data;
 
 namespace Scholarships.Configuration
 {

@@ -1,8 +1,8 @@
-﻿using Scholarships.Models;
-using Scholarships.Models.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Scholarships.Models;
 using Scholarships.Models.Forms;
+using Scholarships.Models.Identity;
 
 namespace Scholarships.Data
 {
@@ -27,10 +27,10 @@ namespace Scholarships.Data
         public DbSet<AnswerGroupSets> AnswerGroupSets { get; set; }
         public DbSet<Guardian> Guardian { get; set; }
         public DbSet<Answer> Answer { get; set; }
-        public DbSet<AnswerSet> AnswerSet  { get; set; }
-        public DbSet<Question> Question  { get; set; }
-        public DbSet<QuestionOption> QuestionOption  { get; set; }
-        public DbSet<QuestionSet> QuestionSet  { get; set; }
+        public DbSet<AnswerSet> AnswerSet { get; set; }
+        public DbSet<Question> Question { get; set; }
+        public DbSet<QuestionOption> QuestionOption { get; set; }
+        public DbSet<QuestionSet> QuestionSet { get; set; }
 
         public DbSet<FileAttachmentGroup> FileAttachmentGroup { get; set; }
         public DbSet<FileAttachment> FileAttachment { get; set; }
@@ -100,7 +100,7 @@ namespace Scholarships.Data
 
             // Scholarship favorites
             builder.Entity<ScholarshipFavorite>()
-                .HasKey(t => new {t.ProfileId, t.ScholarshipId});
+                .HasKey(t => new { t.ProfileId, t.ScholarshipId });
 
             builder.Entity<ScholarshipFavorite>()
                 .HasOne(fav => fav.Profile)

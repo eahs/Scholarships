@@ -37,12 +37,12 @@ namespace Scholarships.Models
         public DateTime BirthDate { get; set; } = DateTime.Now.AddDays(-365 * 18);
 
         [Required]
-        [Range(0,2, ErrorMessage = "Invalid Gender")] // 0 = male, 1 = female, 2 = other
+        [Range(0, 2, ErrorMessage = "Invalid Gender")] // 0 = male, 1 = female, 2 = other
         public int Gender { get; set; }
 
         public int Ethnicity { get; set; } = 5;  // White (most common default)
 
-        [Required, DataType(DataType.EmailAddress, ErrorMessage="Enter a valid contact email address")]
+        [Required, DataType(DataType.EmailAddress, ErrorMessage = "Enter a valid contact email address")]
         [RegularExpression("^(.+)@(?!roverkids.org).+$", ErrorMessage = "Please enter a personal email address you will have access to after graduation - roverkids.org accounts are not allowed")]
         [DisplayName("Personal Email")]
         public string Email { get; set; }
@@ -78,7 +78,7 @@ namespace Scholarships.Models
         [DisplayName("College You Are Planning to Attend")]
         public string CollegeAttending { get; set; } = "";
         [DisplayName("Yearly Tuition Cost")]
-        [DataType(DataType.Currency, ErrorMessage="You must enter the yearly tuition cost in dollars. Example: 35,000")]
+        [DataType(DataType.Currency, ErrorMessage = "You must enter the yearly tuition cost in dollars. Example: 35,000")]
         public double TuitionYearly { get; set; }
         [DisplayName("Yearly Room and Board Cost")]
         [DataType(DataType.Currency)]

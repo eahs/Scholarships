@@ -1,5 +1,5 @@
-﻿using Scholarships.Models.CacheViewModels;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Scholarships.Models.CacheViewModels;
 using System;
 using System.Threading.Tasks;
 

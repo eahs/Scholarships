@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Models
 {
@@ -13,7 +10,7 @@ namespace Scholarships.Models
 
         public string Name { get; set; }
         public DateTime Created { get; set; } = DateTime.Now;
-        public DateTime Started { get; set; } 
+        public DateTime Started { get; set; }
         public DateTime Ended { get; set; }
         public bool Completed { get; set; } = false;
         public string StatusMessage { get; set; } = "Currently Waiting";

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Scholarships.Models.Forms
+﻿namespace Scholarships.Models.Forms
 {
     public class QuestionOptionViewModel : FormsBaseViewModel
     {

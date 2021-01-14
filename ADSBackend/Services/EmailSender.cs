@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Net;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Scholarships.Services
@@ -17,7 +15,7 @@ namespace Scholarships.Services
             Configuration = configuration;
         }
 
-        public SmtpClient ConfigureClient ()
+        public SmtpClient ConfigureClient()
         {
             // https://support.google.com/a/answer/176600?hl=en
             System.Net.NetworkCredential basicauthenticationinfo = new System.Net.NetworkCredential(Configuration.Get("ApplicationEmail"), Configuration.Get("ApplicationEmailPassword"));
@@ -36,7 +34,7 @@ namespace Scholarships.Services
             return client;
         }
 
-        private static MailMessage ConfigureMessage (string email, string subject, string message )
+        private static MailMessage ConfigureMessage(string email, string subject, string message)
         {
             MailMessage mailMessage = new MailMessage
             {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Scholarships.Models.Forms
 {
@@ -15,7 +10,7 @@ namespace Scholarships.Models.Forms
         public int AnswerId { get; set; }
         public Answer Answer { get; set; }
 
-        public int QuestionOptionId { get; set; }    
+        public int QuestionOptionId { get; set; }
         public QuestionOption Option { get; set; }
 
     }

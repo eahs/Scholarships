@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Models.Forms
 {
@@ -38,7 +35,7 @@ namespace Scholarships.Models.Forms
 
         // These fields are only used when producing a form
         [NotMapped]
-        public Answer Answer { get; set; }  
+        public Answer Answer { get; set; }
 
         [NotMapped]
         public int Index { get; set; } = 0;

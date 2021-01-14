@@ -1,26 +1,19 @@
-﻿using Scholarships.Data;
-using Scholarships.Models;
-using Scholarships.Models.Identity;
-using Scholarships.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Scholarships.Models.ScholarshipViewModels;
-using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Scholarships.Models.Forms;
 using Newtonsoft.Json;
 using RestSharp.Extensions;
+using Scholarships.Data;
+using Scholarships.Models;
+using Scholarships.Models.Forms;
+using Scholarships.Models.Identity;
+using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Util;
-using Serilog;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Scholarships.Services
 {
@@ -29,7 +22,7 @@ namespace Scholarships.Services
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly HttpContext _httpcontext;
-        
+
         public DataService(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -226,7 +219,7 @@ namespace Scholarships.Services
         /// <param name="AnswerGroupId"></param>
         /// <param name="BypassProfileVerification"></param>
         /// <returns></returns>
-        public async Task<QuestionSet> GetQuestionSetWithAnswers (int AnswerGroupId, bool bypassProfileVerification = false)
+        public async Task<QuestionSet> GetQuestionSetWithAnswers(int AnswerGroupId, bool bypassProfileVerification = false)
         {
             var agroup = await _context.AnswerGroup.Include(ag => ag.AnswerSets)
                                                     .ThenInclude(q => q.AnswerSet)
@@ -248,9 +241,9 @@ namespace Scholarships.Services
 
             if (firstSet == null || firstSet.ProfileId != profile.ProfileId)
                 return null;
-            
+
             QuestionSet qset = await GetQuestionSet(firstSet.QuestionSetId);
-            
+
             if (qset == null)
                 return null;
 
@@ -303,7 +296,7 @@ namespace Scholarships.Services
             return qset;
         }
 
-        public async Task<Scholarship> GetScholarship (int scholarshipId)
+        public async Task<Scholarship> GetScholarship(int scholarshipId)
         {
             var scholarship = await _context.Scholarship
                 .Include(s => s.QuestionSet)
@@ -344,7 +337,7 @@ namespace Scholarships.Services
             return vm;
         }
 
-        public async Task<Application> GetApplication (int scholarshipId, int profileId, int questionSetId)
+        public async Task<Application> GetApplication(int scholarshipId, int profileId, int questionSetId)
         {
             var application = await _context.Application.FirstOrDefaultAsync(app => app.ScholarshipId == scholarshipId && app.ProfileId == profileId);
 
@@ -434,7 +427,7 @@ namespace Scholarships.Services
             var favorites = await _context.ScholarshipFavorite.Where(f => f.ProfileId == profileId)
                                                                       .Select(f => f.ScholarshipId)
                                                                       .ToListAsync();
-                                                              
+
             var scholarships = await _context.Scholarship
                 .Select(s => new Scholarship
                 {
@@ -477,7 +470,7 @@ namespace Scholarships.Services
             return apps ?? new List<Application>();
         }
 
-        public async Task<Scholarship> DuplicateScholarshipAsync (int scholarshipId)
+        public async Task<Scholarship> DuplicateScholarshipAsync(int scholarshipId)
         {
             Scholarship scholarship = await _context.Scholarship.Include(s => s.FieldsOfStudy)
                                                                  .ThenInclude(fos => fos.FieldOfStudy)
@@ -607,7 +600,7 @@ namespace Scholarships.Services
             return _scholarship;
         }
 
-        public async Task<ScholarshipWinnersViewModel> GetScholarshipWinnersAsync ()
+        public async Task<ScholarshipWinnersViewModel> GetScholarshipWinnersAsync()
         {
             var winners = await _context.Application.Include(app => app.Scholarship)
                                                     .Include(app => app.Profile)
@@ -618,12 +611,13 @@ namespace Scholarships.Services
                                                     .ThenBy(app => app.Profile.FirstName)
                                                     .ToListAsync();
 
-            return new ScholarshipWinnersViewModel {
-                    Applications = winners
-                };
+            return new ScholarshipWinnersViewModel
+            {
+                Applications = winners
+            };
         }
 
-        private static string ProfileFieldToURI (string fieldname)
+        private static string ProfileFieldToURI(string fieldname)
         {
             return "/Profile/Edit";
         }

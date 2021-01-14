@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Scholarships.Models.Forms
 {
@@ -12,7 +9,7 @@ namespace Scholarships.Models.Forms
         public int FileAttachmentId { get; set; }
         public int FileAttachmentGroupId { get; set; }
         public string FileAttachmentUuid { get; set; } = System.Guid.NewGuid().ToString();
-        public FileAttachmentGroup FileAttachmentGroup { get; set; }        
+        public FileAttachmentGroup FileAttachmentGroup { get; set; }
         public string ContentType { get; set; }  // mime-type
         public string FileName { get; set; }
         public string FileSubPath { get; set; }  // Path relative to root file storage directory

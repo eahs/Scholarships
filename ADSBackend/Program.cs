@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Scholarships.Models.ConfigurationViewModels;
 using Serilog;
 using Serilog.Events;
 using System;
 using System.IO;
-using Scholarships.Models.ConfigurationViewModels;
 
 namespace Scholarships
 {
@@ -37,7 +37,7 @@ namespace Scholarships
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 .Enrich.FromLogContext()
                 .WriteTo.Debug()
-                .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, 
+                .WriteTo.File(logPath, rollingInterval: RollingInterval.Day,
                                         flushToDiskInterval: TimeSpan.FromSeconds(1),
                                         shared: true)
                 .CreateLogger();

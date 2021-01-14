@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Hangfire;
-using Hangfire.AspNetCore;
+﻿using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,7 +12,11 @@ using Scholarships.Models.ScholarshipViewModels;
 using Scholarships.Services;
 using Scholarships.Tasks;
 using Serilog;
-using JsonSerializer = System.Text.Json.JsonSerializer;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
@@ -41,7 +38,7 @@ namespace Scholarships.Controllers
             // First calculate start of school year so we only fetch scholarships from the current school year
             int startingYear = DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1;
             DateTime yearStart = new DateTime(startingYear, 7, 1);
-            DateTime yearEnd = new DateTime(startingYear+1, 7, 1);
+            DateTime yearEnd = new DateTime(startingYear + 1, 7, 1);
 
             // Grab only needed fields
             var scholarships = await _context.Scholarship
@@ -154,11 +151,11 @@ namespace Scholarships.Controllers
             if (id == null)
                 return Ok(new { Result = "NotFound" });
 
-            var scholarship = await _context.Scholarship.FirstOrDefaultAsync(s => s.ScholarshipId == (int) id);
+            var scholarship = await _context.Scholarship.FirstOrDefaultAsync(s => s.ScholarshipId == (int)id);
             var profile = await _dataService.GetProfileAsync();
 
             if (scholarship == null || profile == null)
-                return Ok(new {Result = "NotFound"});
+                return Ok(new { Result = "NotFound" });
 
             ScholarshipFavorite favorite = new ScholarshipFavorite
             {
@@ -186,11 +183,11 @@ namespace Scholarships.Controllers
         {
             var appsCompleted = await _context.Application.Where(app => app.Submitted)
                                                  .GroupBy(p => p.ScholarshipId)
-                                                 .Select(x => new 
-                                                    {
-                                                        ScholarshipId = x.Key,
-                                                        Count = x.Count()
-                                                    }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
+                                                 .Select(x => new
+                                                 {
+                                                     ScholarshipId = x.Key,
+                                                     Count = x.Count()
+                                                 }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
 
             var appsPending = await _context.Application.Where(app => !app.Submitted)
                 .GroupBy(p => p.ScholarshipId)
@@ -244,7 +241,7 @@ namespace Scholarships.Controllers
             }
 
             var profile = await _dataService.GetProfileAsync();
-            var app = await _context.Application.FirstOrDefaultAsync(a => a.ProfileId == profile.ProfileId && a.ScholarshipId == scholarship.ScholarshipId );
+            var app = await _context.Application.FirstOrDefaultAsync(a => a.ProfileId == profile.ProfileId && a.ScholarshipId == scholarship.ScholarshipId);
             var favorite = await _context.ScholarshipFavorite.FirstOrDefaultAsync(fav =>
                 fav.ScholarshipId == scholarship.ScholarshipId && fav.ProfileId == profile.ProfileId);
 
@@ -254,7 +251,7 @@ namespace Scholarships.Controllers
 
             ScholarshipDetailsViewModel vm = new ScholarshipDetailsViewModel
             {
-                Scholarship = scholarship, 
+                Scholarship = scholarship,
                 ApplicationCompleted = app != null ? app.Submitted : false,
                 ProfileCompleted = fieldStatus.Count == 0,
                 FieldStatus = fieldStatus,
@@ -288,7 +285,7 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Manager")]      
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<IActionResult> ToggleFavoriteApplication(int? id, bool state)
         {
             if (id == null)
@@ -343,7 +340,7 @@ namespace Scholarships.Controllers
                 return new { error = true, message = "Scholarship Id not specified" };
 
             var job = await _context.Job.OrderByDescending(x => x.JobId).FirstOrDefaultAsync(j =>
-                j.Type == "applications" && j.ForeignKey == (int) id);
+                j.Type == "applications" && j.ForeignKey == (int)id);
 
             if (job != null && job.Completed)
             {
@@ -447,7 +444,7 @@ namespace Scholarships.Controllers
 
 
         [Authorize(Roles = "Admin,Manager,Student")]
-        public async Task<IActionResult> Apply (int? id)  // id of scholarship
+        public async Task<IActionResult> Apply(int? id)  // id of scholarship
         {
             if (id == null)
                 return NotFound();
@@ -572,7 +569,7 @@ namespace Scholarships.Controllers
                 scholarship.Description ??= "";
                 scholarship.Standards ??= "";
                 scholarship.Eligibility ??= "";
-                
+
                 _context.Add(scholarship);
                 await _context.SaveChangesAsync();
 
@@ -628,7 +625,7 @@ namespace Scholarships.Controllers
         /// </summary>
         /// <param name="selectedFieldsOfStudyIds"></param>
         /// <returns></returns>
-        private async Task SetupForm (List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds, List<int> selectedCategoryIds)
+        private async Task SetupForm(List<int> selectedFieldsOfStudyIds, List<int> selectedProfilePropertyIds, List<int> selectedCategoryIds)
         {
             var fieldsOfStudy = await _context.FieldOfStudy.OrderBy(fos => fos.Name).ToListAsync();
             ViewBag.FieldsOfStudy = new MultiSelectList(fieldsOfStudy, "FieldOfStudyId", "Name", selectedFieldsOfStudyIds);
@@ -652,7 +649,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _dataService.GetScholarship((int) id);
+            var scholarship = await _dataService.GetScholarship((int)id);
             if (scholarship == null)
             {
                 return NotFound();
@@ -810,7 +807,7 @@ namespace Scholarships.Controllers
                 return NotFound();
             }
 
-            var scholarship = await _dataService.GetScholarship((int) id);
+            var scholarship = await _dataService.GetScholarship((int)id);
 
             if (scholarship == null)
             {

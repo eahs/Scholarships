@@ -19,7 +19,7 @@ namespace Scholarships.Models.AdminViewModels
 
         [Required]
         public string Role { get; set; }
-        
+
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
