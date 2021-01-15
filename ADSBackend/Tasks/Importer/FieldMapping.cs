@@ -17,7 +17,21 @@ namespace Scholarships.Tasks.Importer
             Map(m => m.Email).Name("NETWORKID").ConvertUsing(row => row.GetField("NETWORKID") + "@roverkids.org");
             Map(m => m.LunchStatus).Name("LunchStatus");
             Map(m => m.BirthDate).Name("BirthDate");
-            Map(m => m.GraduationYear).Name("GraduationYear");
+            Map(m => m.GraduationYear).Name("GraduationYear").ConvertUsing(row =>
+            {
+                string gyear = row.GetField("GraduationYear");
+                int year = DateTime.Now.Month < 7 ? DateTime.Now.Year : DateTime.Now.Year + 1;
+
+                if (gyear.Length > 0)
+                {
+                    int temp;
+
+                    if (Int32.TryParse(gyear, out temp))
+                        year = temp;
+                }
+
+                return year;
+            });
             Map(m => m.Gender).Name("Gender").ConvertUsing(row => row.GetField("Gender") == "M" ? 0 : 1);
             Map(m => m.Ethnicity).Name("Ethnicity").ConvertUsing(row => ConvertFieldToInt(row.GetField("Ethnicity")));
             Map(m => m.Address1).Name("AddressLine1");

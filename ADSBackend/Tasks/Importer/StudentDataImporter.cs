@@ -46,10 +46,10 @@ namespace Scholarships.Tasks.Importer
                 {
                     bool update = student.SATScoreMath != p.SATScoreMath ||
                                   student.SATScoreReading != p.SATScoreReading ||
-                                  student.GPA != p.GPA ||
+                                  Math.Abs((decimal)(student.GPA - p.GPA)) > 0 ||
                                   student.ClassRank != p.ClassRank ||
                                   student.StudentId != p.StudentId ||
-                                  student.LunchStatus != student.LunchStatus;
+                                  student.LunchStatus != p.LunchStatus;
 
                     if (update)
                     {
