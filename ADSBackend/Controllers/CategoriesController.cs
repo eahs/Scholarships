@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Manager")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;

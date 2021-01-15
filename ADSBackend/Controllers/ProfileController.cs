@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Scholarships.Controllers
 {
-    [Authorize]
+    [Authorize(Roles="Admin,Student")]
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -32,9 +32,7 @@ namespace Scholarships.Controllers
         // GET: Profiles
         public async Task<IActionResult> Index()
         {
-            var profile = await _dataService.GetProfileAsync();
-
-            return View(profile);
+            return RedirectToAction("Edit", "Profile");
         }
 
         // GET: Profiles/Edit
