@@ -467,6 +467,14 @@ namespace Scholarships.Controllers
             if (!await CanAccessScholarship(vm.Scholarship.ScholarshipId))
                 return NotFound();
 
+            var sappwon = await _context.Application.Include(app => app.Scholarship)
+                .Where(app =>
+                app.ProfileId == vm.Application.ProfileId && app.ApplicantAwarded &&
+                app.ApplicationId != vm.Application.ApplicationId)
+                .ToListAsync();
+
+            vm.ScholarshipsWon = sappwon.Select(app => app.Scholarship).ToList();
+
             return View(vm);
 
         }

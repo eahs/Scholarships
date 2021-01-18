@@ -53,6 +53,24 @@
         </form>
     </div>
 </div>
+    <div class="ibox">
+        <div class="alert alert-light">
+            <h3>Other Scholarships Won</h3>
+
+            @if (Model.ScholarshipsWon.Count > 0)
+            {
+                <span>None so far</span>
+            }
+            else
+            {
+                var names = Model.ScholarshipsWon.Select(s => s.Name).ToList();
+                var namesJoined = String.Join(", ", names);
+
+                <span>@namesJoined</span>
+            }
+        </div>
+    </div>
+
 <div class="ibox">
     <div class="ibox-content">
         @await Html.PartialAsync("_ScholarshipApplicationPartial")
