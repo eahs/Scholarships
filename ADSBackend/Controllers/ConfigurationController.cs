@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Scholarships.Data;
@@ -43,7 +44,7 @@ namespace Scholarships.Controllers
             {
                 _configuration.Set("ApplicationEmail", viewModel.ApplicationEmail);
 
-                if (viewModel.ApplicationEmailPassword != null)
+                if (!String.IsNullOrEmpty(viewModel.ApplicationEmailPassword))
                     _configuration.Set("ApplicationEmailPassword", viewModel.ApplicationEmailPassword);
 
                 await _configuration.SaveChangesAsync();
