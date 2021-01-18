@@ -240,6 +240,8 @@ namespace Scholarships
             var baseDir = env.ContentRootPath;
             AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(baseDir, "App_Data"));
 
+            app.UseStatusCodePagesWithRedirects("/error/{0}");
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Error 404 - Page Not Found";
+    Layout = "~/Views/Shared/_LayoutLandingSecondary.cshtml";
+}
+
+        <div class="wrapper wrapper-content  animated fadeInRight article">
+            <div class="row justify-content-md-center">
+                <div class="col-lg-6">
+
+                    <h1>Oh no! Please fur-give me</h1>
+
+                    <div class="error-desc" style="margin-top: 20px">
+                        It looks like I really am in the dog house now.  Sorry, but I was unable to retrieve the page you are looking for.  Maybe go back and try something else?  I don't know.. I'm just a pup.
+                    </div>
+
+                    <p style="margin: 0 0 100px 0;">
+                    </p>
+                    <hr>
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-success">Home</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ytwrapper">
+                        <div class="ytframe-container">
+                            <iframe src="https://www.youtube-nocookie.com/embed/mYRuGImcoik?autoplay=1&mute=1&loop=1&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&fs=0&controls=0&playlist=mYRuGImcoik" width="560" height="315" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+@section Styles
+{
+    <style type="text/css">
+        .ytframe-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */  
+            padding-top: 25px;
+            width: 300%; /* enlarge beyond browser width */
+            left: -100%; /* center */
+        }
+
+        .ytframe-container iframe {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+        }
+
+        .ytwrapper {
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .landing-page h1 {
+            font-size: 40px;
+            font-weight: 900;
+        }
+    </style>
+}
+
