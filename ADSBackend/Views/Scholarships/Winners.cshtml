@@ -74,7 +74,14 @@
                 {
                 <tr>
                     <td style="vertical-align: middle">
-                        @item.Scholarship.Name
+                        @if (User.IsInRole("Provider"))
+                        {
+                            @item.Scholarship.Name
+                        }
+                        else
+                        {
+                        <a asp-action="Applications" asp-route-id="@item.Scholarship.ScholarshipId">@item.Scholarship.Name</a>
+                        }
                     </td>
                     <td style="vertical-align: middle">
                         @item.Profile.FirstName

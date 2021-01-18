@@ -65,7 +65,14 @@
             {
                 <tr>
                     <td style="vertical-align: middle">
-                        @Html.DisplayFor(modelItem => item.Name)
+                        @if (User.IsInRole("Provider"))
+                        {
+                            @Html.DisplayFor(modelItem => item.Name)
+                        }
+                        else
+                        {
+                        <a asp-action="Applications" asp-route-id="@item.ScholarshipId">@Html.DisplayFor(modelItem => item.Name)</a>
+                        }
                     </td>
                     <td style="vertical-align: middle" class="text-center">
                         @item.ApplicantPending
