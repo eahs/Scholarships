@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,6 +11,7 @@ using Scholarships.Services;
 using System.Linq;
 using System.Threading.Tasks;
 using Scholarships.Models;
+using Serilog;
 
 namespace Scholarships.Controllers
 {
@@ -47,13 +49,19 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> Create()
         {
+            var scholarships = await _context.Scholarship.OrderByDescending(s => s.DueDate.Year)
+                .ThenBy(s => s.Name)
+                .ToListAsync();
+
+            ViewBag.Scholarships = new MultiSelectList(scholarships, "ScholarshipId", "NameAndYear");
             ViewBag.Roles = new SelectList(await _roleManager.Roles.ToListAsync(), "Name", "Name");
+
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Email,FirstName,LastName,Role,Password,ConfirmPassword")] UserViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Email,FirstName,LastName,Role,Password,ConfirmPassword,ScholarshipIds")] UserViewModel viewModel)
         {
             if (string.IsNullOrEmpty(viewModel.Password))
             {
@@ -78,10 +86,27 @@ namespace Scholarships.Controllers
                 // assign new role
                 await _userManager.AddToRoleAsync(user, viewModel.Role);
 
+                // Save associated scholarships they may manage
+                var sps = viewModel.ScholarshipIds.Select(vm => new ScholarshipProvider
+                {
+                    UserId = user.Id,
+                    ScholarshipId = vm
+                }).ToList();
+
+                _context.ScholarshipProvider.AddRange(sps);
+                await _context.SaveChangesAsync();
+
                 // send confirmation email
-                var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var confirmationLink = Url.EmailConfirmationLink(user.Id, confirmationCode, Request.Scheme);
-                await _emailSender.SendEmailConfirmationAsync(viewModel.Email, confirmationLink);
+                try
+                {
+                    var confirmationCode = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationLink = Url.EmailConfirmationLink(user.Id, confirmationCode, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(viewModel.Email, confirmationLink);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Unable to send confirmation email");
+                }
 
                 return RedirectToAction(nameof(Index));
             }
