@@ -77,8 +77,19 @@
                     </li>
                 }
                 <li is-active-route asp-controller="Scholarships" asp-action="Index">
-                        <a asp-controller="Scholarships" asp-action="Index"><i class="fa fa-graduation-cap"></i><span class="nav-label">Scholarships</span></a>
+                    <a asp-controller="Scholarships" asp-action="Index"><i class="fa fa-graduation-cap"></i><span class="nav-label">Scholarships</span></a>
+                </li>
+                @if (User.IsInRole("Provider"))
+                {
+                    <li id="nav_manage" class="@manageClass">
+                        <a href="#"><i class="fa fa-database"></i> <span class="nav-label">Manage</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level collapse">
+                            <li is-active-route asp-controller="Scholarships" asp-action="Manage">
+                                <a asp-controller="Scholarships" asp-action="Manage">Scholarships</a>
+                            </li>
+                        </ul>
                     </li>
+                }
 
                 @if (User.IsInRole("Manager") || User.IsInRole("Admin"))
                 {
@@ -103,7 +114,7 @@
                         </ul>
                     </li>
                 }
-    @if (User.IsInRole("Admin"))
+                @if (User.IsInRole("Admin"))
                 {
                     <li id="nav_admin" class="@adminClass">
                         <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Administration </span><span class="fa arrow"></span></a>

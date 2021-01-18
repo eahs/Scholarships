@@ -95,5 +95,8 @@ namespace Scholarships.Models
 
         [NotMapped]
         public int ApplicantPending { get; set; } = 0;  // Used for counting number of users who have started application process
+
+        [NotMapped]
+        public string NameAndYear => $"{Name} ({DueDate.Year})";
     }
 }

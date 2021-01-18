@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
@@ -17,7 +18,7 @@ namespace Scholarships.Models.Identity
         public string LastName { get; set; } = "";
 
         public virtual string FullName => FirstName.Trim() + " " + LastName?.Trim();
-
+        public List<ScholarshipProvider> ManagedScholarships { get; set; }
         public virtual string GravitarHash()
         {
             MD5 md5Hasher = MD5.Create();

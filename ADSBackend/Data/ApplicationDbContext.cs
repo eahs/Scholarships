@@ -35,6 +35,7 @@ namespace Scholarships.Data
         public DbSet<FileAttachmentGroup> FileAttachmentGroup { get; set; }
         public DbSet<FileAttachment> FileAttachment { get; set; }
         public DbSet<Job> Job { get; set; }
+        public DbSet<ScholarshipProvider> ScholarshipProvider { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -45,6 +46,14 @@ namespace Scholarships.Data
             // Add your customizations after calling base.OnModelCreating(builder);
 
             // Scholarship category relations
+
+            builder.Entity<ScholarshipProvider>()
+                .HasKey(t => new {t.UserId, t.ScholarshipId});
+
+            builder.Entity<ScholarshipProvider>()
+                .HasOne(t => t.User)
+                .WithMany(t => t.ManagedScholarships)
+                .HasForeignKey(t => t.UserId);
 
             builder.Entity<ScholarshipCategory>()
                 .HasKey(t => new { t.CategoryId, t.ScholarshipId });

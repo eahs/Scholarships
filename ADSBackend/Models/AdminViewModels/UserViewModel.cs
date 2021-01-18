@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Scholarships.Models.AdminViewModels
 {
@@ -19,6 +20,8 @@ namespace Scholarships.Models.AdminViewModels
 
         [Required]
         public string Role { get; set; }
+        [Display(Name = "Managed Scholarships")]
+        public List<int> ScholarshipIds { get; set; }
 
         [DataType(DataType.Password)]
         public string Password { get; set; }

@@ -38,6 +38,10 @@
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label class="control-label" style="width: 100%">Managed Scholarships (Requires Provider Role)</label>
+                        <select asp-for="ScholarshipIds" asp-items="ViewBag.Scholarships" multiple="multiple" class="fos form-control"></select>
+                    </div>
+                    <div class="form-group">
                         <label asp-for="Password" class="control-label"></label>
                         <input asp-for="Password" class="form-control" />
                         <span asp-validation-for="Password" class="text-danger"></span>
@@ -56,3 +60,35 @@
         <a asp-action="Index">Back to List</a>
     </div>
 </div>
+
+@section Styles  {
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style type="text/css">
+        </style>
+}
+
+@section Scripts {
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+    <script type="text/javascript">
+        $(".fos").select2({
+                tags: true,
+                createTag: function (params) {
+                    // Don't offset to create a tag if there is no at symbol
+                    if (params.term.indexOf('@@') === -1) {
+                        // Return null to disable tag creation
+                        return null;
+                    }
+
+                    return {
+                        id: params.term,
+                        text: params.term
+                    }
+                }
+            }
+        );
+    </script>
+}

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Scholarships.Models.Scholarship>
+﻿@using Microsoft.CodeAnalysis.CSharp.Syntax
+@model IEnumerable<Scholarships.Models.Scholarship>
 
 @{
     ViewData["Title"] = "Manage Scholarships";
@@ -7,7 +8,7 @@
     int startingYear = DateTime.Now.Month >= 7 ? DateTime.Now.Year : DateTime.Now.Year - 1;
     DateTime yearStart = new DateTime(startingYear, 7, 1);
     DateTime yearEnd = new DateTime(startingYear + 1, 7, 1);
-
+    
 }
 
 <ol class="breadcrumb">
@@ -31,60 +32,70 @@
     </div>
 </div>
 <div class="ibox">
-    <div class="ibox-title"><a asp-action="Create" class="btn btn-w-m btn-primary">Create New</a></div>
+    @if (!User.IsInRole("Provider"))
+    {
+        <div class="ibox-title"><a asp-action="Create" class="btn btn-w-m btn-primary">Create New</a></div>
+    }
     <div class="ibox-content" id="scholarships_container" style="display: none">
 
 
         <table class="table" id="scholarships">
             <thead>
-                <tr>
-                    <th style="width: 40%">
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th class="text-center">
-                        Applications Pending
-                    </th>
-                    <th class="text-center">
-                        Applications Completed
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.ReleaseDate)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.DueDate)
-                    </th>
-                    <th></th>
-                </tr>
+            <tr>
+                <th style="width: 40%">
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th class="text-center">
+                    Applications Pending
+                </th>
+                <th class="text-center">
+                    Applications Completed
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ReleaseDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DueDate)
+                </th>
+                <th></th>
+            </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td style="vertical-align: middle">
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td style="vertical-align: middle" class="text-center">
-                            @item.ApplicantPending
-                        </td>
-                        <td style="vertical-align: middle" class="text-center">
-                            @item.ApplicantCount
-                        </td>
-                        <td style="vertical-align: middle">
-                            @Html.DisplayFor(modelItem => item.ReleaseDate)
-                        </td>
-                        <td style="vertical-align: middle">
-                            @Html.DisplayFor(modelItem => item.DueDate)
-                        </td>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="vertical-align: middle">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td style="vertical-align: middle" class="text-center">
+                        @item.ApplicantPending
+                    </td>
+                    <td style="vertical-align: middle" class="text-center">
+                        @item.ApplicantCount
+                    </td>
+                    <td style="vertical-align: middle">
+                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    </td>
+                    <td style="vertical-align: middle">
+                        @Html.DisplayFor(modelItem => item.DueDate)
+                    </td>
 
-                        <td style="vertical-align: middle; white-space: nowrap">
+                    <td style="vertical-align: middle; white-space: nowrap">
+                        @if (User.IsInRole("Provider"))
+                        {
+                            <a class="btn btn-white btn-bitbucket" asp-action="Applications" asp-route-id="@item.ScholarshipId"><i class="fa fa-id-card-o"></i> View Applications</a>
+                        }
+                        else
+                        {
                             <a class="btn btn-white btn-bitbucket" asp-action="Edit" asp-route-id="@item.ScholarshipId"><i class="fa fa-wrench"></i> Edit</a>
                             <a class="btn btn-white btn-bitbucket" asp-action="Applications" asp-route-id="@item.ScholarshipId"><i class="fa fa-id-card-o"></i> View Applications</a>
                             <a class="btn btn-white btn-bitbucket" asp-action="Details" asp-route-id="@item.ScholarshipId"><i class="fa fa-info"></i> Details</a>
                             <a class="btn btn-white btn-bitbucket" asp-action="Delete" asp-route-id="@item.ScholarshipId"><i class="fa fa-trash"></i> Delete</a>
+                        }
 
-                        </td>
-                    </tr>
-                }
+                    </td>
+                </tr>
+            }
             </tbody>
         </table>
 

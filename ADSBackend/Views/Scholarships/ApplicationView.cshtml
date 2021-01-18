@@ -1,4 +1,5 @@
-﻿@model Scholarships.Models.ScholarshipViewModels.ScholarshipApplyViewModel
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model Scholarships.Models.ScholarshipViewModels.ScholarshipApplyViewModel
 
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -43,7 +44,7 @@
             <div class="form-group">
                 <label for="ApplicantNotes" class="control-label">Applicant Notes</label>
                 <textarea id="ApplicantNotes" name="ApplicantNotes" class="summernote">
-
+                @Model.Application.ApplicantNotes
                 </textarea>
             </div>
             <div class="form-group">

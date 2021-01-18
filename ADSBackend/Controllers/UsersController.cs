@@ -9,6 +9,7 @@ using Scholarships.Models.Identity;
 using Scholarships.Services;
 using System.Linq;
 using System.Threading.Tasks;
+using Scholarships.Models;
 
 namespace Scholarships.Controllers
 {
@@ -90,9 +91,20 @@ namespace Scholarships.Controllers
 
         public async Task<IActionResult> Edit(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            var role = await _userManager.GetRolesAsync(user);
+            var user = await _context.Users.Include(p => p.ManagedScholarships)
+                                           .FirstOrDefaultAsync(u => u.Id == id);
 
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var role = await _userManager.GetRolesAsync(user);
+            var scholarships = await _context.Scholarship.OrderByDescending(s => s.DueDate.Year)
+                .ThenBy(s => s.Name)
+                .ToListAsync();
+
+            ViewBag.Scholarships = new MultiSelectList(scholarships, "ScholarshipId", "NameAndYear", user.ManagedScholarships.Select(u => u.ScholarshipId).ToList());
             ViewBag.Roles = new SelectList(await _roleManager.Roles.ToListAsync(), "Name", "Name");
 
             var viewModel = new UserViewModel
@@ -101,7 +113,8 @@ namespace Scholarships.Controllers
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Role = role.FirstOrDefault()
+                Role = role.FirstOrDefault(),
+                ScholarshipIds = user.ManagedScholarships.Select(s => s.ScholarshipId).ToList()
             };
 
             return View(viewModel);
@@ -109,7 +122,7 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,FirstName,LastName,Role,Password,ConfirmPassword")] UserViewModel viewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,FirstName,LastName,Role,Password,ScholarshipIds,ConfirmPassword")] UserViewModel viewModel)
         {
             if (id != viewModel.Id)
             {
@@ -126,13 +139,24 @@ namespace Scholarships.Controllers
                     user.FirstName = viewModel.FirstName;
                     user.LastName = viewModel.LastName;
 
+                    var sps = viewModel.ScholarshipIds.Select(vm => new ScholarshipProvider
+                    {
+                        UserId = user.Id,
+                        ScholarshipId = vm
+                    }).ToList();
+
+                    var oldScholarshipIds = await _context.ScholarshipProvider.Where(sp => sp.UserId == id).ToListAsync();
+                    _context.ScholarshipProvider.RemoveRange(oldScholarshipIds);
+                    _context.ScholarshipProvider.AddRange(sps);
+
+
                     if (!string.IsNullOrEmpty(viewModel.Password))
                     {
                         // change the password
                         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, viewModel.Password);
                     }
 
-                    // upadate user
+                    // update user
                     _context.Update(user);
                     await _context.SaveChangesAsync();
 

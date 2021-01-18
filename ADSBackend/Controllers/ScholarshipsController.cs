@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Scholarships.Models.Identity;
 
 namespace Scholarships.Controllers
 {
@@ -25,12 +27,15 @@ namespace Scholarships.Controllers
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
         private readonly Services.Configuration Configuration;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ScholarshipsController(ApplicationDbContext context, DataService dataService, Services.Configuration configurationService)
+        public ScholarshipsController(ApplicationDbContext context, DataService dataService, Services.Configuration configurationService, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _dataService = dataService;
             Configuration = configurationService;
+            _userManager = userManager;
+
         }
 
         private async Task<ScholarshipListViewModel> FetchScholarships(ScholarshipListViewModel vm = null)
@@ -178,7 +183,7 @@ namespace Scholarships.Controllers
         }
 
         // GET: Scholarships
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Provider")]
         public async Task<IActionResult> Manage()
         {
             var appsCompleted = await _context.Application.Where(app => app.Submitted)
@@ -207,6 +212,17 @@ namespace Scholarships.Controllers
                 ApplicantCount = appsCompleted.ContainsKey(s.ScholarshipId) ? appsCompleted[s.ScholarshipId] : 0,
                 ApplicantPending = appsPending.ContainsKey(s.ScholarshipId) ? appsPending[s.ScholarshipId] : 0
             }).OrderByDescending(s => s.ReleaseDate).ToListAsync();
+
+            if (User.IsInRole("Provider"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var scholarshipIds = await _context.ScholarshipProvider.Where(sp => sp.UserId == user.Id).Select(sp => sp.ScholarshipId).ToListAsync();
+
+                if (scholarshipIds == null || scholarshipIds.Count == 0)
+                    scholarships.Clear();
+                else
+                    scholarships = scholarships.Where(s => scholarshipIds.Contains(s.ScholarshipId)).ToList();
+            }
 
             return View(scholarships);
         }
@@ -261,7 +277,7 @@ namespace Scholarships.Controllers
             return View(vm);
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Provider")]
         public async Task<IActionResult> Applications(int id) // id = ScholarshipId
         {
             Scholarship scholarship = await _context.Scholarship.FirstOrDefaultAsync(s => s.ScholarshipId == id);
@@ -280,12 +296,17 @@ namespace Scholarships.Controllers
                 Applications = applications
             };
 
+            if (!await CanAccessScholarship(vm.Scholarship.ScholarshipId))
+            {
+                return NotFound();
+            }
+
             return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Provider")]
         public async Task<IActionResult> ToggleFavoriteApplication(int? id, bool state)
         {
             if (id == null)
@@ -294,6 +315,9 @@ namespace Scholarships.Controllers
             var app = await _context.Application.FirstOrDefaultAsync(s => s.ApplicationId == (int)id);
 
             if (app == null)
+                return Ok(new { Result = "NotFound" });
+
+            if (!await CanAccessScholarship(app.ScholarshipId))
                 return Ok(new { Result = "NotFound" });
 
             if (state != app.ApplicantFavorite)
@@ -308,7 +332,7 @@ namespace Scholarships.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Provider")]
         [Produces("application/json")]
         public async Task<object> UpdateApplicationNotes(int? id, Application _app)
         {
@@ -318,6 +342,9 @@ namespace Scholarships.Controllers
             var app = await _context.Application.FirstOrDefaultAsync(s => s.ApplicationId == (int)id);
 
             if (app == null)
+                return new { Result = "NotFound" };
+
+            if (!await CanAccessScholarship(app.ScholarshipId))
                 return new { Result = "NotFound" };
 
             app.ApplicantScore = Math.Clamp(_app.ApplicantScore, 0, 100);
@@ -426,15 +453,18 @@ namespace Scholarships.Controllers
 
         }
 
-        [Authorize(Roles = "Admin,Manager")]
+        [Authorize(Roles = "Admin,Manager,Provider")]
         public async Task<IActionResult> ApplicationView(int? id) // id = ApplicationId
         {
             if (id == null)
                 return NotFound();
-
+            
             var vm = await _dataService.GetScholarshipApplicationViewModel((int)id);
 
             if (vm == null)
+                return NotFound();
+
+            if (!await CanAccessScholarship(vm.Scholarship.ScholarshipId))
                 return NotFound();
 
             return View(vm);
@@ -838,6 +868,31 @@ namespace Scholarships.Controllers
         private bool ScholarshipExists(int id)
         {
             return _context.Scholarship.Any(e => e.ScholarshipId == id);
+        }
+
+        private async Task<List<int>> GetProviderScholarshipIds()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var scholarshipIds = await _context.ScholarshipProvider.Where(sp => sp.UserId == user.Id).Select(sp => sp.ScholarshipId).ToListAsync();
+
+            return scholarshipIds ?? new List<int>();
+        }
+
+        private async Task<bool> CanAccessScholarship(int scholarshipId)
+        {
+            if (User.IsInRole("Provider"))
+            {
+                List<int> scholarshipIds = await GetProviderScholarshipIds();
+
+                return scholarshipIds.Contains(scholarshipId);
+            }
+            else if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+            {
+                return true;
+            }
+
+
+            return false;
         }
     }
 }

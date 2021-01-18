@@ -13,9 +13,13 @@
 </ol>
 
 <h2>Applications</h2>
-<div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
-    <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
-</div>
+@if (!User.IsInRole("Provider"))
+{
+    <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
+        <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
+    </div>
+}
+
 <div class="ibox">
     <div class="ibox-content">
 
