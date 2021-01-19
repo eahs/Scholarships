@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Scholarships.Configuration;
 using Scholarships.Data;
+using Scholarships.Middlewares;
 using Scholarships.Models.Identity;
 using Scholarships.Services;
 using Scholarships.Tasks;
@@ -241,6 +242,7 @@ namespace Scholarships
             AppDomain.CurrentDomain.SetData("DataDirectory", Path.Combine(baseDir, "App_Data"));
 
             app.UseStatusCodePagesWithRedirects("/error/{0}");
+            app.UseAnalyticsLogger(); // Custom middleware
             
             app.UseEndpoints(endpoints =>
             {
