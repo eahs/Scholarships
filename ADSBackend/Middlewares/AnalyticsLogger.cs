@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Scholarships.Data;
 using Scholarships.Models.Identity;
+using Microsoft.AspNetCore.Routing;
 
 namespace Scholarships.Middlewares
 {
@@ -16,6 +17,7 @@ namespace Scholarships.Middlewares
     public class AnalyticsLogger
     {
         private readonly RequestDelegate _next;
+        private string[] ControllersToTrack = { "Scholarships", "Articles", "Home", "Profile", "Scholarships" };
 
         public AnalyticsLogger(RequestDelegate next)
         {
@@ -30,12 +32,16 @@ namespace Scholarships.Middlewares
                       .GetEndpoint()
                       .Metadata
                       .GetMetadata<ControllerActionDescriptor>();
-
+                
                 var controllerName = controllerActionDescriptor.ControllerName;
-                var actionName = controllerActionDescriptor.ActionName;
-                var Id = controllerActionDescriptor.Id;
 
-                var userId = userManager.GetUserId(httpContext.User); // httpContext.User.FindFirst(ClaimTypes.NameIdentifier)
+                if (ControllersToTrack.Contains(controllerName))
+                {
+                    var actionName = controllerActionDescriptor.ActionName;
+                    var Id = httpContext.GetRouteValue("id");
+
+                    var userId = userManager.GetUserId(httpContext.User); 
+                }
             }
 
             await _next(httpContext);
