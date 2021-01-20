@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Scholarships.Data;
 using Scholarships.Models.Identity;
 using Microsoft.AspNetCore.Routing;
+using Scholarships.Models;
 
 namespace Scholarships.Middlewares
 {
@@ -17,7 +19,7 @@ namespace Scholarships.Middlewares
     public class AnalyticsLogger
     {
         private readonly RequestDelegate _next;
-        private string[] ControllersToTrack = { "Scholarships", "Articles", "Home", "Profile", "Scholarships" };
+        private string[] ControllersToTrack = { "Admin", "Scholarships", "Articles", "Home", "Profile", "Scholarships" };
 
         public AnalyticsLogger(RequestDelegate next)
         {
@@ -26,22 +28,68 @@ namespace Scholarships.Middlewares
 
         public async Task InvokeAsync(HttpContext httpContext, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            if (httpContext.User.Identity.IsAuthenticated)
+            try
             {
-                var controllerActionDescriptor = httpContext
-                      .GetEndpoint()
-                      .Metadata
-                      .GetMetadata<ControllerActionDescriptor>();
-                
-                var controllerName = controllerActionDescriptor.ControllerName;
 
-                if (ControllersToTrack.Contains(controllerName))
+                if (httpContext.User.Identity.IsAuthenticated)
                 {
-                    var actionName = controllerActionDescriptor.ActionName;
-                    var Id = httpContext.GetRouteValue("id");
+                    var controllerActionDescriptor = httpContext
+                          .GetEndpoint()
+                          .Metadata
+                          .GetMetadata<ControllerActionDescriptor>();
+                    
+                    var controllerName = controllerActionDescriptor.ControllerName;
 
-                    var userId = userManager.GetUserId(httpContext.User); 
+                    if (ControllersToTrack.Contains(controllerName))
+                    {
+                        var actionName = controllerActionDescriptor.ActionName;
+                        var Id = httpContext.GetRouteValue("id");
+                        var userId = userManager.GetUserId(httpContext.User);
+
+                        try
+                        {
+                            int? cleanId = null;
+                            int cleanUserId;
+
+                            if (Id is string)
+                            {
+                                int temp;
+
+                                if (int.TryParse(Id as string, out temp))
+                                {
+                                    cleanId = temp;
+                                }
+                            }
+
+
+                            bool success = int.TryParse(userId, out cleanUserId);
+
+                            if (success)
+                            {
+                                context.EventLogEntry.Add(new EventLogEntry
+                                {
+                                    UserId = cleanUserId,
+                                    Controller = controllerName,
+                                    Action = actionName,
+                                    Id = cleanId,
+                                    DateTime = DateTime.Now,
+                                    Metadata = "{}"
+                                });
+                                await context.SaveChangesAsync();
+                            }
+
+
+                        }
+                        catch (Exception)
+                        {
+                            // Ignore
+                        }
+                    }
                 }
+
+            }
+            catch (Exception)
+            {
             }
 
             await _next(httpContext);

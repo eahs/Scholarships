@@ -5,8 +5,10 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>aspnet-Scholarships-1B78AC81-4275-4FD0-A978-4F04A644F2AC</UserSecretsId>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-    <Version>1.0.0.295</Version>
-    <Configurations>Debug;Release</Configurations>	
+    <Version>2.0.0.297</Version>
+    <Configurations>Debug;Release</Configurations>
+    <AssemblyVersion>2.0.0.295</AssemblyVersion>
+    <FileVersion>2.0.0.295</FileVersion>	
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +25,8 @@
     <Compile Remove="Migrations\20200116145103_ImportedProfile.Designer.cs" />
     <Compile Remove="Migrations\20200116145220_ImportedProfile.cs" />
     <Compile Remove="Migrations\20200116145220_ImportedProfile.Designer.cs" />
+    <Compile Remove="Migrations\20210119205616_EventLogging.cs" />
+    <Compile Remove="Migrations\20210119205616_EventLogging.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

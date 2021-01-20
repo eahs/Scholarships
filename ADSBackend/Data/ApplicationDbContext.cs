@@ -36,6 +36,7 @@ namespace Scholarships.Data
         public DbSet<FileAttachment> FileAttachment { get; set; }
         public DbSet<Job> Job { get; set; }
         public DbSet<ScholarshipProvider> ScholarshipProvider { get; set; }
+        public DbSet<EventLogEntry> EventLogEntry { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
