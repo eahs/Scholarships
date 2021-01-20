@@ -227,7 +227,7 @@ namespace Scholarships
 
             // Add recurring index aggregator
             RecurringJob.AddOrUpdate<IAggregateEventLogs>(
-                generator => generator.Execute(), Cron.Hourly);
+                generator => generator.Execute(), "*/5 * * * *");
 
             // Enqueue student data import task
             BackgroundJob.Enqueue<IStudentDataImporter>(

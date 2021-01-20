@@ -72,6 +72,7 @@ namespace Scholarships.Tasks
                     {
                         EventLogDaily evd = new EventLogDaily
                         {
+                            Date = entry.DateTime.Date,
                             Controller = entry.Controller,
                             Action = entry.Action,
                             Id = entry.Id,
