@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using System.Reflection
+@{ 
+    var version = "v" + Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -32,7 +36,8 @@
             </div>
             <div class="footer">
                 <div>
-                    <strong>Copyright</strong> Easton Area School District &copy; @DateTime.Now.Year
+                    &copy; <strong>Copyright</strong> @DateTime.Now.Year Easton Area School District -- @version
+
                 </div>
             </div>
         </div>

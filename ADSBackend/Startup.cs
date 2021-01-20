@@ -162,6 +162,7 @@ namespace Scholarships
             }
 
             // register tasks
+            services.AddScoped<IAggregateEventLogs, AggregateEventLogs>();
             services.AddScoped<IGenerateTranscripts, GenerateTranscripts>();
             services.AddScoped<IEmailQueue, EmailQueue>();
             services.AddScoped<IStudentDataImporter, StudentDataImporter>();
@@ -220,9 +221,15 @@ namespace Scholarships
             app.UseHangfireDashboard("/hangfire", options);
             app.UseHangfireServer();
 
+            // Add recurring transcripts processor
             RecurringJob.AddOrUpdate<IGenerateTranscripts>(
                 generator => generator.Execute(), Cron.Daily);
 
+            // Add recurring index aggregator
+            RecurringJob.AddOrUpdate<IAggregateEventLogs>(
+                generator => generator.Execute(), Cron.Hourly);
+
+            // Enqueue student data import task
             BackgroundJob.Enqueue<IStudentDataImporter>(
                 generator => generator.Execute());
 

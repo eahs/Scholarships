@@ -12,94 +12,86 @@
     </li>
 </ol>
 
-<h2>Applications</h2>
+<h2>@Model.Scholarship.Name</h2>
 
-    <div class="tabs-container" style="width: 100%">
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tab-1">Applications</a></li>
-            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tab-2">Statistics</a></li>
-        </ul>
-        <div class="tab-content" style="width: 98%">
-            <div role="tabpanel" id="tab-1" class="tab-pane active">
-                <div class="panel-body">
-                    <div class="panel-body">
+<div class="tabs-container" style="width: 100%">
+    <ul class="nav nav-tabs" role="tablist">
+        <li><a class="nav-link active" data-toggle="tab" href="#tab-1">Applications</a></li>
+        <li><a class="nav-link" data-toggle="tab" href="#tab-2">Analytics</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" id="tab-1" class="tab-pane active">
+            <div class="panel-body">
 
-                        @if (!User.IsInRole("Provider"))
-                        {
-                        <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
-                            <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
-                        </div>
-                        }
-
-
-
-
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 40%">
-                                                Applicant Name
-                                            </th>
-                                            <th style="white-space: nowrap;">
-                                                Student ID
-                                            </th>
-                                            <th>
-                                                Submission Date
-                                            </th>
-                                            <th>
-
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var app in Model.Applications)
-                                        {
-                                        <tr>
-                                            <td style="vertical-align: middle">
-                                                <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
-                                                @if (app.ApplicantAwarded)
-                                                {
-                                                <div class="btn btn-warning btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Awarded Scholarship"><i class="fa fa-trophy"></i></div>
-                                                }
-
-                                                @if (app.ApplicantFavorite)
-                                                {
-                                                <div class="btn btn-danger btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Favorite Application"><i class="fa fa-heart"></i></div>
-                                                }
-
-                                            </td>
-                                            <td style="vertical-align: middle">
-                                                @app.Profile.StudentId
-                                            </td>
-                                            <td style="vertical-align: middle">
-                                                @app.SubmittedDate
-                                            </td>
-                                            <td>
-                                                <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
-                                            </td>
-                                        </tr>
+                @if (!User.IsInRole("Provider"))
+                {
+                    <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
+                        <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
+                    </div>
                 }
-                                    </tbody>
-                                </table>
 
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40%">
+                                Applicant Name
+                            </th>
+                            <th style="white-space: nowrap;">
+                                Student ID
+                            </th>
+                            <th>
+                                Submission Date
+                            </th>
+                            <th>
 
-                    </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var app in Model.Applications)
+                        {
+                            <tr>
+                                <td style="vertical-align: middle">
+                                    <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
+                                    @if (app.ApplicantAwarded)
+                                    {
+                                        <div class="btn btn-warning btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Awarded Scholarship"><i class="fa fa-trophy"></i></div>
+                                    }
+
+                                    @if (app.ApplicantFavorite)
+                                    {
+                                        <div class="btn btn-danger btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Favorite Application"><i class="fa fa-heart"></i></div>
+                                    }
+
+                                </td>
+                                <td style="vertical-align: middle">
+                                    @app.Profile.StudentId
+                                </td>
+                                <td style="vertical-align: middle">
+                                    @app.SubmittedDate
+                                </td>
+                                <td>
+                                    <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
             </div>
-            <div role="tabpanel" id="tab-2" class="tab-pane">
-                <div class="panel-body">
-                    <div class="panel-body">
-                        Statistics here
-                    </div>
-                </div>
-            </div>
-
         </div>
+        <div role="tabpanel" id="tab-2" class="tab-pane">
+            <div class="panel-body">
+                Analytics coming soon...
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
 
 
-    <script type="text/javascript">
+<script type="text/javascript">
 
         function createPackage(createNew) {
 
@@ -137,5 +129,6 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
-    </script>
+</script>
+
 }

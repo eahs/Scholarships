@@ -37,6 +37,8 @@ namespace Scholarships.Data
         public DbSet<Job> Job { get; set; }
         public DbSet<ScholarshipProvider> ScholarshipProvider { get; set; }
         public DbSet<EventLogEntry> EventLogEntry { get; set; }
+        public DbSet<EventLogDaily> EventLogDaily { get; set; }
+        public DbSet<EventLogAggregationIndex> EventLogAggregationIndex { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

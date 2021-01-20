@@ -30,7 +30,7 @@ namespace Scholarships.Controllers
         }
 
         // GET: Profiles
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return RedirectToAction("Edit", "Profile");
         }
