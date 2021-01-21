@@ -96,7 +96,7 @@
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-            
+
     <script type="text/javascript">
 
         function createPackage(createNew) {
@@ -138,22 +138,32 @@
         var ctx = document.getElementById("myChart").getContext("2d");
         var chart = new Chart(ctx, {
             type: 'line',
-            data: [{ t: '2016-12-25', y: 20 },
-                { t: '2016-12-26', y: 10 },
-                { t: '2016-12-27', y: 3 }],
-            options: {
-                scales: {
-                    xAxes: [
-                        {
-                            type: 'time',
-                            time: {
-                                unit: 'day'
-                            }
+            data:
+            {
+                datasets: [
+                    {
+                        label: 'Scholarship Views',
+                        data:
+                        [
+                            { t: '2016-12-25', y: 14 },
+                            { t: '2016-12-26', y: 19 },
+                            { t: '2016-12-27', y: 3 }]
+                    }
+                ]
+            },
+        options: {
+            scales: {
+                xAxes: [
+                    {
+                        type: 'time',
+                        time: {
+                            unit: 'day'
                         }
-                    ]
-                }
+                    }
+                ]
             }
-        });
+        }
+    });
 
     </script>
 
