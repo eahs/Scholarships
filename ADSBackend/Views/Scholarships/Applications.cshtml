@@ -25,9 +25,9 @@
 
                 @if (!User.IsInRole("Provider"))
                 {
-                    <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
-                        <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
-                    </div>
+                <div class="ibox alert alert-warning" style="margin-top: 10px; padding: 20px">
+                    <button class="btn btn-primary" onclick="createPackage(true)"><i class="fa fa-cogs"></i> Create Application Package</button>  <div style="float: right">Status: <span id="packageStatus"></span></div>
+                </div>
                 }
 
                 <table class="table">
@@ -49,32 +49,32 @@
                     </thead>
                     <tbody>
                         @foreach (var app in Model.Applications)
-                        {
-                            <tr>
-                                <td style="vertical-align: middle">
-                                    <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
-                                    @if (app.ApplicantAwarded)
-                                    {
-                                        <div class="btn btn-warning btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Awarded Scholarship"><i class="fa fa-trophy"></i></div>
-                                    }
+                    {
+                        <tr>
+                            <td style="vertical-align: middle">
+                                <a asp-controller="Scholarships" asp-action="ApplicationView" asp-route-id="@app.ApplicationId">@app.Profile.LastName, @app.Profile.FirstName</a>
+                                @if (app.ApplicantAwarded)
+                                {
+                                <div class="btn btn-warning btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Awarded Scholarship"><i class="fa fa-trophy"></i></div>
+                                }
 
-                                    @if (app.ApplicantFavorite)
-                                    {
-                                        <div class="btn btn-danger btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Favorite Application"><i class="fa fa-heart"></i></div>
-                                    }
+                                @if (app.ApplicantFavorite)
+                                {
+                                <div class="btn btn-danger btn-circle btn-outline" style="margin-left: 10px" data-toggle="tooltip" data-placement="right" title="Favorite Application"><i class="fa fa-heart"></i></div>
+                                }
 
-                                </td>
-                                <td style="vertical-align: middle">
-                                    @app.Profile.StudentId
-                                </td>
-                                <td style="vertical-align: middle">
-                                    @app.SubmittedDate
-                                </td>
-                                <td>
-                                    <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
-                                </td>
-                            </tr>
-                        }
+                            </td>
+                            <td style="vertical-align: middle">
+                                @app.Profile.StudentId
+                            </td>
+                            <td style="vertical-align: middle">
+                                @app.SubmittedDate
+                            </td>
+                            <td>
+                                <a class="btn btn-white btn-bitbucket" asp-action="ApplicationView" asp-route-id="@app.ApplicationId"><i class="fa fa-id-card-o"></i> View Application</a>
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
 
@@ -82,16 +82,22 @@
         </div>
         <div role="tabpanel" id="tab-2" class="tab-pane">
             <div class="panel-body">
-                Analytics coming soon...
+                <canvas id="myChart" width="400" height="100"></canvas>
             </div>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <style type="text/css" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css"></style>
+}
+
 @section Scripts {
 
-
-<script type="text/javascript">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+            
+    <script type="text/javascript">
 
         function createPackage(createNew) {
 
@@ -124,11 +130,31 @@
             $("#packageStatus").html(msg);
         });
 
-        $(function () {
+        $(function() {
 
             $('[data-toggle="tooltip"]').tooltip();
         });
 
-</script>
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: [{ t: '2016-12-25', y: 20 },
+                { t: '2016-12-26', y: 10 },
+                { t: '2016-12-27', y: 3 }],
+            options: {
+                scales: {
+                    xAxes: [
+                        {
+                            type: 'time',
+                            time: {
+                                unit: 'day'
+                            }
+                        }
+                    ]
+                }
+            }
+        });
+
+    </script>
 
 }

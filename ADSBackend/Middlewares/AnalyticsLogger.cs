@@ -34,55 +34,58 @@ namespace Scholarships.Middlewares
                 if (httpContext.User.Identity.IsAuthenticated)
                 {
                     var controllerActionDescriptor = httpContext
-                          .GetEndpoint()
+                          .GetEndpoint()?
                           .Metadata
                           .GetMetadata<ControllerActionDescriptor>();
-                    
-                    var controllerName = controllerActionDescriptor.ControllerName;
 
-                    if (ControllersToTrack.Contains(controllerName))
+                    if (controllerActionDescriptor != null)
                     {
-                        var actionName = controllerActionDescriptor.ActionName;
-                        var Id = httpContext.GetRouteValue("id");
-                        var userId = userManager.GetUserId(httpContext.User);
+                        var controllerName = controllerActionDescriptor.ControllerName;
 
-                        try
+                        if (ControllersToTrack.Contains(controllerName))
                         {
-                            int? cleanId = null;
-                            int cleanUserId;
+                            var actionName = controllerActionDescriptor.ActionName;
+                            var Id = httpContext.GetRouteValue("id");
+                            var userId = userManager.GetUserId(httpContext.User);
 
-                            if (Id is string)
+                            try
                             {
-                                int temp;
+                                int? cleanId = null;
+                                int cleanUserId;
 
-                                if (int.TryParse(Id as string, out temp))
+                                if (Id is string)
                                 {
-                                    cleanId = temp;
+                                    int temp;
+
+                                    if (int.TryParse(Id as string, out temp))
+                                    {
+                                        cleanId = temp;
+                                    }
                                 }
-                            }
 
 
-                            bool success = int.TryParse(userId, out cleanUserId);
+                                bool success = int.TryParse(userId, out cleanUserId);
 
-                            if (success)
-                            {
-                                context.EventLogEntry.Add(new EventLogEntry
+                                if (success)
                                 {
-                                    UserId = cleanUserId,
-                                    Controller = controllerName,
-                                    Action = actionName,
-                                    Id = cleanId,
-                                    DateTime = DateTime.Now,
-                                    Metadata = "{}"
-                                });
-                                await context.SaveChangesAsync();
+                                    context.EventLogEntry.Add(new EventLogEntry
+                                    {
+                                        UserId = cleanUserId,
+                                        Controller = controllerName,
+                                        Action = actionName,
+                                        Id = cleanId,
+                                        DateTime = DateTime.Now,
+                                        Metadata = "{}"
+                                    });
+                                    await context.SaveChangesAsync();
+                                }
+
+
                             }
-
-
-                        }
-                        catch (Exception)
-                        {
-                            // Ignore
+                            catch (Exception)
+                            {
+                                // Ignore
+                            }
                         }
                     }
                 }
