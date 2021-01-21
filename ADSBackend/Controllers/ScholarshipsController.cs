@@ -285,6 +285,26 @@ namespace Scholarships.Controllers
             if (scholarship == null)
                 return NotFound();
 
+            var appsCompleted = await _context.Application.Where(app => app.Submitted)
+                                                 .GroupBy(p => p.ScholarshipId)
+                                                 .Select(x => new
+                                                 {
+                                                     ScholarshipId = x.Key,
+                                                     Count = x.Count()
+                                                 }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
+
+            var appsPending = await _context.Application.Where(app => !app.Submitted)
+                .GroupBy(p => p.ScholarshipId)
+                .Select(x => new
+                {
+                    ScholarshipId = x.Key,
+                    Count = x.Count()
+                }).ToDictionaryAsync(x => x.ScholarshipId, x => x.Count);
+
+            scholarship.ApplicantCount = appsCompleted.ContainsKey(scholarship.ScholarshipId) ? appsCompleted[scholarship.ScholarshipId] : 0;
+            scholarship.ApplicantPending = appsPending.ContainsKey(scholarship.ScholarshipId) ? appsPending[scholarship.ScholarshipId] : 0;
+
+
             List<Application> applications = await _context.Application.Include(ap => ap.Profile)
                                                                        .Where(s => s.ScholarshipId == id && s.Submitted)
                                                                        .OrderByDescending(s => s.ApplicantAwarded).ThenByDescending(s => s.ApplicantScore).ThenBy(s => s.Profile.LastName).ThenBy(s => s.Profile.FirstName)
@@ -292,6 +312,7 @@ namespace Scholarships.Controllers
 
             ApplicationViewModel vm = new ApplicationViewModel
             {
+                ScholarshipId = id,
                 Scholarship = scholarship,
                 Applications = applications
             };
@@ -406,7 +427,7 @@ namespace Scholarships.Controllers
                     Created = DateTime.Now,
                     Type = "applications",
                     ForeignKey = (int)id,
-                    StatusMessage = trigger ? "Pending" : ""
+                    StatusMessage = trigger ? "Pending" : "Not Created"
                 };
 
                 if (trigger)
