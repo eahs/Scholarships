@@ -27,7 +27,7 @@ namespace Scholarships.Controllers
         [HttpGet("analytics")]
         public async Task<object> GetDailyAnalytics(string uri)
         {
-            List<object> data = new List<object>();
+            List<object> adata = new List<object>();
 
             var stats = await _context.EventLogDaily.Where(eld => uri == (eld.Controller+"/"+eld.Action+(eld.Id == null ? "" : "/" +eld.Id)))
                 .OrderBy(eld => eld.Date)
@@ -35,7 +35,7 @@ namespace Scholarships.Controllers
 
             foreach (var stat in stats)
             {
-                data.Add(new
+                adata.Add(new
                 {
                     x = stat.Date.ToString("MM/dd/yyyy"),
                     y = stat.Count
@@ -44,7 +44,17 @@ namespace Scholarships.Controllers
 
             return new
             {
-                data
+                data = new
+                {
+                    datasets = new object[]
+                    {
+                        new {
+                            label = "Scholarship Views",
+                            data = adata
+                        }
+                    }
+                }
+                
             };
         }
     }
