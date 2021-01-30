@@ -14,7 +14,7 @@ namespace Scholarships.Tasks.Importer
             Map(m => m.LastName).Name("LastName");
             Map(m => m.MiddleName).Name("MiddleName");
             Map(m => m.StudentId).Name("StudentNumber");
-            Map(m => m.Email).Name("NETWORKID").ConvertUsing(row => row.GetField("NETWORKID") + "@roverkids.org");
+            Map(m => m.Email).Name("NETWORKID").ConvertUsing(row => row.GetField("NETWORKID").ToLower() + "@roverkids.org");
             Map(m => m.LunchStatus).Name("LunchStatus");
             Map(m => m.BirthDate).Name("BirthDate");
             Map(m => m.GraduationYear).Name("GraduationYear").ConvertUsing(row =>
