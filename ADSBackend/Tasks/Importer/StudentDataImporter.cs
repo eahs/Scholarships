@@ -34,12 +34,13 @@ namespace Scholarships.Tasks.Importer
 
             await _context.Database.ExecuteSqlRawAsync("DELETE FROM ImportedProfile");
 
-            var existingStudents = await _context.Profile.Where(p => p.GraduationYear == schoolYear)
+            var existingStudents = await _context.Profile.Include(p => p.User)
+                                                                    .Where(p => p.GraduationYear == schoolYear)
                                                                     .ToListAsync();
 
             foreach (ImportedProfile p in NewProfiles)
             {
-                var student = existingStudents.Find(ep => ep.StudentId == p.StudentId);
+                var student = existingStudents.FirstOrDefault(ep => ep.User.UserName == p.Email);
 
                 // Does the student profile already exist?
                 if (student != null)

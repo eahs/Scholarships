@@ -87,14 +87,21 @@ namespace Scholarships.Controllers
                 await _userManager.AddToRoleAsync(user, viewModel.Role);
 
                 // Save associated scholarships they may manage
-                var sps = viewModel.ScholarshipIds.Select(vm => new ScholarshipProvider
+                if (viewModel.ScholarshipIds != null)
                 {
-                    UserId = user.Id,
-                    ScholarshipId = vm
-                }).ToList();
+                    var sps = viewModel.ScholarshipIds.Select(vm => new ScholarshipProvider
+                    {
+                        UserId = user.Id,
+                        ScholarshipId = vm
+                    }).ToList();
 
-                _context.ScholarshipProvider.AddRange(sps);
-                await _context.SaveChangesAsync();
+                    _context.ScholarshipProvider.AddRange(sps);
+
+                    await _context.SaveChangesAsync();
+                }
+
+
+                
 
                 // send confirmation email
                 try

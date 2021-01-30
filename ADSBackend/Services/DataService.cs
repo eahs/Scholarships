@@ -89,6 +89,36 @@ namespace Scholarships.Services
                     }
 
                 }
+                else
+                {
+                    if (String.IsNullOrEmpty(profile.StudentId) && user.UserName.Contains("roverkids"))
+                    {
+                        // Let's see if there is one based off of email address
+                        var iprofile = await _context.ImportedProfile.FirstOrDefaultAsync(p => p.Email == user.UserName);
+
+                        if (iprofile != null)
+                        {
+                            profile.FirstName = iprofile.FirstName;
+                            profile.LastName = iprofile.LastName;
+                            profile.StudentId = iprofile.StudentId;
+                            profile.Address1 = iprofile.Address1;
+                            profile.Address2 = iprofile.Address2;
+                            profile.BirthDate = iprofile.BirthDate;
+                            profile.ClassRank = iprofile.ClassRank;
+                            profile.City = iprofile.City;
+                            profile.State = iprofile.State;
+                            profile.GraduationYear = iprofile.GraduationYear;
+                            profile.City = iprofile.City;
+                            profile.ZipCode = iprofile.ZipCode;
+                            profile.Gender = iprofile.Gender;
+                            profile.Phone = iprofile.Phone;
+
+                            _context.Update(profile);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+                }
 
             }
 
