@@ -24,7 +24,7 @@ namespace Scholarships.Tasks.Importer
             Configuration = configurationService;
         }
 
-        private async Task UpdateStudentProfilesAsync(IEnumerable<ImportedProfile> NewProfiles)
+        private async Task UpdateStudentProfilesAsync(List<ImportedProfile> NewProfiles)
         {
             // Calculate the current graduating year for seniors
             int schoolYear = DateTime.Now.Year;
@@ -32,7 +32,8 @@ namespace Scholarships.Tasks.Importer
             if (currentMonth > 7)
                 schoolYear++;
 
-            await _context.Database.ExecuteSqlRawAsync("DELETE FROM ImportedProfile");
+            if (NewProfiles.Count > 0)
+                await _context.Database.ExecuteSqlRawAsync("DELETE FROM ImportedProfile");
 
             var existingStudents = await _context.Profile.Include(p => p.User)
                                                                     .Where(p => p.GraduationYear == schoolYear)
@@ -107,7 +108,7 @@ namespace Scholarships.Tasks.Importer
 
                     var records = csv.GetRecords<ImportedProfile>();
 
-                    AsyncHelpers.RunSync(() => UpdateStudentProfilesAsync(records));
+                    AsyncHelpers.RunSync(() => UpdateStudentProfilesAsync(records.ToList()));
 
                 }
             }

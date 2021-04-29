@@ -233,6 +233,10 @@ namespace Scholarships
             BackgroundJob.Enqueue<IStudentDataImporter>(
                 generator => generator.Execute());
 
+            RecurringJob.AddOrUpdate<IStudentDataImporter>(
+                generator => generator.Execute(), Cron.Daily);
+
+
             //BackgroundJob.Enqueue<IEmailQueue>(
             //    queue => queue.SendMail("tanczosm@eastonsd.org", "Test Message", "this is a scholarship email test.. did you get this?"));
             //BackgroundJob.Enqueue<ICreateApplicationPackage>(queue => queue.Execute());
