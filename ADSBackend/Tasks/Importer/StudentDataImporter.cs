@@ -46,17 +46,25 @@ namespace Scholarships.Tasks.Importer
                 // Does the student profile already exist?
                 if (student != null)
                 {
-                    bool update = student.SATScoreMath != p.SATScoreMath ||
-                                  student.SATScoreReading != p.SATScoreReading ||
-                                  Math.Abs((decimal)(student.GPA - p.GPA)) > 0 ||
+                    bool update = Math.Abs((decimal)(student.GPA - p.GPA)) > 0 ||
                                   student.ClassRank != p.ClassRank ||
                                   student.StudentId != p.StudentId ||
                                   student.LunchStatus != p.LunchStatus;
 
+                    if (student.SATScoreMath != null && student.SATScoreMath != p.SATScoreMath)
+                    {
+                        update = true;
+                    }
+
+                    if (student.SATScoreReading != null && student.SATScoreReading != p.SATScoreReading)
+                    {
+                        update = true;
+                    }
+
                     if (update)
                     {
-                        if (p.SATScoreMath != 0) student.SATScoreMath = p.SATScoreMath;
-                        if (p.SATScoreReading != 0) student.SATScoreReading = p.SATScoreReading;
+                        if (p.SATScoreMath != null) student.SATScoreMath = p.SATScoreMath;
+                        if (p.SATScoreReading != null) student.SATScoreReading = p.SATScoreReading;
                         student.ClassRank = p.ClassRank;
                         student.GPA = p.GPA;
                         student.StudentId = p.StudentId;

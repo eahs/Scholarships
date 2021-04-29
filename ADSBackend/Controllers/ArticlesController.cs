@@ -8,6 +8,7 @@ using Scholarships.Models;
 
 namespace Scholarships.Controllers
 {
+	[Authorize(Roles = "Admin,Manager")]
     public class ArticlesController : Controller
     {
         private readonly ApplicationDbContext _context;
